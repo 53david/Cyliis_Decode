@@ -42,12 +42,12 @@ public class CloseBlue {
 
     public CloseBlue(HardwareMap hardwareMap){
         Initializer.start(hardwareMap);
-        storage = new Storage();
+         storage = new Storage();
          chassis = new Chassis(Chassis.State.PID);
          intake = new Intake();
          shooter = new Shooter();
          odo = new Odo();
-        Intake.state = Intake.State.TRANSFER;
+        Storage.state = Storage.State.TRANSFER;
         Turret.allienceState = Turret.AllianceState.BLUE;
         shoot = new Node("shoot");
         beforeSpike2 = new Node("beforeSpike2");
@@ -63,12 +63,6 @@ public class CloseBlue {
                 ()->{
                     if ((Intake.state == Intake.State.INTAKE || Intake.state == Intake.State.REVERSE)&& !storage.IsStorageSpinning()){
                         Intake.state = Intake.State.IDLE;
-                    }
-                    else if (Intake.state == Intake.State.INTAKE && storage.IsStorageSpinning()){
-                        Intake.state = Intake.State.INTAKE;
-                    }
-                    else if (Intake.state == Intake.State.REVERSE && storage.IsStorageSpinning()){
-                        Intake.state = Intake.State.REVERSE;
                     }
                     chassis.setTargetPosition(shootPos);
                     Shooter.state = Shooter.State.SHOOT;
@@ -139,7 +133,7 @@ public class CloseBlue {
                     Shooter.state = Shooter.State.IDLE;
                 },
                 ()->{
-                    return Intake.state == Intake.State.TRANSFER || timer.seconds()>5.5;
+                    return Storage.state == Storage.State.TRANSFER || timer.seconds()>5.5;
                 },
                 new Node[]{afterCollecting}
         );

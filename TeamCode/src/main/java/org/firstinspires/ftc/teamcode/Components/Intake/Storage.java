@@ -96,8 +96,6 @@ public class Storage {
             case SHOOT:
 
                 Hood.state = Hood.State.SHOOT;
-                pid.setPID(0,0,0);
-                special.setPID(0,0,0);
                 spin.setPower(Odo.power);
 
                 if (timer.seconds()>0.6){
@@ -130,6 +128,7 @@ public class Storage {
         if (state == State.TRANSFER && gm1.cross && prevgm1.cross != gm1.cross){
             state = State.SHOOT;
             timer.reset();
+
         }
         if (gm1.circle && prevgm1.circle!= gm1.circle && nrBalls>=1){
             state = State.TRANSFER;
@@ -142,12 +141,12 @@ public class Storage {
         }
         else {
             if (Math.toDegrees(Math.abs(FromVtoRads()-target)) >= 10) {
-                spin.setPower(pid.calculate(FromVtoRads(), target) + Ks * Math.signum(target-FromVtoRads()));
                 pid.setPID(Kp,0,Kd);
+                spin.setPower(pid.calculate(FromVtoRads(), target) + Ks * Math.signum(target-FromVtoRads()));
             }
             else {
-                spin.setPower(special.calculate(FromVtoRads(), target) + Ks * Math.signum(target-FromVtoRads()));
                 special.setPID(P,0,D);
+                spin.setPower(special.calculate(FromVtoRads(), target) + Ks * Math.signum(target-FromVtoRads()));
             }
         }
         }

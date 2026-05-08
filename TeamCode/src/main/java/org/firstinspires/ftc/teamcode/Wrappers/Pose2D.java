@@ -5,7 +5,6 @@ public class Pose2D {
     public double x;
     public double y;
     public double heading;
-
     Pose2D correction;
 
     public Pose2D(double x, double y) {

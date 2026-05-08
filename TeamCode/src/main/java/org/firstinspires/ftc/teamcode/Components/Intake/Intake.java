@@ -11,7 +11,6 @@ public class Intake {
         IDLE,
         REVERSE,
         INTAKE,
-        TRANSFER,
     }
     public static State state;
     public Intake(){

@@ -36,7 +36,7 @@ public class FarBlue {
         chassis = new Chassis(Chassis.State.PID);
         intake = new Intake();
         shooter = new Shooter();
-        Intake.state = Intake.State.TRANSFER;
+        Storage.state = Storage.State.TRANSFER;
         Turret.allienceState = Turret.AllianceState.BLUE;
         shoot = new Node("shoot");
         spike1 = new Node("spike1");
@@ -51,7 +51,7 @@ public class FarBlue {
                     Shooter.state = Shooter.State.SHOOT;
                     if (chassis.inPosition(40,40,0.13) && Math.abs(Initializer.pp.getVelX(DistanceUnit.MM))<=25
                             && Math.abs(Initializer.pp.getVelX())<=25 && !isShootReady){
-                        Intake.state = Intake.State.SHOOT;
+                        Storage.state = Storage.State.SHOOT;
                         isShootReady = true;
                     }
 

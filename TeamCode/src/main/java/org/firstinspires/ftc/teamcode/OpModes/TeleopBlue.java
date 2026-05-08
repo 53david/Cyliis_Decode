@@ -40,7 +40,6 @@ public class TeleopBlue extends LinearOpMode {
         isAutonomousActive = false;
         Initializer.start(hardwareMap);
         odo = new Odo();
-        odo.reset();
         intake =new Intake();
         drive =new Chassis(Chassis.State.DRIVE);
         shooter =new Shooter();

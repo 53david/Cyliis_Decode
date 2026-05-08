@@ -33,6 +33,7 @@ public class TeleopRed extends LinearOpMode {
         drive = new Chassis(Chassis.State.DRIVE);
         shooter = new Shooter();
         intake = new Intake();
+        odo = new Odo();
         Turret.allienceState = Turret.AllianceState.RED;
         Shooter.state = Shooter.State.SHOOT;
         waitForStart();
