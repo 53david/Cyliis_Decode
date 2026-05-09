@@ -141,7 +141,7 @@ public class FarRed {
         chassis.update();
         currentNode.run();
         if (currentNode.transition()){
-            currentNode = currentNode.next[Math.min(currentNode.index++,currentNode.next.length)];
+            currentNode = currentNode.next[Math.min(currentNode.index++,currentNode.next.length-1)];
         }
     }
 
