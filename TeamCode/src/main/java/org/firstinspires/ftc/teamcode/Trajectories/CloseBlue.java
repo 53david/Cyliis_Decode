@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Trajectories;
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -22,22 +23,21 @@ public class CloseBlue {
     public Shooter shooter;
     public Odo odo;
     public static Pose2D shootPos = new Pose2D(-1450, -460, Math.PI/2);
-    public static Pose2D[] beforeSpike2Pos = {
-            new Pose2D(-1910, -100, Math.PI/2) ,
-            new Pose2D(-2450, -100, Math.PI/2)
+    public static Pose2D loadingPos = new Pose2D(0,0,0);
+    public static Pose2D[] gatePos = {
+            new Pose2D(0,0,0),
+            new Pose2D(0,0,0),
     };
-
-    public static Pose2D[] spike2Pos = {
-            new Pose2D(-1910, 765, Math.PI/2),
-            new Pose2D(-2450, 765, Math.PI/2)
+    public static Pose2D[] spike1Pos={
+            new Pose2D(0,0,0),
+            new Pose2D(0,0,0),
     };
-    public static Pose2D beforeShootPos = new Pose2D(-1930, 600, Math.PI/2-0.3);
-    public static Pose2D beforeGatePos = new Pose2D(-1845, 620, Math.PI/2);
-    public static Pose2D gatePos = new Pose2D(-1875, 700, Math.PI/2+0.4);
-
-    public Pose2D beforeSpike1Pos = new Pose2D(-1270 , -450 , Math.PI/2);
-    public Pose2D spike1Pos = new Pose2D(-1270 , 620 , Math.PI/2);
-    Node shoot,beforeSpike2,beforeSpike1,openGate,spike1,spike2,afterCollecting,beforeGate,gate;
+    public static Pose2D[] spike2Pos={
+            new Pose2D(0,0,0),
+            new Pose2D(0,0,0),
+    };
+    public static Pose2D parkPos = new Pose2D(0,0,0);
+    Node shoot,spike1,loading,spike2,gate,park;
     public Node currentNode;
 
     public CloseBlue(HardwareMap hardwareMap){
@@ -50,13 +50,8 @@ public class CloseBlue {
         Storage.state = Storage.State.TRANSFER;
         Turret.allienceState = Turret.AllianceState.BLUE;
         shoot = new Node("shoot");
-        beforeSpike2 = new Node("beforeSpike2");
-        beforeSpike1 = new Node("beforeSpike1");
-        openGate = new Node("openGate");
         spike1 = new Node("spike1");
         spike2 = new Node("spike2");
-        afterCollecting = new Node("afterCollecting");
-        beforeGate = new Node("beforeGate");
         gate = new Node("gate");
         currentNode = shoot;
         shoot.addConditions(
@@ -79,85 +74,74 @@ public class CloseBlue {
                 ()->{
                     return Storage.state == Storage.State.RESET;
                 },
-                new Node[]{beforeSpike2, beforeGate, beforeGate, beforeSpike1}
+                new Node[]{spike2, gate, loading, gate, spike1, park}
         );
-        beforeSpike2.addConditions(
+        gate.addConditions(
                 ()->{
                     Shooter.state = Shooter.State.IDLE;
-                    Intake.state = Intake.State.IDLE;
-                    chassis.setTargetPosition(beforeSpike2Pos[Math.min(beforeSpike2.index , beforeSpike2Pos.length-1) ] );
+                    Intake.state = Intake.State.INTAKE;
+                    chassis.setTargetPosition(gatePos[Math.min(gate.index, gatePos.length-1)]);
                 },
                 ()->{
-                    return chassis.inPosition(35, 35, 0.1);
+                    if (gate.index == 0 && chassis.inPosition(80,80,0.2)){
+                        timer.reset();
+                        return true;
+                    }
+                    if (gate.index == 1 && (Storage.state == Storage.State.TRANSFER || timer.seconds()>2.5)){
+                        timer.reset();
+                        return true;
+                    }
+                    return false;
                 },
-                new Node[]{spike2}
+                new Node[]{gate,shoot}
+        );
+        loading.addConditions(
+                ()->{
+                    Shooter.state = Shooter.State.IDLE;
+                    Intake.state = Intake.State.INTAKE;
+                    chassis.setTargetPosition(loadingPos);
+                },
+                ()->{
+                    if (chassis.inPosition(40,40,0.2)){
+                        timer.reset();
+                        return true;
+                    }
+                    return false;
+                },
+                new Node[]{shoot}
+        );
+        spike1.addConditions(
+                ()->{
+                    Shooter.state = Shooter.State.IDLE;
+                    Intake.state = Intake.State.INTAKE;
+                    chassis.setTargetPosition(spike1Pos[Math.min(spike1.index, spike1Pos.length-1)]);
+                },
+                ()->{
+                    return chassis.inPosition(40,40,0.1);
+                },
+                new Node[]{spike1,shoot}
         );
         spike2.addConditions(
                 ()->{
+                    Shooter.state = Shooter.State.IDLE;
                     Intake.state = Intake.State.INTAKE;
                     chassis.setTargetPosition(spike2Pos[Math.min(spike2.index, spike2Pos.length-1)]);
                 },
                 ()->{
-                    return chassis.inPosition(35, 35, 0.1);
+                    return chassis.inPosition(40,40,0.1);
                 },
-                new Node[]{afterCollecting}
+                new Node[]{spike2,shoot}
         );
-        afterCollecting.addConditions(
+        park.addConditions(
                 ()->{
-                    chassis.setTargetPosition(beforeShootPos);
-                    Shooter.state = Shooter.State.SHOOT;
-                    if (Storage.state == Storage.State.TRANSFER){
-                        Intake.state = Intake.State.REVERSE;
-                    }
-                },
-                ()->{
-                    return chassis.inPosition(35, 35, 0.1);
-                },
-                new Node[]{shoot}
-        );
-        beforeGate.addConditions(
-                ()->{
-                    chassis.setTargetPosition(beforeGatePos);
                     Shooter.state = Shooter.State.IDLE;
-                    timer.reset();
-                },
-                ()->{
-                    return chassis.inPosition(60, 60, 0.15);
-                },
-                new Node[]{gate}
-        );
-        gate.addConditions(
-                ()->{
-                    chassis.setTargetPosition(gatePos);
                     Intake.state = Intake.State.INTAKE;
-                    Shooter.state = Shooter.State.IDLE;
+                    chassis.setTargetPosition(parkPos);
                 },
                 ()->{
-                    return Storage.state == Storage.State.TRANSFER || timer.seconds()>5.5;
+                    return chassis.inPosition(60,60,0.2);
                 },
-                new Node[]{afterCollecting}
-        );
-        beforeSpike1.addConditions(
-                ()->{
-                    chassis.setTargetPosition(beforeSpike1Pos);
-                    Shooter.state = Shooter.State.IDLE;
-                    Intake.state = Intake.State.IDLE;
-                },
-                ()->{
-                    return chassis.inPosition(40, 40, 0.1);
-                },
-                new Node[]{spike1}
-        );
-        spike1.addConditions(
-                ()->{
-                    chassis.setTargetPosition(spike1Pos);
-                    Intake.state = Intake.State.INTAKE;
-                    Shooter.state = Shooter.State.IDLE;
-                },
-                ()->{
-                    return chassis.inPosition(100, 100, 0.1);
-                },
-                new Node[]{shoot}
+                new Node[]{park}
         );
     }
     public void update(){

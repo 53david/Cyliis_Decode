@@ -59,10 +59,12 @@ public class FarRed {
                     }
                     Shooter.state = Shooter.State.SHOOT;
                     chassis.setTargetPosition(shootPos);
+                    if (Storage.state != Storage.State.TRANSFER && Storage.state!=Storage.State.RESET){
+                        Storage.state = Storage.State.TRANSFER;
+                    }
                     if (chassis.inPosition(60,60,0.25) && Storage.state == Storage.State.TRANSFER){
                         Storage.state = Storage.State.SHOOT;
                     }
-
                 },
                 ()->{
                     if (Storage.state == Storage.State.RESET){
@@ -85,7 +87,7 @@ public class FarRed {
                     chassis.setTargetPosition(spike3Pos[Math.min(spike3.index, spike3Pos.length-1)]);
                 },
                 ()->{
-                    if (Storage.state == Storage.State.TRANSFER || timer.seconds()>5.5){
+                    if (Storage.state == Storage.State.TRANSFER || timer.seconds()>2){
                         timer.reset();
                         return true;
                     }
@@ -105,13 +107,13 @@ public class FarRed {
                     chassis.setTargetPosition(spike3Pos[Math.min(tunnel.index, tunnelPos.length-1)]);
                 },
                 ()->{
-                    if (Storage.state == Storage.State.TRANSFER || timer.seconds()>5.5){
+                    if (Storage.state == Storage.State.TRANSFER || timer.seconds()>2.3){
                         timer.reset();
                         return true;
                     }
                     return false;
                 },
-                new Node[]{shoot}
+                new Node[]{tunnel,tunnel,shoot}
         );
         loading.addConditions(
                 ()->{
@@ -125,7 +127,7 @@ public class FarRed {
                     chassis.setTargetPosition(loadingPos);
                 },
                 ()->{
-                    if (Storage.state == Storage.State.TRANSFER || timer.seconds()>5.5){
+                    if (Storage.state == Storage.State.TRANSFER || chassis.inPosition(40,40,0.2)){
                         timer.reset();
                         return true;
                     }
