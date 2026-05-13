@@ -82,8 +82,6 @@ public class Storage {
 
                 target = specialPos;
                 isTransferReady = false;
-
-
                 if(!IsStorageSpinning() && timer.seconds()>0.25){
                     Latch.state = Latch.State.TRANSFER;
                 }

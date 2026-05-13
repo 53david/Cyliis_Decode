@@ -25,7 +25,6 @@ public class Intake {
         latch.update();
         storage.update();
         activeIntake.update();
-        colorDetection.update();
     }
     public void stateUpdate(){
         switch (state){

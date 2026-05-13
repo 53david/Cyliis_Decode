@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Trajectories;
 
-import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -53,6 +52,8 @@ public class CloseBlue {
         spike1 = new Node("spike1");
         spike2 = new Node("spike2");
         gate = new Node("gate");
+        loading = new Node("loading");
+        park = new Node("park");
         currentNode = shoot;
         shoot.addConditions(
                 ()->{

@@ -11,7 +11,7 @@ public class Latch {
 
     public static double transPos = 0.385;
     public static double idlePos = 0.16;
-    public double currentPos = 0.16;
+    public double currentPos;
     public static double pos = 0.16;
 
         public enum State{
@@ -32,8 +32,8 @@ public class Latch {
     }
     public void update(){
         stateUpdate();
+        profile.update();
         transfer.setPosition(currentPos);
-
     }
     public void stateUpdate(){
         switch (state){

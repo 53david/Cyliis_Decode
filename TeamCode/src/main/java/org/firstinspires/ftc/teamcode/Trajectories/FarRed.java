@@ -25,14 +25,14 @@ public class FarRed {
     public Pose2D[] tunnelPos = {
             new Pose2D(0,0,0),
             new Pose2D(0,0,0),
-            new Pose2D(0,0,0),
     };
+    public Pose2D parkPos = new Pose2D(0,0,0);
     public Odo odo;
     public Shooter shooter;
     public Intake intake;
     public Storage storage;
     public Chassis chassis;
-    Node shoot,spike3,loading,tunnel;
+    Node shoot,spike3,loading,tunnel,park;
     public Node currentNode;
     public FarRed(HardwareMap hardwareMap){
         Initializer.start(hardwareMap);
@@ -50,6 +50,7 @@ public class FarRed {
         spike3 = new Node("spike3");
         loading = new Node("loading");
         tunnel = new Node("tunnel");
+        park = new Node("park");
         currentNode = shoot;
         shoot.addConditions(
                 ()->{
@@ -73,7 +74,7 @@ public class FarRed {
                     }
                     return false;
                 },
-                new Node[]{spike3,loading,tunnel,loading,tunnel,loading}
+                new Node[]{spike3,loading,tunnel,loading,tunnel,loading,park}
         );
         spike3.addConditions(
                 ()->{
@@ -113,7 +114,7 @@ public class FarRed {
                     }
                     return false;
                 },
-                new Node[]{tunnel,tunnel,shoot}
+                new Node[]{tunnel,shoot}
         );
         loading.addConditions(
                 ()->{
@@ -134,6 +135,17 @@ public class FarRed {
                     return false;
                 },
                 new Node[]{shoot}
+        );
+        park.addConditions(
+                ()->{
+                    chassis.setTargetPosition(parkPos);
+                    Intake.state = Intake.State.IDLE;
+                    Shooter.state = Shooter.State.IDLE;
+                    },
+                ()->{
+                    return chassis.inPosition(60,60,0.15);
+                },
+                new Node[]{park}
         );
     }
     public void update(){

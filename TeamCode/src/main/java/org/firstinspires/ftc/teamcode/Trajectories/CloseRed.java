@@ -52,6 +52,8 @@ public class CloseRed {
         shoot = new Node("shoot");
         spike1 = new Node("spike1");
         spike2 = new Node("spike2");
+        loading = new Node("loading");
+        park = new Node("park");
         gate = new Node("gate");
         currentNode = shoot;
         shoot.addConditions(

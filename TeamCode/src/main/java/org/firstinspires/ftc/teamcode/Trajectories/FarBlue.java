@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Trajectories;
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
@@ -20,15 +22,18 @@ public class FarBlue {
     public Intake intake;
     public Shooter shooter;
     public Pose2D shootPos = new Pose2D(0,0,Math.PI);
-    public Pose2D[] spike1Pos ={
-            new Pose2D(0,0,Math.PI),
+    public Pose2D[] spike3Pos ={
             new Pose2D(0,0,Math.PI),
             new Pose2D(0,0,Math.PI),
     };
-    public Pose2D loadingZonePos = new Pose2D(0,0,Math.PI);
-    Node shoot,spike1,loadingZone;
+    public Pose2D[] tunnelPos={
+            new Pose2D(0,0,0),
+            new Pose2D(0,0,0),
+    };
+    public Pose2D parkPos= new Pose2D(0,0,0);
+    public Pose2D loadingPos = new Pose2D(0,0,Math.PI);
+    Node shoot,spike3,tunnel,loading,park;
     public Node currentNode;
-    boolean isShootReady = false;
     public FarBlue(HardwareMap hardwareMap){
         Initializer.start(hardwareMap);
         storage = new Storage();
@@ -39,8 +44,10 @@ public class FarBlue {
         Storage.state = Storage.State.TRANSFER;
         Turret.allienceState = Turret.AllianceState.BLUE;
         shoot = new Node("shoot");
-        spike1 = new Node("spike1");
-        loadingZone = new Node("loadingZone");
+        spike3 = new Node("spike3");
+        loading = new Node("loading");
+        tunnel = new Node("tunnel");
+        park = new Node("park");
         currentNode = shoot;
         shoot.addConditions(
                 ()->{
@@ -50,41 +57,64 @@ public class FarBlue {
                     chassis.setTargetSpecialPosition(shootPos);
                     Shooter.state = Shooter.State.SHOOT;
                     if (chassis.inPosition(40,40,0.13) && Math.abs(Initializer.pp.getVelX(DistanceUnit.MM))<=25
-                            && Math.abs(Initializer.pp.getVelY(DistanceUnit.MM))<=25 && !isShootReady){
+                            && Math.abs(Initializer.pp.getVelY(DistanceUnit.MM))<=25){
                         Storage.state = Storage.State.SHOOT;
-                        isShootReady = true;
                     }
 
                 },
                 ()->{
                     return Storage.state == Storage.State.RESET;
                 },
-                new Node[]{loadingZone,spike1,loadingZone,loadingZone}
+                new Node[]{spike3,loading,tunnel,loading,tunnel,loading,park}
         );
-        spike1.addConditions(
+        spike3.addConditions(
                 ()->{
-                    isShootReady = false;
                     Intake.state = Intake.State.INTAKE;
                     Shooter.state = Shooter.State.IDLE;
-                    chassis.setTargetPosition(spike1Pos[Math.min(spike1.index, spike1Pos.length-1)]);
+                    chassis.setTargetPosition(spike3Pos[Math.min(spike3.index, spike3Pos.length-1)]);
                 },
                 ()->{
                     return chassis.inPosition(60,60,0.2);
                 },
-                new Node[]{shoot}
+                new Node[]{spike3,shoot}
         );
-        loadingZone.addConditions(
+        loading.addConditions(
                 ()->{
-                    isShootReady = false;
                     Shooter.state = Shooter.State.IDLE;
                     Intake.state = Intake.State.INTAKE;
-                    chassis.setTargetPosition(loadingZonePos);
+                    chassis.setTargetPosition(loadingPos);
                 },
                 ()->{
                     return chassis.inPosition(40,40,0.15);
                 },
                 new Node[]{shoot}
 
+        );
+        tunnel.addConditions(
+                ()->{
+                    if (Storage.state != Storage.State.TRANSFER){
+                        Intake.state = Intake.State.INTAKE;
+                    }
+                    else {
+                        Intake.state = Intake.State.REVERSE;
+                    }
+                    Shooter.state = Shooter.State.IDLE;
+                    Intake.state = Intake.State.INTAKE;
+                    chassis.setTargetPosition(tunnelPos[Math.min(tunnel.index, tunnelPos.length-1)]);
+                },
+                ()->{
+                    return chassis.inPosition(60,60,0.2);
+                },
+                new Node[]{tunnel,shoot}
+        );
+        park.addConditions(
+                ()->{
+                    chassis.setTargetPosition(parkPos);
+                },
+                ()->{
+                    return chassis.inPosition(60,60,0.2);
+                },
+                new Node[]{park}
         );
     }
     public void update(){
