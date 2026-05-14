@@ -27,10 +27,7 @@ public class CloseBlue {
             new Pose2D(0,0,0),
             new Pose2D(0,0,0),
     };
-    public static Pose2D[] spike1Pos={
-            new Pose2D(0,0,0),
-            new Pose2D(0,0,0),
-    };
+    public static Pose2D spike1Pos= new Pose2D(0,0,0);
     public static Pose2D[] spike2Pos={
             new Pose2D(0,0,0),
             new Pose2D(0,0,0),
@@ -115,12 +112,12 @@ public class CloseBlue {
                 ()->{
                     Shooter.state = Shooter.State.IDLE;
                     Intake.state = Intake.State.INTAKE;
-                    chassis.setTargetPosition(spike1Pos[Math.min(spike1.index, spike1Pos.length-1)]);
+                    chassis.setTargetPosition(spike1Pos);
                 },
                 ()->{
                     return chassis.inPosition(40,40,0.1);
                 },
-                new Node[]{spike1,shoot}
+                new Node[]{shoot}
         );
         spike2.addConditions(
                 ()->{

@@ -123,6 +123,10 @@ public class Chassis{
     }
 
     public void update() {
+
+        controllerX.setPID(kp,0,kd);
+        controllerY.setPID(kp,0,kd);
+        controllerHeading.setPID(KD,0,KD);
         if (state == State.DRIVE && Turret.allienceState == Turret.AllianceState.BLUE) {
 
             double X = gm1.left_stick_x;
@@ -162,11 +166,6 @@ public class Chassis{
             setTargetVector(y * Math.cos(-heading) - x * Math.sin(-heading), y * Math.sin(-heading) + x * Math.cos(-heading), rotation);
 
         }
-    }
-    public void tunePid(){
-        controllerX.setPID(kp,0,kd);
-        controllerY.setPID(kp,0,kd);
-        controllerHeading.setPID(KP,0,KD);
     }
 
 }

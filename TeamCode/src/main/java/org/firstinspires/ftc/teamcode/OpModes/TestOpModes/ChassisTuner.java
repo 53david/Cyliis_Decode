@@ -60,7 +60,6 @@ public class ChassisTuner extends LinearOpMode {
             }
             updateState();
             chassis.update();
-            chassis.tunePid();
             odo.update();
             telemetryM.addData("X",Odo.getX());
             telemetryM.addData("Y",Odo.getY());

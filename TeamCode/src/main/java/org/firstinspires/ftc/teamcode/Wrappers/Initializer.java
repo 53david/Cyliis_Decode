@@ -68,8 +68,7 @@ public class Initializer {
         color = hwMap.get(ColorRangeSensor.class,"colorSensor");
         hood = hwMap.get(ServoImplEx.class,"ssh5");
         proximitySensor =hwMap.get(DigitalChannel.class,"bb");
-        pp.resetPosAndIMU();
-        pp.recalibrateIMU();
+
 
     }
 }
