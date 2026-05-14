@@ -24,5 +24,8 @@ public class Node {
     {
         return condition.get();
     }
+    public void reset(){
+        index = 0;
+    }
 
 }

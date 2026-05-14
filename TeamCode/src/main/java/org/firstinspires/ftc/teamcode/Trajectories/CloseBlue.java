@@ -64,13 +64,18 @@ public class CloseBlue {
                                 if (Storage.state == Storage.State.TRANSFER) {
                                     Storage.state = Storage.State.SHOOT;
                                 }
-                                else {
-                                    Storage.state = Storage.State.TRANSFER;
-                                }
+                    }
+                    else if (Storage.state != Storage.State.TRANSFER){
+                        Storage.state = Storage.State.TRANSFER;
                     }
                 },
                 ()->{
-                    return Storage.state == Storage.State.RESET;
+                    if (Storage.state == Storage.State.RESET){
+                        timer.reset();
+                        gate.reset();
+                        return true;
+                    }
+                    return false;
                 },
                 new Node[]{spike2, gate, loading, gate, spike1, park}
         );
@@ -115,7 +120,11 @@ public class CloseBlue {
                     chassis.setTargetPosition(spike1Pos);
                 },
                 ()->{
-                    return chassis.inPosition(40,40,0.1);
+                    if (chassis.inPosition(40,40,0.1)){
+                        timer.reset();
+                        return true;
+                    }
+                    return false;
                 },
                 new Node[]{shoot}
         );
@@ -126,7 +135,11 @@ public class CloseBlue {
                     chassis.setTargetPosition(spike2Pos[Math.min(spike2.index, spike2Pos.length-1)]);
                 },
                 ()->{
-                    return chassis.inPosition(40,40,0.1);
+                    if (chassis.inPosition(40,40,0.1)){
+                        timer.reset();
+                        return true;
+                    }
+                    return false;
                 },
                 new Node[]{spike2,shoot}
         );

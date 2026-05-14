@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Trajectories;
 
-import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -23,15 +22,12 @@ public class CloseRed {
     public Shooter shooter;
     public Odo odo;
     public static Pose2D shootPos = new Pose2D(-1450, -460, Math.PI/2);
-    public static Pose2D loadingPos = new Pose2D(0, 0, 0);
+    public static Pose2D loadingPos = new Pose2D(0,0,0);
     public static Pose2D[] gatePos = {
             new Pose2D(0,0,0),
             new Pose2D(0,0,0),
     };
-    public static Pose2D[] spike1Pos={
-            new Pose2D(0,0,0),
-            new Pose2D(0,0,0),
-    };
+    public static Pose2D spike1Pos= new Pose2D(0,0,0);
     public static Pose2D[] spike2Pos={
             new Pose2D(0,0,0),
             new Pose2D(0,0,0),
@@ -41,6 +37,7 @@ public class CloseRed {
     public Node currentNode;
 
     public CloseRed(HardwareMap hardwareMap){
+        Turret.allienceState = Turret.AllianceState.RED;
         Initializer.start(hardwareMap);
         storage = new Storage();
         chassis = new Chassis(Chassis.State.PID);
@@ -48,13 +45,12 @@ public class CloseRed {
         shooter = new Shooter();
         odo = new Odo();
         Storage.state = Storage.State.TRANSFER;
-        Turret.allienceState = Turret.AllianceState.BLUE;
         shoot = new Node("shoot");
         spike1 = new Node("spike1");
         spike2 = new Node("spike2");
+        gate = new Node("gate");
         loading = new Node("loading");
         park = new Node("park");
-        gate = new Node("gate");
         currentNode = shoot;
         shoot.addConditions(
                 ()->{
@@ -68,13 +64,18 @@ public class CloseRed {
                         if (Storage.state == Storage.State.TRANSFER) {
                             Storage.state = Storage.State.SHOOT;
                         }
-                        else {
-                            Storage.state = Storage.State.TRANSFER;
-                        }
+                    }
+                    else if (Storage.state != Storage.State.TRANSFER){
+                        Storage.state = Storage.State.TRANSFER;
                     }
                 },
                 ()->{
-                    return Storage.state == Storage.State.RESET;
+                    if (Storage.state == Storage.State.RESET){
+                        timer.reset();
+                        gate.reset();
+                        return true;
+                    }
+                    return false;
                 },
                 new Node[]{spike2, gate, loading, gate, spike1, park}
         );
@@ -116,12 +117,16 @@ public class CloseRed {
                 ()->{
                     Shooter.state = Shooter.State.IDLE;
                     Intake.state = Intake.State.INTAKE;
-                    chassis.setTargetPosition(spike1Pos[Math.min(spike1.index, spike1Pos.length-1)]);
+                    chassis.setTargetPosition(spike1Pos);
                 },
                 ()->{
-                    return chassis.inPosition(40,40,0.1);
+                    if (chassis.inPosition(40,40,0.1)){
+                        timer.reset();
+                        return true;
+                    }
+                    return false;
                 },
-                new Node[]{spike1,shoot}
+                new Node[]{shoot}
         );
         spike2.addConditions(
                 ()->{
@@ -130,7 +135,11 @@ public class CloseRed {
                     chassis.setTargetPosition(spike2Pos[Math.min(spike2.index, spike2Pos.length-1)]);
                 },
                 ()->{
-                    return chassis.inPosition(40,40,0.1);
+                    if (chassis.inPosition(40,40,0.1)){
+                        timer.reset();
+                        return true;
+                    }
+                    return false;
                 },
                 new Node[]{spike2,shoot}
         );

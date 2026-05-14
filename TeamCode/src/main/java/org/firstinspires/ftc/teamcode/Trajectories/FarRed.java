@@ -35,12 +35,12 @@ public class FarRed {
     Node shoot,spike3,loading,tunnel,park;
     public Node currentNode;
     public FarRed(HardwareMap hardwareMap){
+        Turret.allienceState = Turret.AllianceState.RED;
         Initializer.start(hardwareMap);
         timer = new ElapsedTime();
         timer.startTime();
         timer.reset();
         Shooter.state = Shooter.State.SHOOT;
-        Turret.allienceState = Turret.AllianceState.RED;
         chassis = new Chassis(Chassis.State.PID);
         storage = new Storage();
         intake = new Intake();
