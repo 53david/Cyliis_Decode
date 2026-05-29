@@ -35,11 +35,10 @@ public class Turret {
     }
 
     private void updateServosPosition() {
-
-        targetAngle -= Odo.getHeading();
-        targetAngle = normalizeRadians(targetAngle);
-        targetAngle = targetAngle / maxAngle;
-        targetPosition = targetAngle;
+        double rAngle = targetAngle - Odo.getHeading();
+        rAngle = normalizeRadians(rAngle);
+        rAngle = rAngle / maxAngle;
+        targetPosition = rAngle;
         targetPosition = Math.max(0.007, targetPosition);
         targetPosition = Math.min(1 - 0.007, targetPosition);
         servo1.setPosition(targetPosition);

@@ -37,8 +37,12 @@ public class Storage {
         SHOOT,
         RESET,
     }
+    public enum ShootState{
+        SORT,
+        RAPID,
+    };
     public static State state;
-
+    public static ShootState shootState;
     public Storage(){
         timer.startTime();
         state = State.RESET;

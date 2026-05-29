@@ -82,7 +82,7 @@ public class Odo {
     public void stateUpdate(){
         switch (state){
             case FAR :
-                power = -0.74;
+                power = -0.7;
                 ShooterCalculator.fwOffset = 60;
                 break;
             case CLOSE:

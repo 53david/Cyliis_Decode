@@ -20,36 +20,39 @@ public class ColorDetection {
     public ColorDetection(){
         color.enableLed(true);
     }
-    public void update(){
+    public void update() {
+        if (isBallInStorage() && !storage.IsStorageSpinning()) {
             red = color.red();
             blue = color.blue();
             green = color.green();
             greenBall = distance(red, green, blue, 0, 255, 0);
             purpleBall = distance(red, green, blue, 175, 0, 175);
 
-        if (isBallInStorage() && purpleBall<=greenBall){
-            currentBall = "Green";
-        }
-        else if (isBallInStorage() && purpleBall> greenBall){
-            currentBall = "Purple";
-        }
+            if (isBallInStorage() && purpleBall <= greenBall) {
+                currentBall = "Green";
+            } else if (isBallInStorage() && purpleBall > greenBall) {
+                currentBall = "Purple";
+            }
 
-        if (Storage.state == Storage.State.BALL1
-                && isBallInStorage() && !storage.IsStorageSpinning()){
-            ball1 = currentBall;
-        }
+            if (Storage.state == Storage.State.BALL1
+                    && isBallInStorage() && !storage.IsStorageSpinning()) {
+                ball1 = currentBall;
+            }
 
-        if (Storage.state == Storage.State.BALL2
-                && isBallInStorage() && !storage.IsStorageSpinning()){
-            ball2 = currentBall;
-        }
+            if (Storage.state == Storage.State.BALL2
+                    && isBallInStorage() && !storage.IsStorageSpinning()) {
+                ball2 = currentBall;
+            }
 
-        if (Storage.state == Storage.State.BALL3
-                && isBallInStorage() && !storage.IsStorageSpinning()){
-            ball3 = currentBall;
-        }
-        if (Storage.state == Storage.State.RESET){
-            ball1 = "Waiting for artifact..."; ball2 = "Waiting for artifact..."; ball3 = "Waiting for artifact...";
+            if (Storage.state == Storage.State.BALL3
+                    && isBallInStorage() && !storage.IsStorageSpinning()) {
+                ball3 = currentBall;
+            }
+            if (Storage.state == Storage.State.RESET) {
+                ball1 = "Waiting for artifact...";
+                ball2 = "Waiting for artifact...";
+                ball3 = "Waiting for artifact...";
+            }
         }
     }
     public static boolean isBallInStorage(){

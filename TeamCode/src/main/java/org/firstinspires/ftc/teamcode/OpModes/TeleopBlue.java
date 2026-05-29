@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
 
+import com.bylazar.gamepad.PanelsGamepad;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -31,6 +32,7 @@ import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
 
 @TeleOp
 public class TeleopBlue extends LinearOpMode {
+
     Intake intake;
     Chassis drive;
     Shooter shooter;

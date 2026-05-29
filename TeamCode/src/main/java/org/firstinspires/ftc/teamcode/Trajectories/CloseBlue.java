@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Components.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Components.Intake.Storage;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Shooter;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
+import org.firstinspires.ftc.teamcode.OpModes.Autonomous.BlueClose;
 import org.firstinspires.ftc.teamcode.Wrappers.Initializer;
 import org.firstinspires.ftc.teamcode.Wrappers.Node;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
@@ -28,7 +29,7 @@ public class CloseBlue {
             new Pose2D(0,0,0),
     };
     public static Pose2D spike1Pos= new Pose2D(0,0,0);
-    public static Pose2D[] spike2Pos={
+    public static Pose2D[] spike2Pos = {
             new Pose2D(0,0,0),
             new Pose2D(0,0,0),
     };
@@ -77,7 +78,7 @@ public class CloseBlue {
                     }
                     return false;
                 },
-                new Node[]{spike2, gate, loading, gate, spike1, park}
+                new Node[]{spike2, gate, loading, gate, spike1, loading}
         );
         gate.addConditions(
                 ()->{
@@ -161,6 +162,9 @@ public class CloseBlue {
         chassis.update();
         intake.update();
         shooter.update();
+        if (BlueClose.timer.seconds() > 28.75){
+            currentNode = park;
+        }
         if(currentNode.transition())currentNode=currentNode.next[Math.min(currentNode.index++ , currentNode.next.length-1)];
     }
 
