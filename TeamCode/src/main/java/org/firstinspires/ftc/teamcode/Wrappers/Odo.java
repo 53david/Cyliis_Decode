@@ -82,7 +82,7 @@ public class Odo {
     public void stateUpdate(){
         switch (state){
             case FAR :
-                power = -0.7;
+                    power = -0.7;
                 ShooterCalculator.fwOffset = 60;
                 break;
             case CLOSE:
@@ -99,7 +99,6 @@ public class Odo {
     }
     public void update() {
         pp.update();
-
         heading=pp.getHeading(RADIANS);
         x=pp.getPosX(DistanceUnit.MM);
         y=pp.getPosY(DistanceUnit.MM);
