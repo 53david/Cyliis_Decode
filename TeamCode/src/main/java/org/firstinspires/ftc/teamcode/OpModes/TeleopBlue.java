@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
 
-import com.bylazar.gamepad.PanelsGamepad;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.Voltage;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.gm1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.isAutonomousActive;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.prevgm1;
@@ -72,6 +69,13 @@ public class TeleopBlue extends LinearOpMode {
             if (Storage.isTransferReady) {
                 gamepad1.rumble(200);
             }
+            if (gamepad1.dpadRightWasPressed() && ColorDetection.state == ColorDetection.State.RAPID){
+                ColorDetection.state = ColorDetection.State.SORT;
+            }
+
+            if (gamepad1.dpadRightWasPressed() && ColorDetection.state != ColorDetection.State.RAPID){
+                ColorDetection.state = ColorDetection.State.RAPID;
+            }
             telemetryM.addData("Velocity",FlyWheel.getVelocity());
             telemetryM.addData("Target", ShooterCalculator.fwVel(Odo.distance()));
             telemetryM.addData("Storage target",Math.toDegrees(Storage.target));
@@ -86,9 +90,11 @@ public class TeleopBlue extends LinearOpMode {
             telemetryM.addData("Hood Angle",ShooterCalculator.hoodAngle(FlyWheel.getVelocity()));
             telemetryM.addData("Hood Angle",ShooterCalculator.hoodRegression(FlyWheel.getVelocity()));
             telemetry.addData("Flywheel velocity", FlyWheel.getVelocity());
-            telemetry.addData("Ball1", ColorDetection.ball1);
-            telemetry.addData("Ball2",ColorDetection.ball2);
-            telemetry.addData("Ball3",ColorDetection.ball3);
+            if (ColorDetection.state == ColorDetection.State.SORT) {
+                telemetry.addData("Ball1", ColorDetection.ball1);
+                telemetry.addData("Ball2", ColorDetection.ball2);
+                telemetry.addData("Ball3", ColorDetection.ball3);
+            }
             if (Vision.isActive()) {
                 telemetryM.addData("Target heading", Vision.getHeading());
                 telemetryM.addData("Distance", Vision.getDistance());

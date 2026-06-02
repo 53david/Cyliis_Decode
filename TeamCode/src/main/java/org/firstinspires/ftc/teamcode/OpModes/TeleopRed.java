@@ -1,52 +1,67 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+
+import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.gm1;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.gm2;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.isAutonomousActive;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.prevgm1;
+
+import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.gm2;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.prevgm2;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.telemetryM;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+
 
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Components.Intake.ColorDetection;
 import org.firstinspires.ftc.teamcode.Components.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Components.Intake.Storage;
 import org.firstinspires.ftc.teamcode.Components.Shooter.FlyWheel;
+import org.firstinspires.ftc.teamcode.Components.Shooter.Hood;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Shooter;
+
 import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
 import org.firstinspires.ftc.teamcode.Wrappers.Initializer;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
+import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
 import org.firstinspires.ftc.teamcode.Wrappers.Vision;
 
 @TeleOp
 public class TeleopRed extends LinearOpMode {
+
+    Intake intake;
     Chassis drive;
     Shooter shooter;
-    Intake intake;
-    Odo odo;
     Vision vision;
+    Odo odo;
     @Override
-    public void runOpMode(){
+    public void runOpMode() {
         isAutonomousActive = false;
         Initializer.start(hardwareMap);
-        drive = new Chassis(Chassis.State.DRIVE);
-        shooter = new Shooter();
-        intake = new Intake();
         odo = new Odo();
-        Turret.allienceState = Turret.AllianceState.RED;
+        intake =new Intake();
+        drive =new Chassis(Chassis.State.DRIVE);
+        shooter =new Shooter();
+        vision = new Vision();
+        Turret.allienceState = Turret.AllianceState.BLUE;
         Shooter.state = Shooter.State.SHOOT;
+        Hood.state = Hood.State.IDLE;
         waitForStart();
-        while (opModeIsActive()){
+        while (opModeIsActive()) {
+            for (LynxModule hub : Initializer.allHubs) {
+                hub.clearBulkCache();
+            }
             gm1.copy(gamepad1);
             gm2.copy(gamepad2);
+            intake.update();
             drive.update();
             shooter.update();
-            vision.update();
-            intake.update();
             odo.update();
+            vision.update();
             prevgm1.copy(gm1);
             prevgm2.copy(gm2);
 
@@ -56,6 +71,17 @@ public class TeleopRed extends LinearOpMode {
             if (Storage.isTransferReady) {
                 gamepad1.rumble(200);
             }
+            if (gamepad1.dpadRightWasPressed() && ColorDetection.state == ColorDetection.State.RAPID){
+                ColorDetection.state = ColorDetection.State.SORT;
+            }
+
+            if (gamepad1.dpadRightWasPressed() && ColorDetection.state != ColorDetection.State.RAPID){
+                ColorDetection.state = ColorDetection.State.RAPID;
+            }
+            telemetryM.addData("Velocity",FlyWheel.getVelocity());
+            telemetryM.addData("Target", ShooterCalculator.fwVel(Odo.distance()));
+            telemetryM.addData("Storage target",Math.toDegrees(Storage.target));
+            telemetryM.addData("Storage pos",Math.toDegrees(Storage.FromVtoRads()));
             telemetry.addData("ALLIANCE",Turret.allienceState);
             telemetry.addData("X",Odo.getX());
             telemetry.addData("Y",Odo.getY());
@@ -63,10 +89,14 @@ public class TeleopRed extends LinearOpMode {
             telemetryM.addData("Distance",Odo.distance());
             telemetry.addData("Intake state", Storage.state);
             telemetry.addData("Shooter state", Shooter.state);
+            telemetryM.addData("Hood Angle",ShooterCalculator.hoodAngle(FlyWheel.getVelocity()));
+            telemetryM.addData("Hood Angle",ShooterCalculator.hoodRegression(FlyWheel.getVelocity()));
             telemetry.addData("Flywheel velocity", FlyWheel.getVelocity());
-            telemetry.addData("Ball1", ColorDetection.ball1);
-            telemetry.addData("Ball2",ColorDetection.ball2);
-            telemetry.addData("Ball3",ColorDetection.ball3);
+            if (ColorDetection.state == ColorDetection.State.SORT) {
+                telemetry.addData("Ball1", ColorDetection.ball1);
+                telemetry.addData("Ball2", ColorDetection.ball2);
+                telemetry.addData("Ball3", ColorDetection.ball3);
+            }
             if (Vision.isActive()) {
                 telemetryM.addData("Target heading", Vision.getHeading());
                 telemetryM.addData("Distance", Vision.getDistance());
@@ -75,7 +105,7 @@ public class TeleopRed extends LinearOpMode {
                 telemetryM.addLine("Waiting for stream..");
 
             }
-            telemetryM.update();
+            telemetry.update();
         }
     }
 }

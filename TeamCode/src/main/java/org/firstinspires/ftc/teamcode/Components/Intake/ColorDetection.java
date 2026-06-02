@@ -9,6 +9,11 @@ import com.bylazar.configurables.annotations.Configurable;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @Configurable
 public class ColorDetection {
+    public enum State{
+        SORT,
+        RAPID,
+    };
+    public static State state = State.RAPID;
     Storage storage = new Storage();
     public static double a = 50;
     public float red = 0;
@@ -21,7 +26,7 @@ public class ColorDetection {
         color.enableLed(true);
     }
     public void update() {
-        if (isBallInStorage() && !storage.IsStorageSpinning()) {
+        if (state != State.SORT && isBallInStorage() && !storage.IsStorageSpinning()) {
             red = color.red();
             blue = color.blue();
             green = color.green();
@@ -56,7 +61,12 @@ public class ColorDetection {
         }
     }
     public static boolean isBallInStorage(){
-        return !proximitySensor.getState() || color.getDistance(DistanceUnit.MM)<a;
+        if (state == State.RAPID) {
+            return !proximitySensor.getState() || color.getDistance(DistanceUnit.MM) < a;
+        }
+        else{
+            return color.getDistance(DistanceUnit.MM) < a;
+        }
     }
     public float distance(float r1, float g1 , float b1, float r2, float g2, float b2) {
         return (float)Math.sqrt( (r1-r2)*(r1-r2) + (b1-b2)*(b1-b2) + (g1-g2)*(g1-g2));
