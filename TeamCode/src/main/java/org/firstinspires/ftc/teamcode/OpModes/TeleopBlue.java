@@ -29,6 +29,7 @@ import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
 import org.firstinspires.ftc.teamcode.Wrappers.Initializer;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
+import org.firstinspires.ftc.teamcode.Wrappers.Vision;
 
 @TeleOp
 public class TeleopBlue extends LinearOpMode {
@@ -36,6 +37,7 @@ public class TeleopBlue extends LinearOpMode {
     Intake intake;
     Chassis drive;
     Shooter shooter;
+    Vision vision;
     Odo odo;
     @Override
     public void runOpMode() {
@@ -45,6 +47,7 @@ public class TeleopBlue extends LinearOpMode {
         intake =new Intake();
         drive =new Chassis(Chassis.State.DRIVE);
         shooter =new Shooter();
+        vision = new Vision();
         Turret.allienceState = Turret.AllianceState.BLUE;
         Shooter.state = Shooter.State.SHOOT;
         Hood.state = Hood.State.IDLE;
@@ -59,6 +62,7 @@ public class TeleopBlue extends LinearOpMode {
             drive.update();
             shooter.update();
             odo.update();
+            vision.update();
             prevgm1.copy(gm1);
             prevgm2.copy(gm2);
 
@@ -85,6 +89,14 @@ public class TeleopBlue extends LinearOpMode {
             telemetry.addData("Ball1", ColorDetection.ball1);
             telemetry.addData("Ball2",ColorDetection.ball2);
             telemetry.addData("Ball3",ColorDetection.ball3);
+            if (Vision.isActive()) {
+                telemetryM.addData("Target heading", Vision.getHeading());
+                telemetryM.addData("Distance", Vision.getDistance());
+                telemetryM.addData("Area", Vision.getArea());
+            } else {
+                telemetryM.addLine("Waiting for stream..");
+
+            }
             telemetry.update();
         }
     }

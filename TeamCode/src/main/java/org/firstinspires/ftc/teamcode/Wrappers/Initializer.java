@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.har
 
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -42,6 +43,7 @@ public class Initializer {
     public static DigitalChannel proximitySensor;
     public static Gamepad prevgm1,prevgm2;
     public static Gamepad gm1,gm2;
+    public static Limelight3A limelight3A;
     public static void start(HardwareMap hwMap){
         allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
@@ -68,7 +70,7 @@ public class Initializer {
         color = hwMap.get(ColorRangeSensor.class,"colorSensor");
         hood = hwMap.get(ServoImplEx.class,"ssh5");
         proximitySensor =hwMap.get(DigitalChannel.class,"bb");
-
+        limelight3A = hwMap.get(Limelight3A.class,"limelight");
 
     }
 }

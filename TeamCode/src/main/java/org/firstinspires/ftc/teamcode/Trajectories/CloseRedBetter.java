@@ -11,11 +11,13 @@ import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
 import org.firstinspires.ftc.teamcode.Wrappers.Node;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 import org.firstinspires.ftc.teamcode.Wrappers.Pose2D;
+import org.firstinspires.ftc.teamcode.Wrappers.Vision;
 
 public class CloseRedBetter {
     Odo odo;
     ElapsedTime timer;
     Chassis chassis;
+    Vision vision;
     Shooter shooter;
     Intake intake;
     public static Pose2D[] shootPos = {
@@ -138,6 +140,7 @@ public class CloseRedBetter {
         currentNode.run();
         chassis.update();
         shooter.update();
+        vision.update();
         intake.update();
         if (currentNode.transition()){
             currentNode = currentNode.next[Math.min(currentNode.index++,currentNode.next.length-1)];

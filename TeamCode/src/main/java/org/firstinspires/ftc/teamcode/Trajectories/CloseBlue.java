@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Initializer;
 import org.firstinspires.ftc.teamcode.Wrappers.Node;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 import org.firstinspires.ftc.teamcode.Wrappers.Pose2D;
+import org.firstinspires.ftc.teamcode.Wrappers.Vision;
 
 public class CloseBlue {
     ElapsedTime timer = new ElapsedTime();
@@ -21,6 +22,7 @@ public class CloseBlue {
     public Chassis chassis;
     public Intake intake;
     public Shooter shooter;
+    public Vision vision;
     public Odo odo;
     public static Pose2D shootPos = new Pose2D(0, 0, Math.PI/2);
     public static Pose2D loadingPos = new Pose2D(0,0,0);
@@ -43,6 +45,7 @@ public class CloseBlue {
          chassis = new Chassis(Chassis.State.PID);
          intake = new Intake();
          shooter = new Shooter();
+         vision = new Vision();
          odo = new Odo();
         Storage.state = Storage.State.TRANSFER;
         Turret.allienceState = Turret.AllianceState.BLUE;
@@ -159,6 +162,7 @@ public class CloseBlue {
     public void update(){
         currentNode.run();
         odo.update();
+        vision.update();
         chassis.update();
         intake.update();
         shooter.update();

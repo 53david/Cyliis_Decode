@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.Components.Shooter.Shooter;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
 import org.firstinspires.ftc.teamcode.Wrappers.Initializer;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
+import org.firstinspires.ftc.teamcode.Wrappers.Vision;
 
 @TeleOp
 public class TeleopRed extends LinearOpMode {
@@ -26,6 +27,7 @@ public class TeleopRed extends LinearOpMode {
     Shooter shooter;
     Intake intake;
     Odo odo;
+    Vision vision;
     @Override
     public void runOpMode(){
         isAutonomousActive = false;
@@ -42,6 +44,7 @@ public class TeleopRed extends LinearOpMode {
             gm2.copy(gamepad2);
             drive.update();
             shooter.update();
+            vision.update();
             intake.update();
             odo.update();
             prevgm1.copy(gm1);
@@ -64,6 +67,14 @@ public class TeleopRed extends LinearOpMode {
             telemetry.addData("Ball1", ColorDetection.ball1);
             telemetry.addData("Ball2",ColorDetection.ball2);
             telemetry.addData("Ball3",ColorDetection.ball3);
+            if (Vision.isActive()) {
+                telemetryM.addData("Target heading", Vision.getHeading());
+                telemetryM.addData("Distance", Vision.getDistance());
+                telemetryM.addData("Area", Vision.getArea());
+            } else {
+                telemetryM.addLine("Waiting for stream..");
+
+            }
             telemetryM.update();
         }
     }

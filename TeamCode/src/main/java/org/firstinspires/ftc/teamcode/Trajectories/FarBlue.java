@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Initializer;
 import org.firstinspires.ftc.teamcode.Wrappers.Node;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 import org.firstinspires.ftc.teamcode.Wrappers.Pose2D;
+import org.firstinspires.ftc.teamcode.Wrappers.Vision;
 
 public class FarBlue {
     ElapsedTime timer;
@@ -32,6 +33,7 @@ public class FarBlue {
     public Intake intake;
     public Storage storage;
     public Chassis chassis;
+    Vision vision;
     Node shoot,spike3,loading,tunnel,park;
     public Node currentNode;
     public FarBlue(HardwareMap hardwareMap){
@@ -153,6 +155,7 @@ public class FarBlue {
         shooter.update();
         intake.update();
         chassis.update();
+        vision.update();
         currentNode.run();
         if (currentNode.transition()){
             currentNode = currentNode.next[Math.min(currentNode.index++,currentNode.next.length-1)];

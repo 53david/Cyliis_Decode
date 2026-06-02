@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
 import org.firstinspires.ftc.teamcode.Wrappers.Node;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 import org.firstinspires.ftc.teamcode.Wrappers.Pose2D;
+import org.firstinspires.ftc.teamcode.Wrappers.Vision;
 
 public class CloseBlueBetter {
     Odo odo;
@@ -18,6 +19,7 @@ public class CloseBlueBetter {
     Chassis chassis;
     Shooter shooter;
     Intake intake;
+    Vision vision;
     public static Pose2D[] shootPos = {
             new Pose2D(0,0,0),
             new Pose2D(0,0,0),
@@ -42,6 +44,7 @@ public class CloseBlueBetter {
         chassis = new Chassis(Chassis.State.PID);
         intake = new Intake();
         shooter = new Shooter();
+        vision = new Vision();
         Turret.allienceState = Turret.AllianceState.BLUE;
         Storage.state=Storage.State.TRANSFER;
         odo.reset();
@@ -137,6 +140,7 @@ public class CloseBlueBetter {
     public void update(){
         currentNode.run();
         chassis.update();
+        vision.update();
         shooter.update();
         intake.update();
         if (currentNode.transition()){
