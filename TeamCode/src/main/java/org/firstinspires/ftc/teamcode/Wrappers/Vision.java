@@ -1,63 +1,93 @@
 package org.firstinspires.ftc.teamcode.Wrappers;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.limelight3A;
 
-import com.bylazar.configurables.annotations.Configurable;
-import com.qualcomm.hardware.limelightvision.LLResult;
+import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.webcam;
 
-@Configurable
+import android.util.Size;
+
+import com.bylazar.camerastream.PanelsCameraStream;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.WhiteBalanceControl;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.concurrent.TimeUnit;
+
 public class Vision {
-    double cameraAngle = 0;
-    double cameraHeight = 0;
-    public static double area = 0;
-    public static double ty = 0;
-    public static double tx = 0;
-    public static double ta = 0;
-    int prevIndex = 0;
-    public static int index = 0;
-    public static LLResult result;
+    public enum State{
+        BLUE,
+        RED,
+    };
+    public static int gain = 10,exposure = 1000,temp = 60000;
+    public static double allianceID;
+    public static State state;
+    public VisionPortal visionPortal;
+    public AprilTagProcessor tagProcessor;
+    public double fx,fy,cx,cy;
     public Vision(){
-        limelight3A.start();
+        tagProcessor = new AprilTagProcessor.Builder()
+                .setDrawAxes(true)
+                .setDrawTagOutline(true)
+                .setDrawTagID(true)
+                .setDrawCubeProjection(true)
+                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
+                .setLensIntrinsics(fx,fy,cx,cy)
+                .build();
+        visionPortal = new VisionPortal.Builder()
+                .addProcessor(tagProcessor)
+                .setCamera(webcam)
+                .setCameraResolution(new Size(640, 480))
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                .setLiveViewContainerId(0)
+                .build();
+
+        PanelsCameraStream.INSTANCE.startStream(visionPortal, 10);
     }
     public void update(){
-        result = limelight3A.getLatestResult();
-        if (prevIndex!=index && limelight3A.isRunning()){
-            limelight3A.pipelineSwitch(index);
+        stateUpdate();
+        if (visionPortal.getCameraState() == VisionPortal.CameraState.STREAMING){
+            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+            WhiteBalanceControl whiteBalanceControl = visionPortal.getCameraControl(WhiteBalanceControl.class);
+            exposureControl.setMode(ExposureControl.Mode.Manual);
+            whiteBalanceControl.setMode(WhiteBalanceControl.Mode.MANUAL);
+            exposureControl.setExposure(exposure, TimeUnit.MILLISECONDS);
+            whiteBalanceControl.setWhiteBalanceTemperature(temp);
+            gainControl.setGain(gain);
         }
-        prevIndex = index;
-        if (result.isValid() && result!=null){
-            ty = result.getTy();
-            tx = result.getTx();
-            ta = result.getTa();
-            area = cameraHeight / Math.toRadians(cameraAngle-ty);
+        stateUpdate();
+    }
+    public void stateUpdate(){
+        switch (state){
+            case BLUE:
+                allianceID = 20;
+                break;
+            case RED:
+                allianceID = 24;
+                break;
 
         }
     }
-    public static double getDistance(){
-        if (result!=null && result.isValid()) {
-            return area;
-        }
-        return 1e9;
-    }
-    public static double getHeading(){
-        if (result!=null && result.isValid()){
-            return tx;
-        }
-        return 1e9;
-    }
-    public static double tagID(){
-        if (result!=null && !result.getFiducialResults().isEmpty()) {
-            return result.getFiducialResults().get(0).getFiducialId();
-        }
-        return 1e9;
-    }
-    public static double getArea(){
-        if (result!=null && result.isValid()){
-            return ta;
-        }
-        return 1e9;
-    }
-    public static boolean isActive(){
-        return limelight3A.isRunning();
-    }
+    public double CameraOffset(){
 
+        for(AprilTagDetection tag:tagProcessor.getDetections()){
+            if (tag.id == allianceID) {
+                return -tag.ftcPose.bearing;
+            }
+        }
+        return 1e9;
+    }
+    public double DistanceOffset(){
+
+        for(AprilTagDetection tag:tagProcessor.getDetections()){
+            if (tag.id == allianceID) {
+                return tag.ftcPose.range;
+            }
+        }
+        return 1e9;
+    }
 }

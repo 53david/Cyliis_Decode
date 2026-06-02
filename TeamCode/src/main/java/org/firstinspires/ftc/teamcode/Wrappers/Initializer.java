@@ -17,6 +17,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+
 import java.util.List;
 
 
@@ -43,6 +45,7 @@ public class Initializer {
     public static DigitalChannel proximitySensor;
     public static Gamepad prevgm1,prevgm2;
     public static Gamepad gm1,gm2;
+    public static WebcamName webcam;
     public static Limelight3A limelight3A;
     public static void start(HardwareMap hwMap){
         allHubs = hardwareMap.getAll(LynxModule.class);
@@ -71,6 +74,7 @@ public class Initializer {
         hood = hwMap.get(ServoImplEx.class,"ssh5");
         proximitySensor =hwMap.get(DigitalChannel.class,"bb");
         limelight3A = hwMap.get(Limelight3A.class,"limelight");
+        //webcam = hwMap.get(WebcamName.class,"webcam");
 
     }
 }

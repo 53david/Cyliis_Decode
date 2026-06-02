@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Initializer;
 import org.firstinspires.ftc.teamcode.Wrappers.Node;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 import org.firstinspires.ftc.teamcode.Wrappers.Pose2D;
-import org.firstinspires.ftc.teamcode.Wrappers.Vision;
+import org.firstinspires.ftc.teamcode.Wrappers.LimeLight;
 
 public class FarRed {
     ElapsedTime timer;
@@ -33,7 +33,7 @@ public class FarRed {
     public Intake intake;
     public Storage storage;
     public Chassis chassis;
-    Vision vision;
+    LimeLight limeLight;
     Node shoot,spike3,loading,tunnel,park;
     public Node currentNode;
     public FarRed(HardwareMap hardwareMap){
@@ -47,7 +47,7 @@ public class FarRed {
         storage = new Storage();
         intake = new Intake();
         shooter = new Shooter();
-        vision = new Vision();
+        limeLight = new LimeLight();
         odo = new Odo();
         shoot = new Node("shoot");
         spike3 = new Node("spike3");
@@ -156,7 +156,7 @@ public class FarRed {
         shooter.update();
         intake.update();
         chassis.update();
-        vision.update();
+        limeLight.update();
         currentNode.run();
         if (currentNode.transition()){
             currentNode = currentNode.next[Math.min(currentNode.index++,currentNode.next.length-1)];

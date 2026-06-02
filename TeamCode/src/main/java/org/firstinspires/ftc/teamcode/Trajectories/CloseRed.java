@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Initializer;
 import org.firstinspires.ftc.teamcode.Wrappers.Node;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 import org.firstinspires.ftc.teamcode.Wrappers.Pose2D;
-import org.firstinspires.ftc.teamcode.Wrappers.Vision;
+import org.firstinspires.ftc.teamcode.Wrappers.LimeLight;
 
 public class CloseRed {
     ElapsedTime timer = new ElapsedTime();
@@ -22,7 +22,7 @@ public class CloseRed {
     public Intake intake;
     public Shooter shooter;
     public Odo odo;
-    Vision vision;
+    LimeLight limeLight;
     public static Pose2D shootPos = new Pose2D(-1450, -460, Math.PI/2);
     public static Pose2D loadingPos = new Pose2D(0,0,0);
     public static Pose2D[] gatePos = {
@@ -46,7 +46,7 @@ public class CloseRed {
         intake = new Intake();
         shooter = new Shooter();
         odo = new Odo();
-        vision = new Vision();
+        limeLight = new LimeLight();
         Storage.state = Storage.State.TRANSFER;
         shoot = new Node("shoot");
         spike1 = new Node("spike1");
@@ -161,7 +161,7 @@ public class CloseRed {
     public void update(){
         currentNode.run();
         odo.update();
-        vision.update();
+        limeLight.update();
         chassis.update();
         intake.update();
         shooter.update();

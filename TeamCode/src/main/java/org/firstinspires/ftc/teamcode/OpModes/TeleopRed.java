@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
 import org.firstinspires.ftc.teamcode.Wrappers.Initializer;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
-import org.firstinspires.ftc.teamcode.Wrappers.Vision;
+import org.firstinspires.ftc.teamcode.Wrappers.LimeLight;
 
 @TeleOp
 public class TeleopRed extends LinearOpMode {
@@ -36,7 +36,7 @@ public class TeleopRed extends LinearOpMode {
     Intake intake;
     Chassis drive;
     Shooter shooter;
-    Vision vision;
+    LimeLight limeLight;
     Odo odo;
     @Override
     public void runOpMode() {
@@ -46,7 +46,7 @@ public class TeleopRed extends LinearOpMode {
         intake =new Intake();
         drive =new Chassis(Chassis.State.DRIVE);
         shooter =new Shooter();
-        vision = new Vision();
+        limeLight = new LimeLight();
         Turret.allienceState = Turret.AllianceState.BLUE;
         Shooter.state = Shooter.State.SHOOT;
         Hood.state = Hood.State.IDLE;
@@ -61,7 +61,7 @@ public class TeleopRed extends LinearOpMode {
             drive.update();
             shooter.update();
             odo.update();
-            vision.update();
+            limeLight.update();
             prevgm1.copy(gm1);
             prevgm2.copy(gm2);
 
@@ -97,10 +97,10 @@ public class TeleopRed extends LinearOpMode {
                 telemetry.addData("Ball2", ColorDetection.ball2);
                 telemetry.addData("Ball3", ColorDetection.ball3);
             }
-            if (Vision.isActive()) {
-                telemetryM.addData("Target heading", Vision.getHeading());
-                telemetryM.addData("Distance", Vision.getDistance());
-                telemetryM.addData("Area", Vision.getArea());
+            if (LimeLight.isActive()) {
+                telemetryM.addData("Target heading", LimeLight.getHeading());
+                telemetryM.addData("Distance", LimeLight.getDistance());
+                telemetryM.addData("Area", LimeLight.getArea());
             } else {
                 telemetryM.addLine("Waiting for stream..");
 

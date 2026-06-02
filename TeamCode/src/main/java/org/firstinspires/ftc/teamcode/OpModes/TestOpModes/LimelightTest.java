@@ -5,22 +5,22 @@ import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.telemetryM;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Wrappers.Vision;
+import org.firstinspires.ftc.teamcode.Wrappers.LimeLight;
 
 
 @TeleOp
 public class LimelightTest extends LinearOpMode {
-    public Vision vision;
+    public LimeLight limeLight;
 
     public void runOpMode() {
-        vision = new Vision();
+        limeLight = new LimeLight();
         waitForStart();
         while (opModeIsActive()) {
-            vision.update();
-            if (Vision.isActive()) {
-                telemetryM.addData("Target heading", Vision.getHeading());
-                telemetryM.addData("Distance", Vision.getDistance());
-                telemetryM.addData("Area", Vision.getArea());
+            limeLight.update();
+            if (LimeLight.isActive()) {
+                telemetryM.addData("Target heading", LimeLight.getHeading());
+                telemetryM.addData("Distance", LimeLight.getDistance());
+                telemetryM.addData("Area", LimeLight.getArea());
             } else {
                 telemetryM.addLine("Waiting for stream..");
 
