@@ -15,7 +15,7 @@ public class LimeLight {
     public static double allianceID= 0;
     double cameraAngle = 0;
     double cameraHeight = 0;
-    public static double area = 0;
+    public static double distance = 0;
     public static double ty = 0;
     public static double tx = 0;
     public static double ta = 0;
@@ -36,7 +36,7 @@ public class LimeLight {
             ty = result.getTy();
             tx = result.getTx();
             ta = result.getTa();
-            area = cameraHeight / Math.toRadians(cameraAngle-ty);
+            distance = cameraHeight / Math.toRadians(cameraAngle-ty);
 
         }
     }
@@ -53,7 +53,7 @@ public class LimeLight {
     }
     public static double getDistance(){
         if (result!=null && result.isValid()) {
-            return area;
+            return distance;
         }
         return 1e9;
     }

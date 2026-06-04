@@ -72,7 +72,7 @@ public class Vision {
 
         }
     }
-    public double CameraOffset(){
+    public double getTagAngle(){
 
         for(AprilTagDetection tag:tagProcessor.getDetections()){
             if (tag.id == allianceID) {
@@ -81,12 +81,19 @@ public class Vision {
         }
         return 1e9;
     }
-    public double DistanceOffset(){
+    public double getDistance(){
 
         for(AprilTagDetection tag:tagProcessor.getDetections()){
             if (tag.id == allianceID) {
                 return tag.ftcPose.range;
             }
+        }
+        return 1e9;
+    }
+    public double tagID(){
+
+        for(AprilTagDetection tag:tagProcessor.getDetections()){
+            return tag.id;
         }
         return 1e9;
     }
