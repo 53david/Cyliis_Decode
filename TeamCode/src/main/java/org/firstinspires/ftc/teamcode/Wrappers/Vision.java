@@ -26,6 +26,7 @@ public class Vision {
     public static State state;
     public VisionPortal visionPortal;
     public AprilTagProcessor tagProcessor;
+    boolean ok = false;
     public double fx,fy,cx,cy;
     public Vision(){
         tagProcessor = new AprilTagProcessor.Builder()
@@ -48,8 +49,9 @@ public class Vision {
         PanelsCameraStream.INSTANCE.startStream(visionPortal, 10);
     }
     public void update(){
+
         stateUpdate();
-        if (visionPortal.getCameraState() == VisionPortal.CameraState.STREAMING){
+        if (visionPortal.getCameraState() == VisionPortal.CameraState.STREAMING && !ok){
             ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
             GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
             WhiteBalanceControl whiteBalanceControl = visionPortal.getCameraControl(WhiteBalanceControl.class);
@@ -58,7 +60,9 @@ public class Vision {
             exposureControl.setExposure(exposure, TimeUnit.MILLISECONDS);
             whiteBalanceControl.setWhiteBalanceTemperature(temp);
             gainControl.setGain(gain);
+            ok =true;
         }
+
         stateUpdate();
     }
     public void stateUpdate(){

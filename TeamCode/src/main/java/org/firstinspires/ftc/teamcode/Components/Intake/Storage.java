@@ -25,7 +25,7 @@ public class Storage {
     public static double Kp = 0.65;
     public static double Kd = 0.011;
     public static double P = 1.5;
-    public static double D = 0.0275;
+    public static double D = 0.025;
     public static double Ks = 0;
     PIDController pid = new PIDController(Kp,0,Kd);
     PIDController special = new PIDController(P,0,D);
@@ -100,7 +100,7 @@ public class Storage {
                 Hood.state = Hood.State.SHOOT;
                 spin.setPower(Odo.power);
 
-                if (timer.seconds()>0.6){
+                if (timer.seconds()>0.5){
                     state = State.RESET;
                     timer.reset();
                 }
