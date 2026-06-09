@@ -49,7 +49,7 @@ public class Turret {
 
         double dx = goalPositionX - Odo.getX();
         double dy = goalPositionY - Odo.getY();
-        targetAngle = Math.atan2((dy),(dx));
+        targetAngle = Math.atan2(dy,dx);
 
     }
 

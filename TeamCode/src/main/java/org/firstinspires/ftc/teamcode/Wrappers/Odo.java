@@ -68,11 +68,6 @@ public class Odo {
         yGlide = forwardGlide * Math.sin(heading) + lateralGlide * Math.cos(heading);
     }
 
-    public static SparkFunOTOS.Pose2D getCurrentPosition(){
-        double h = pp.getHeading(RADIANS);
-        h = normalizeRadians(h);
-        return new SparkFunOTOS.Pose2D(getX(),getY(), h);
-    }
     public static double distance(){
         return Math.sqrt(
                 (predictedX - Turret.goalPositionX) * (predictedX - Turret.goalPositionX) +
@@ -108,14 +103,5 @@ public class Odo {
         stateUpdate();
         predictedX = x + xGlide;
         predictedY = y + yGlide;
-    }
-    public static double trueX(){
-        return pp.getPosX(DistanceUnit.MM);
-    }
-    public static double trueY(){
-        return pp.getPosY(DistanceUnit.MM);
-    }
-    public static double trueHeading(){
-        return pp.getHeading(UnnormalizedAngleUnit.RADIANS);
     }
 }
