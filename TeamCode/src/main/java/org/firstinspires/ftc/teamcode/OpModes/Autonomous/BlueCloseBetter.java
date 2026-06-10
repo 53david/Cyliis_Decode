@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.Trajectories.CloseBlueBetter;
 @Autonomous
 public class BlueCloseBetter extends LinearOpMode {
     public CloseBlueBetter closeBlueBetter;
+    @Override
     public void runOpMode() throws InterruptedException{
         closeBlueBetter = new CloseBlueBetter(hardwareMap);
         waitForStart();

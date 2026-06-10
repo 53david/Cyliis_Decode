@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Trajectories.FarRed;
 @Autonomous
 public class RedFar extends LinearOpMode {
     public FarRed farRed;
+    @Override
     public void runOpMode() throws InterruptedException{
         isAutonomousActive = true;
         farRed = new FarRed(hardwareMap);

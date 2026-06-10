@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.Trajectories.CloseRedBetter;
 @Autonomous
 public class RedCloseBetter extends LinearOpMode {
     CloseRedBetter closeRedBetter;
+    @Override
     public void runOpMode() throws InterruptedException{
         closeRedBetter = new CloseRedBetter(hardwareMap);
         waitForStart();

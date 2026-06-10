@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.Trajectories.CloseBlue;
 @Autonomous
 public class RedClose extends LinearOpMode {
     CloseBlue closeRed;
+    @Override
     public void runOpMode() throws InterruptedException{
         isAutonomousActive = true;
         closeRed = new CloseBlue(hardwareMap);
