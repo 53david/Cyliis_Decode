@@ -166,7 +166,7 @@ public class CloseBlue {
         chassis.update();
         intake.update();
         shooter.update();
-        if (BlueClose.timer.seconds() > 28.75){
+        if (BlueClose.timer.seconds() > 29.5){
             currentNode = park;
         }
         if(currentNode.transition())currentNode=currentNode.next[Math.min(currentNode.index++ , currentNode.next.length-1)];
