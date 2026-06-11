@@ -49,6 +49,7 @@ public class TeleopBlue extends LinearOpMode {
         Turret.allienceState = Turret.AllianceState.BLUE;
         Shooter.state = Shooter.State.SHOOT;
         Hood.state = Hood.State.IDLE;
+        LimeLight.state = LimeLight.State.BLUE;
         waitForStart();
         while (opModeIsActive()) {
             for (LynxModule hub : Initializer.allHubs) {

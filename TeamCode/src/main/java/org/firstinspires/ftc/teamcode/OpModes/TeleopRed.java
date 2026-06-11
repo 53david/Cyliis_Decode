@@ -47,9 +47,10 @@ public class TeleopRed extends LinearOpMode {
         drive =new Chassis(Chassis.State.DRIVE);
         shooter =new Shooter();
         limeLight = new LimeLight();
-        Turret.allienceState = Turret.AllianceState.BLUE;
+        Turret.allienceState = Turret.AllianceState.RED;
         Shooter.state = Shooter.State.SHOOT;
         Hood.state = Hood.State.IDLE;
+        LimeLight.state = LimeLight.State.RED;
         waitForStart();
         while (opModeIsActive()) {
             for (LynxModule hub : Initializer.allHubs) {

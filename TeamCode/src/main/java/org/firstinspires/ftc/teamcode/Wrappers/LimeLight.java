@@ -4,7 +4,6 @@ import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.limelight3A;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.LLResult;
 
-
 @Configurable
 public class LimeLight {
     public enum State{
