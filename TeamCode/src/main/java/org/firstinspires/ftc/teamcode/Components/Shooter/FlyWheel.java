@@ -28,7 +28,7 @@ public class FlyWheel {
         IDLE,
         SHOOT,
     }
-    public static double errorThreshold = 60;
+    public static double errorThreshold = 100;
     public static State state = State.SHOOT;
     public static double vel = 1400;
     public static double rpm = 0;
@@ -59,7 +59,7 @@ public class FlyWheel {
         shoot2.setPower(rpm);
 
     }
-    public static boolean IsShootReady(){
+    public static boolean isReady(){
         return Math.abs(vel-getVelocity()) < errorThreshold;
     }
     public static double getVelocity(){
