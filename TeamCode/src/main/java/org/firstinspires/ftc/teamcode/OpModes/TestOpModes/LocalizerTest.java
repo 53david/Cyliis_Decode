@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 public class LocalizerTest extends LinearOpMode {
     Odo odo;
     @Override
-    public void runOpMode(){
+    public void runOpMode()throws InterruptedException{
         Initializer.start(hardwareMap);
         odo = new Odo();
         while (opModeIsActive()){

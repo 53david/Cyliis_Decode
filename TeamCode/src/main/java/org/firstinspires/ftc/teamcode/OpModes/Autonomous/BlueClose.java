@@ -11,19 +11,13 @@ import org.firstinspires.ftc.teamcode.Trajectories.CloseBlue;
 public class BlueClose extends LinearOpMode {
     CloseBlue closeBlue;
     boolean ok = true;
-    public static ElapsedTime timer;
     @Override
-    public void runOpMode(){
+    public void runOpMode() throws InterruptedException{
         isAutonomousActive = true;
-        timer = new ElapsedTime();
-        timer.startTime();
         closeBlue = new CloseBlue(hardwareMap);
         waitForStart();
         while(opModeIsActive()){
             closeBlue.update();
-            if (ok) {
-                timer.reset(); ok = false;
-            }
         }
     }
 

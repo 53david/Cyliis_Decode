@@ -13,7 +13,7 @@ import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.spin;
 public class LatchTest extends LinearOpMode {
     Latch latch;
     @Override
-    public void runOpMode(){
+    public void runOpMode()throws InterruptedException{
         Initializer.start(hardwareMap);
         latch = new Latch();
         waitForStart();

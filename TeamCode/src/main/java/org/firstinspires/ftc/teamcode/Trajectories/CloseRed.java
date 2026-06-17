@@ -17,12 +17,12 @@ import org.firstinspires.ftc.teamcode.Wrappers.LimeLight;
 
 public class CloseRed {
     ElapsedTime timer = new ElapsedTime();
-    Storage storage;
+    public Storage storage;
     public Chassis chassis;
     public Intake intake;
     public Shooter shooter;
     public Odo odo;
-    LimeLight limeLight;
+    public LimeLight limeLight;
     public static Pose2D shootPos = new Pose2D(-1450, -460, Math.PI/2);
     public static Pose2D loadingPos = new Pose2D(0,0,0);
     public static Pose2D[] gatePos = {

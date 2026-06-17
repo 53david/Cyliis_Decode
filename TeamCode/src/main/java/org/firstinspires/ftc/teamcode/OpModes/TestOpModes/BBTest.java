@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Components.Intake.ColorDetection;
 public class BBTest extends LinearOpMode {
 
     @Override
-    public void runOpMode(){
+    public void runOpMode()throws InterruptedException{
         waitForStart();
         while (opModeIsActive()){
             telemetryM.addData("Is Object Nearby?",!proximitySensor.getState());

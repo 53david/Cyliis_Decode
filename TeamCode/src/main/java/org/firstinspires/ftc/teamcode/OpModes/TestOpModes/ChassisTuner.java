@@ -15,7 +15,8 @@ import org.firstinspires.ftc.teamcode.Wrappers.Pose2D;
 @TeleOp
 public class ChassisTuner extends LinearOpMode {
     Chassis chassis;
-    public void runOpMode(){
+    @Override
+    public void runOpMode() throws InterruptedException{
         chassis = new Chassis(Chassis.State.PID);
         waitForStart();
         while(opModeIsActive()){

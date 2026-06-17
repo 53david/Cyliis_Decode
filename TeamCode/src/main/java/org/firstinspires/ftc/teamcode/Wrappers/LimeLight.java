@@ -10,6 +10,12 @@ public class LimeLight {
         RED,
         BLUE,
     };
+    public enum StreamState{
+        CLOSE,
+        STREAM,
+    }
+    public boolean ok;
+    public static StreamState streamState;
     public static State state;
     public static double allianceID= 0;
     double cameraAngle = 0;
@@ -19,24 +25,26 @@ public class LimeLight {
     public static double tx = 0;
     public static double ta = 0;
     int prevIndex = 0;
-    public static int index = 0;
+    public int index = 0;
     public static LLResult result;
     public LimeLight(){
-        limelight3A.start();
+        ok = true;
     }
     public void update(){
         stateUpdate();
-        result = limelight3A.getLatestResult();
-        if (prevIndex!=index && limelight3A.isRunning()){
-            limelight3A.pipelineSwitch(index);
-        }
-        prevIndex = index;
-        if (result.isValid() && result!=null){
-            ty = result.getTy();
-            tx = result.getTx();
-            ta = result.getTa();
-            distance = cameraHeight / Math.toRadians(cameraAngle-ty);
+        if (streamState != StreamState.CLOSE) {
+            result = limelight3A.getLatestResult();
+            if (prevIndex != index && limelight3A.isRunning()) {
+                limelight3A.pipelineSwitch(index);
+            }
+            prevIndex = index;
+            if (result.isValid() && result != null) {
+                ty = result.getTy();
+                tx = result.getTx();
+                ta = result.getTa();
+                distance = cameraHeight / Math.toRadians(cameraAngle - ty);
 
+            }
         }
     }
     public void stateUpdate(){
@@ -48,6 +56,14 @@ public class LimeLight {
                 allianceID = 20;
                 break;
 
+        }
+        switch (streamState){
+            case CLOSE:
+                limelight3A.close();
+                break;
+            case STREAM:
+                limelight3A.start();
+                break;
         }
     }
     public static double getDistance(){
@@ -83,6 +99,9 @@ public class LimeLight {
                 return result.getFiducialResults().get(0).getTargetXDegrees();
         }
         return 1e9;
+    }
+    public void setIndex(int index){
+        this.index = index;
     }
 
 }
