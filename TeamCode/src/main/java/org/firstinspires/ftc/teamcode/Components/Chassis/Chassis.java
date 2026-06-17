@@ -88,7 +88,7 @@ public class Chassis{
 
     public void setMode(State state)
     {
-        this.state=state;
+        Chassis.state =state;
     }
 
     public void setTargetPosition(double x , double y , double heading)
@@ -126,7 +126,7 @@ public class Chassis{
 
         controllerX.setPID(kp,0,kd);
         controllerY.setPID(kp,0,kd);
-        controllerHeading.setPID(KD,0,KD);
+        controllerHeading.setPID(KP,0,KD);
         if (state == State.DRIVE && Turret.allienceState == Turret.AllianceState.BLUE) {
 
             double X = gm1.left_stick_x;
