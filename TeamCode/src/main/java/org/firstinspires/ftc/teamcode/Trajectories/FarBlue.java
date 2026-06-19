@@ -47,6 +47,7 @@ public class FarBlue {
         storage = new Storage();
         intake = new Intake();
         shooter = new Shooter();
+        limeLight  = new LimeLight(LimeLight.StreamState.CLOSE);
         odo = new Odo();
         shoot = new Node("shoot");
         spike3 = new Node("spike3");

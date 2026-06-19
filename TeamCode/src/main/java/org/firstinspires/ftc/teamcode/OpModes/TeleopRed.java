@@ -46,7 +46,7 @@ public class TeleopRed extends LinearOpMode {
         intake =new Intake();
         drive =new Chassis(Chassis.State.DRIVE);
         shooter =new Shooter();
-        limeLight = new LimeLight();
+        limeLight = new LimeLight(LimeLight.StreamState.CLOSE);
         Turret.allienceState = Turret.AllianceState.RED;
         Shooter.state = Shooter.State.SHOOT;
         Hood.state = Hood.State.IDLE;

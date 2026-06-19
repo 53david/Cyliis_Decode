@@ -44,7 +44,7 @@ public class TeleopBlue extends LinearOpMode {
         intake =new Intake();
         drive =new Chassis(Chassis.State.DRIVE);
         shooter =new Shooter();
-        limeLight = new LimeLight();
+        limeLight = new LimeLight(LimeLight.StreamState.CLOSE);
 
         Turret.allienceState = Turret.AllianceState.BLUE;
         Shooter.state = Shooter.State.SHOOT;

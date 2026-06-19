@@ -15,7 +15,7 @@ public class LimeLight {
         STREAM,
     }
     public boolean ok;
-    public static StreamState streamState;
+    public StreamState streamState;
     public static State state;
     public static double allianceID= 0;
     double cameraAngle = 0;
@@ -27,8 +27,8 @@ public class LimeLight {
     int prevIndex = 0;
     public int index = 0;
     public static LLResult result;
-    public LimeLight(){
-        ok = true;
+    public LimeLight(StreamState state){
+        this.streamState = state;
     }
     public void update(){
         stateUpdate();
@@ -38,11 +38,11 @@ public class LimeLight {
                 limelight3A.pipelineSwitch(index);
             }
             prevIndex = index;
-            if (result.isValid() && result != null) {
+            if (result!=null && result.isValid()) {
                 ty = result.getTy();
                 tx = result.getTx();
                 ta = result.getTa();
-                distance = cameraHeight / Math.toRadians(cameraAngle - ty);
+                distance = cameraHeight / Math.tan(Math.toRadians(cameraAngle + ty));
 
             }
         }
@@ -94,9 +94,12 @@ public class LimeLight {
         return limelight3A.isRunning();
     }
     public static double getTagAngle(){
-        if (!result.getFiducialResults().isEmpty() && result!=null) {
-            if (result.getFiducialResults().get(0).getFiducialId() == allianceID)
-                return result.getFiducialResults().get(0).getTargetXDegrees();
+        if (result!=null && !result.getFiducialResults().isEmpty()) {
+            for (var tag : result.getFiducialResults()) {
+                if (tag.getFiducialId() == allianceID) {
+                    return tag.getTargetXDegrees();
+                }
+            }
         }
         return 1e9;
     }

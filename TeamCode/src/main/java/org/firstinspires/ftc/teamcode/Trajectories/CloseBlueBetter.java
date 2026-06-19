@@ -48,13 +48,13 @@ public class CloseBlueBetter {
         chassis = new Chassis(Chassis.State.PID);
         intake = new Intake();
         shooter = new Shooter();
-        limeLight = new LimeLight();
+        limeLight = new LimeLight(LimeLight.StreamState.CLOSE);
         Turret.allienceState = Turret.AllianceState.BLUE;
         Storage.state=Storage.State.TRANSFER;
         odo.reset();
         shoot.addConditions(
                 ()->{
-                    if (Storage.state != Storage.State.TRANSFER && Storage.state !=Storage.State.RESET){
+                    if (Storage.state != Storage.State.TRANSFER && Storage.state !=Storage.State.RESET && Storage.state!= Storage.State.SHOOT){
                         Storage.state = Storage.State.TRANSFER;
                     }
                     if ((Intake.state == Intake.State.INTAKE || Intake.state == Intake.State.REVERSE) && chassis.inPosition(100,100,0.2)){

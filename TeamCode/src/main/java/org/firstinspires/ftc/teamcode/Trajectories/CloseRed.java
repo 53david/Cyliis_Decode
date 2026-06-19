@@ -46,7 +46,7 @@ public class CloseRed {
         intake = new Intake();
         shooter = new Shooter();
         odo = new Odo();
-        limeLight = new LimeLight();
+        limeLight = new LimeLight(LimeLight.StreamState.CLOSE);
         Storage.state = Storage.State.TRANSFER;
         shoot = new Node("shoot");
         spike1 = new Node("spike1");

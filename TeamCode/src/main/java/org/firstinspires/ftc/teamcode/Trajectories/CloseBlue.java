@@ -45,7 +45,7 @@ public class CloseBlue {
          chassis = new Chassis(Chassis.State.PID);
          intake = new Intake();
          shooter = new Shooter();
-         limeLight = new LimeLight();
+         limeLight = new LimeLight(LimeLight.StreamState.CLOSE);
          odo = new Odo();
         Storage.state = Storage.State.TRANSFER;
         Turret.allienceState = Turret.AllianceState.BLUE;
@@ -166,9 +166,6 @@ public class CloseBlue {
         chassis.update();
         intake.update();
         shooter.update();
-        if (BlueClose.timer.seconds() > 29.5){
-            currentNode = park;
-        }
         if(currentNode.transition())currentNode=currentNode.next[Math.min(currentNode.index++ , currentNode.next.length-1)];
     }
 
