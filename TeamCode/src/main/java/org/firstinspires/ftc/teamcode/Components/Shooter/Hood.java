@@ -23,7 +23,8 @@ public class Hood {
                 hood.setPosition(ShooterCalculator.hoodAngle(Odo.distance()));
                 break;
             case SHOOT:
-                hood.setPosition(ShooterCalculator.hoodRegression(FlyWheel.getVelocity()));
+                hood.setPosition(ShooterCalculator.hoodAngle(Odo.distance())
+                        +(FlyWheel.vel - FlyWheel.getVelocity())*ShooterCalculator.regression);
                 break;
         }
     }
