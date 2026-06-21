@@ -19,7 +19,7 @@ public class Turret {
     public static double targetAngle = 0;
     public double targetPosition = 0.5;
     public double maxAngle = Math.PI*2;
-    public static double angleOffset = 4.0;
+    public static double angleOffset = 0;
     public enum State{
         IDLE,
         ACTIVE,
@@ -44,10 +44,7 @@ public class Turret {
     private void updateServosPosition() {
         double rAngle = targetAngle - Odo.getHeading();
         if (LimeLight.streamState == LimeLight.StreamState.STREAM && LimeLight.getPipeline() == 2){
-            rAngle += Math.toRadians(LimeLight.getHeading());
-            if (Odo.state == Odo.State.FAR) {
-                rAngle += Math.toRadians(angleOffset);
-            }
+            rAngle += Math.toRadians(LimeLight.getHeading()) + angleOffset;
         }
         rAngle = normalizeRadians(rAngle);
         rAngle = rAngle / maxAngle;

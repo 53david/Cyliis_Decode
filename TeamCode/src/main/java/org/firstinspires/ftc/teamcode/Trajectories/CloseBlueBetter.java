@@ -49,7 +49,7 @@ public class CloseBlueBetter {
         intake = new Intake();
         shooter = new Shooter();
         limeLight = new LimeLight(LimeLight.StreamState.CLOSE);
-        Turret.allienceState = Turret.AllianceState.BLUE;
+        Turret.allianceState = Turret.AllianceState.BLUE;
         Storage.state=Storage.State.TRANSFER;
         odo.reset();
         shoot.addConditions(

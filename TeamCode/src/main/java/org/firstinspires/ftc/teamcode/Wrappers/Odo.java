@@ -78,10 +78,11 @@ public class Odo {
         switch (state){
             case FAR :
                 power = -0.7;
-                Turret.
+                Turret.angleOffset = 4;
                 break;
             case CLOSE:
                 power = -1;
+                Turret.angleOffset = 0;
                 break;
         }
         if (distance()>2200){
