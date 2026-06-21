@@ -39,7 +39,7 @@ public class CloseRed {
     public Node currentNode;
 
     public CloseRed(HardwareMap hardwareMap){
-        Turret.allienceState = Turret.AllianceState.RED;
+        Turret.allianceState = Turret.AllianceState.RED;
         Initializer.start(hardwareMap);
         storage = new Storage();
         chassis = new Chassis(Chassis.State.PID);

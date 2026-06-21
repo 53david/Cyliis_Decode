@@ -77,12 +77,11 @@ public class Odo {
     public void stateUpdate(){
         switch (state){
             case FAR :
-                    power = -0.7;
-                ShooterCalculator.fwOffset = 60;
+                power = -0.7;
+                Turret.
                 break;
             case CLOSE:
                 power = -1;
-                ShooterCalculator.fwOffset = 80;
                 break;
         }
         if (distance()>2200){

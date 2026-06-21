@@ -34,12 +34,12 @@ public class CloseBlueBetter {
 
     };
     public static Pose2D[] gatePos = {
-            new Pose2D(),
-            new Pose2D(),
+            new Pose2D(0,0,0),
+            new Pose2D(0,0,0),
     };
     public static Pose2D spike1Pos = new Pose2D(0,0,0);
-    public static Pose2D spike2Pos =new Pose2D();
-    public static Pose2D loadingPos= new Pose2D();
+    public static Pose2D spike2Pos =new Pose2D(0,0,0);
+    public static Pose2D loadingPos= new Pose2D(0,0,0);
     Node shoot,spike1,spike2,gate,loading;
     public Node currentNode;
     public CloseBlueBetter(HardwareMap hardwareMap){
@@ -63,7 +63,7 @@ public class CloseBlueBetter {
                     else if (Storage.state == Storage.State.TRANSFER && !chassis.inPosition(100,100,0.2)){
                         Intake.state = Intake.State.REVERSE;
                     }
-                    if (Storage.state == Storage.State.TRANSFER && chassis.inPosition(60,60,0.17) && Math.abs(Initializer.pp.getVelX(DistanceUnit.MM))<40
+                    if (Storage.state == Storage.State.TRANSFER && chassis.inPosition(80,80,0.17) && Math.abs(Initializer.pp.getVelX(DistanceUnit.MM))<40
                             && Math.abs(Initializer.pp.getVelY(DistanceUnit.MM))<40 && FlyWheel.isReady() && ok){
                         Storage.state = Storage.State.SHOOT;
                         ok = false;
@@ -106,7 +106,7 @@ public class CloseBlueBetter {
 
                 },
                 ()->{
-                    if (chassis.inPosition(30,30,0.1) || Storage.state == Storage.State.TRANSFER){
+                    if (chassis.inPosition(30,30,0.1) && timer.seconds()>2){
                         timer.reset();
                         return true;
                     }
@@ -137,11 +137,11 @@ public class CloseBlueBetter {
 
                 },
                 ()->{
-                    if (gate.index!=1 && chassis.inPosition(100,100,0.2)){
+                    if (gate.index!=1 && chassis.inPosition(70,70,0.19)){
                         timer.reset();
                         return true;
                     }
-                    else if (gate.index == 1 && (Storage.state == Storage.State.TRANSFER || timer.seconds()>3.5)){
+                    else if (gate.index == 1 && (Storage.state == Storage.State.TRANSFER || timer.seconds()>4)){
                         timer.reset();
                         return true;
                     }

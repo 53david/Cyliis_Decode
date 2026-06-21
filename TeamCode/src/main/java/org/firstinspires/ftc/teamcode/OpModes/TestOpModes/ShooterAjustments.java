@@ -25,7 +25,7 @@ public class ShooterAjustments extends LinearOpMode {
            hood = new Hood();
            odo = new Odo();
            chassis = new Chassis(Chassis.State.DRIVE);
-           Turret.allienceState= Turret.AllianceState.BLUE;
+           Turret.allianceState= Turret.AllianceState.BLUE;
            FlyWheel.state = FlyWheel.State.IDLE;
            waitForStart();
            while (opModeIsActive()){

@@ -48,7 +48,7 @@ public class CloseBlue {
          limeLight = new LimeLight(LimeLight.StreamState.CLOSE);
          odo = new Odo();
         Storage.state = Storage.State.TRANSFER;
-        Turret.allienceState = Turret.AllianceState.BLUE;
+        Turret.allianceState = Turret.AllianceState.BLUE;
         shoot = new Node("shoot");
         spike1 = new Node("spike1");
         spike2 = new Node("spike2");

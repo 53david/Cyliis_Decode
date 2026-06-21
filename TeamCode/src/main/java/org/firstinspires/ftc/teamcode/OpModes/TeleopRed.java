@@ -47,7 +47,7 @@ public class TeleopRed extends LinearOpMode {
         drive =new Chassis(Chassis.State.DRIVE);
         shooter =new Shooter();
         limeLight = new LimeLight(LimeLight.StreamState.CLOSE);
-        Turret.allienceState = Turret.AllianceState.RED;
+        Turret.allianceState = Turret.AllianceState.RED;
         Shooter.state = Shooter.State.SHOOT;
         Hood.state = Hood.State.IDLE;
         LimeLight.state = LimeLight.State.RED;
@@ -83,7 +83,7 @@ public class TeleopRed extends LinearOpMode {
             telemetryM.addData("Target", ShooterCalculator.fwVel(Odo.distance()));
             telemetryM.addData("Storage target",Math.toDegrees(Storage.target));
             telemetryM.addData("Storage pos",Math.toDegrees(Storage.FromVtoRads()));
-            telemetry.addData("ALLIANCE",Turret.allienceState);
+            telemetry.addData("ALLIANCE",Turret.allianceState);
             telemetry.addData("X",Odo.getX());
             telemetry.addData("Y",Odo.getY());
             telemetry.addData("Heading",Odo.getHeading());

@@ -37,7 +37,7 @@ public class FarBlue {
     Node shoot,spike3,loading,tunnel,park;
     public Node currentNode;
     public FarBlue(HardwareMap hardwareMap){
-        Turret.allienceState = Turret.AllianceState.BLUE;
+        Turret.allianceState = Turret.AllianceState.BLUE;
         Initializer.start(hardwareMap);
         timer = new ElapsedTime();
         timer.startTime();

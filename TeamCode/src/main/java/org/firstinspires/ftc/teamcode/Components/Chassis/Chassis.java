@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.frontLeft;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.frontRight;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.gm1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.pp;
+import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.prevgm1;
 
 import com.arcrobotics.ftclib.controller.PIDController;
 
@@ -127,7 +128,15 @@ public class Chassis{
         controllerX.setPID(kp,0,kd);
         controllerY.setPID(kp,0,kd);
         controllerHeading.setPID(KP,0,KD);
-        if (state == State.DRIVE && Turret.allienceState == Turret.AllianceState.BLUE) {
+
+        if (Turret.state == Turret.State.IDLE && gm1.dpad_up && prevgm1.dpad_up != gm1.dpad_up){
+            state = State.PID;
+            setTargetPosition(Odo.getX(),Odo.getY(),Turret.getTargetAngle());
+            if (inPosition(30,30,0.08)){
+                state = State.DRIVE;
+            }
+        }
+        if (state == State.DRIVE && Turret.allianceState == Turret.AllianceState.BLUE) {
 
             double X = gm1.left_stick_x;
             double Y = -gm1.left_stick_y;
@@ -137,7 +146,7 @@ public class Chassis{
             double y = X * Math.sin(heading) + Y * Math.cos(heading);
             setTargetVector(x, y, rx);
         }
-        else if (state == State.DRIVE && Turret.allienceState == Turret.AllianceState.RED) {
+        else if (state == State.DRIVE && Turret.allianceState == Turret.AllianceState.RED) {
 
             double X = gm1.left_stick_x;
             double Y = -gm1.left_stick_y;

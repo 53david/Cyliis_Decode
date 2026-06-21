@@ -15,7 +15,7 @@ public class LimeLight {
         STREAM,
     }
     public boolean ok;
-    public StreamState streamState;
+    public static StreamState streamState;
     public static State state;
     public static double allianceID= 0;
     double cameraAngle = 0;
@@ -25,7 +25,7 @@ public class LimeLight {
     public static double tx = 0;
     public static double ta = 0;
     int prevIndex = 0;
-    public int index = 0;
+    public static int index = 0;
     public static LLResult result;
     public LimeLight(StreamState state){
         this.streamState = state;
@@ -103,8 +103,11 @@ public class LimeLight {
         }
         return 1e9;
     }
-    public void setIndex(int index){
-        this.index = index;
+    public static double getPipeline(){
+        return index;
+    }
+    public void setIndex(int x){
+        index = x;
     }
 
 }

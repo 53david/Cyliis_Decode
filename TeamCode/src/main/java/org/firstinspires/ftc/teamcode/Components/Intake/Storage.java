@@ -37,12 +37,7 @@ public class Storage {
         SHOOT,
         RESET,
     }
-    public enum ShootState{
-        SORT,
-        RAPID,
-    };
     public static State state;
-    public static ShootState shootState;
     public Storage(){
         timer.startTime();
         state = State.RESET;
@@ -89,7 +84,7 @@ public class Storage {
                 if(!IsStorageSpinning() && timer.seconds()>0.25){
                     Latch.state = Latch.State.TRANSFER;
                 }
-                if (!IsStorageSpinning() && gm1.cross && FlyWheel.IsShootReady()){
+                if (!IsStorageSpinning() && gm1.cross && prevgm1.cross != gm1.cross){
                     state = State.SHOOT;
                     timer.reset();
                 }
