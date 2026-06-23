@@ -12,7 +12,6 @@ public class Latch {
     public static double transPos = 0.385;
     public static double idlePos = 0.16;
     public double currentPos;
-    public static double pos = 0.16;
 
         public enum State{
         IDLE,
@@ -46,7 +45,6 @@ public class Latch {
         }
     }
     public void test(){
-        currentPos = pos;
         if(profile.finalPosition != currentPos)
             profile.setMotion(profile.getPosition(), currentPos, profile.getVelocity());
         profile.update();

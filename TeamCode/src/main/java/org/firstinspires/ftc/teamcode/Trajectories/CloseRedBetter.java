@@ -22,7 +22,6 @@ public class CloseRedBetter {
     Chassis chassis;
     Shooter shooter;
     Intake intake;
-    LimeLight limeLight;
     boolean ok = true;
     public static Pose2D[] shootPos = {
             new Pose2D(0,0,0),
@@ -47,8 +46,7 @@ public class CloseRedBetter {
         odo = new Odo();
         chassis = new Chassis(Chassis.State.PID);
         intake = new Intake();
-        shooter = new Shooter();
-        limeLight = new LimeLight(LimeLight.StreamState.CLOSE);
+        shooter = new Shooter(Shooter.State.SHOOT);
         Turret.allianceState = Turret.AllianceState.BLUE;
         Storage.state=Storage.State.TRANSFER;
         odo.reset();
@@ -153,7 +151,6 @@ public class CloseRedBetter {
     public void update(){
         currentNode.run();
         chassis.update();
-        limeLight.update();
         shooter.update();
         intake.update();
         if (currentNode.transition()){

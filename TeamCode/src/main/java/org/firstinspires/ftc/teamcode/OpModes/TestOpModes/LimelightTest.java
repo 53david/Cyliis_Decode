@@ -16,7 +16,7 @@ public class LimelightTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException{
         Initializer.start(hardwareMap);
-        limeLight = new LimeLight(LimeLight.StreamState.STREAM);
+        limeLight = new LimeLight(LimeLight.StreamState.STREAM,LimeLight.State.BLUE);
         waitForStart();
         while (opModeIsActive()) {
             limeLight.update();

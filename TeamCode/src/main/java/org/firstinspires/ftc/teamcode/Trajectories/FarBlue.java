@@ -33,7 +33,6 @@ public class FarBlue {
     public Intake intake;
     public Storage storage;
     public Chassis chassis;
-    LimeLight limeLight;
     Node shoot,spike3,loading,tunnel,park;
     public Node currentNode;
     public FarBlue(HardwareMap hardwareMap){
@@ -46,8 +45,7 @@ public class FarBlue {
         chassis = new Chassis(Chassis.State.PID);
         storage = new Storage();
         intake = new Intake();
-        shooter = new Shooter();
-        limeLight  = new LimeLight(LimeLight.StreamState.CLOSE);
+        shooter = new Shooter(Shooter.State.SHOOT);
         odo = new Odo();
         shoot = new Node("shoot");
         spike3 = new Node("spike3");
@@ -156,7 +154,6 @@ public class FarBlue {
         shooter.update();
         intake.update();
         chassis.update();
-        limeLight.update();
         currentNode.run();
         if (currentNode.transition()){
             currentNode = currentNode.next[Math.min(currentNode.index++,currentNode.next.length-1)];

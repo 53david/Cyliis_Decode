@@ -22,7 +22,6 @@ public class CloseBlue {
     public Chassis chassis;
     public Intake intake;
     public Shooter shooter;
-    public LimeLight limeLight;
     public Odo odo;
     public static Pose2D shootPos = new Pose2D(0, 0, Math.PI/2);
     public static Pose2D loadingPos = new Pose2D(0,0,0);
@@ -44,8 +43,7 @@ public class CloseBlue {
          storage = new Storage();
          chassis = new Chassis(Chassis.State.PID);
          intake = new Intake();
-         shooter = new Shooter();
-         limeLight = new LimeLight(LimeLight.StreamState.CLOSE);
+         shooter = new Shooter(Shooter.State.SHOOT);
          odo = new Odo();
         Storage.state = Storage.State.TRANSFER;
         Turret.allianceState = Turret.AllianceState.BLUE;
@@ -162,7 +160,6 @@ public class CloseBlue {
     public void update(){
         currentNode.run();
         odo.update();
-        limeLight .update();
         chassis.update();
         intake.update();
         shooter.update();

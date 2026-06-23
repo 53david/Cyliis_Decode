@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.limelight3A;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.LLResult;
 
+import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
+
 @Configurable
 public class LimeLight {
     public enum State{
@@ -27,8 +29,10 @@ public class LimeLight {
     int prevIndex = 0;
     public static int index = 0;
     public static LLResult result;
-    public LimeLight(StreamState state){
-        this.streamState = state;
+
+    public LimeLight(StreamState state1, State state2){
+        streamState = state1;
+        state = state2;
     }
     public void update(){
         stateUpdate();

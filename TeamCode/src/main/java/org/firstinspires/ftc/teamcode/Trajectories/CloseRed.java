@@ -22,7 +22,6 @@ public class CloseRed {
     public Intake intake;
     public Shooter shooter;
     public Odo odo;
-    public LimeLight limeLight;
     public static Pose2D shootPos = new Pose2D(-1450, -460, Math.PI/2);
     public static Pose2D loadingPos = new Pose2D(0,0,0);
     public static Pose2D[] gatePos = {
@@ -44,9 +43,8 @@ public class CloseRed {
         storage = new Storage();
         chassis = new Chassis(Chassis.State.PID);
         intake = new Intake();
-        shooter = new Shooter();
+        shooter = new Shooter(Shooter.State.SHOOT);
         odo = new Odo();
-        limeLight = new LimeLight(LimeLight.StreamState.CLOSE);
         Storage.state = Storage.State.TRANSFER;
         shoot = new Node("shoot");
         spike1 = new Node("spike1");
@@ -161,7 +159,6 @@ public class CloseRed {
     public void update(){
         currentNode.run();
         odo.update();
-        limeLight.update();
         chassis.update();
         intake.update();
         shooter.update();

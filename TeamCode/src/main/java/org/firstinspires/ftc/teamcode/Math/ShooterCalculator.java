@@ -10,7 +10,7 @@ public class ShooterCalculator {
     public static double Ks = 0.15;
     public static double Kv = 0.00044;
     public static double Ka = 0.00635;
-    public static double regression = 0.005;
+    public static double regression = 0.001;
 
     public static double fwVel(double delta) {
         return Math.clamp(0.37415 * delta+1155.78231,1500,2400);

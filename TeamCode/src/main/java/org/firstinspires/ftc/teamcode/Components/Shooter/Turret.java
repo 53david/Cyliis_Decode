@@ -76,11 +76,11 @@ public class Turret {
                 goalPositionX = 0; goalPositionY = 840;
                 break;
             case RED:
-                goalPositionX = -20 ; goalPositionY = -840;
+                goalPositionX = -20; goalPositionY = -840;
                 break;
         }
         switch (state){
-            case IDLE :
+            case IDLE:
                 servo1.setPosition(0.05);
                 servo2.setPosition(0.05);
                 break;

@@ -24,7 +24,7 @@ public class Hood {
                 break;
             case SHOOT:
                 hood.setPosition(ShooterCalculator.hoodAngle(Odo.distance())
-                        +(FlyWheel.vel - FlyWheel.getVelocity())*ShooterCalculator.regression);
+                        - (FlyWheel.vel - FlyWheel.getVelocity())*ShooterCalculator.regression);
                 break;
         }
     }

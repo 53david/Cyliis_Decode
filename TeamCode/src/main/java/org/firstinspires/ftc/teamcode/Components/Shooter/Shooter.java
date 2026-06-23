@@ -9,7 +9,8 @@ public class Shooter {
         SHOOT,
     }
     public static State state = State.SHOOT;
-    public Shooter(){
+    public Shooter(State state1){
+        state = state1;
         turret = new Turret();
         flyWheel =new FlyWheel();
         hood = new Hood();
