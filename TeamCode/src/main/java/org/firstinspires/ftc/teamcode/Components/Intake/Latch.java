@@ -18,7 +18,7 @@ public class Latch {
         TRANSFER,
     };
     public static State state;
-    public static double maxVel=20, acc=16, dec=16;
+    public static double maxVel=20, acc=15, dec=16;
     BetterMotionProfile profile;
     public Latch(){
         transfer.setPosition(idlePos);

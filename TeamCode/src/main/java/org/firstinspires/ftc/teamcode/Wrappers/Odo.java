@@ -29,7 +29,6 @@ public class Odo {
         pp.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED , org.firstinspires.ftc.teamcode.Wrappers.GoBildaPinpointDriver.EncoderDirection.FORWARD);
         pp.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         pp.setOffsets(129.503 , -78.001, DistanceUnit.MM);
-        pp.resetPosAndIMU();
     }
 
     public static double getHeading() {
@@ -40,6 +39,18 @@ public class Odo {
     }
     public static double getY() {
         return predictedY;
+    }
+    public static double getRawX(){
+        return pp.getPosX(DistanceUnit.MM);
+    }
+    public static double getRawY(){
+        return pp.getPosY(DistanceUnit.MM);
+    }
+    public static double velX(){
+        return pp.getVelX(DistanceUnit.MM);
+    }
+    public static double velY(){
+        return pp.getVelY(DistanceUnit.MM);
     }
     public void reset() {
         pp.setPosition(new Pose2D(DistanceUnit.MM , 0 , 0 , RADIANS , 0));
@@ -77,7 +88,7 @@ public class Odo {
     public void stateUpdate(){
         switch (state){
             case FAR :
-                power = -0.7;
+                power = -0.9;
                 Turret.angleOffset = 4;
                 break;
             case CLOSE:
@@ -85,7 +96,7 @@ public class Odo {
                 Turret.angleOffset = 0;
                 break;
         }
-        if (distance()>2200){
+        if (distance()>2800){
             state = State.FAR;
         }
         else {

@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.Voltage;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.gm1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.isAutonomousActive;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.prevgm1;
@@ -30,7 +29,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
 import org.firstinspires.ftc.teamcode.Wrappers.LimeLight;
 
-@TeleOp
+@TeleOp(name = "Vlad e slab, David rege Red")
 public class TeleopRed extends LinearOpMode {
 
     Intake intake;
@@ -47,18 +46,15 @@ public class TeleopRed extends LinearOpMode {
         intake =new Intake();
         drive =new Chassis(Chassis.State.DRIVE);
         shooter =new Shooter(Shooter.State.SHOOT);
-        Turret.allianceState = Turret.AllianceState.BLUE;
+        Turret.allianceState = Turret.AllianceState.RED;
         Hood.state = Hood.State.IDLE;
         waitForStart();
         while (opModeIsActive()) {
-            for (LynxModule hub : Initializer.allHubs) {
-                hub.clearBulkCache();
-            }
             gm1.copy(gamepad1);
             gm2.copy(gamepad2);
             intake.update();
-            drive.update();
             shooter.update();
+            drive.update();
             odo.update();
             prevgm1.copy(gm1);
             prevgm2.copy(gm2);
@@ -66,25 +62,33 @@ public class TeleopRed extends LinearOpMode {
             if (gamepad1.psWasPressed()){
                 odo.reset();
             }
+            if (Storage.isTransferReady){
+                gamepad1.rumble(200);
+            }
             telemetry.addData("ALLIANCE",Turret.allianceState);
             telemetry.addData("X",Odo.getX());
             telemetry.addData("Y",Odo.getY());
             telemetry.addData("Heading",Odo.getHeading());
             telemetry.addData("Intake state", Storage.state);
             telemetry.addData("Shooter state", Shooter.state);
+            telemetry.addData("Flywheel velocity", FlyWheel.getVelocity());
             if (ColorDetection.state == ColorDetection.State.SORT) {
                 telemetry.addData("Ball1", ColorDetection.ball1);
                 telemetry.addData("Ball2", ColorDetection.ball2);
                 telemetry.addData("Ball3", ColorDetection.ball3);
             }
             if (LimeLight.isActive()) {
-                telemetryM.addData("Target heading", LimeLight.getHeading());
-                telemetryM.addData("Distance", LimeLight.getDistance());
-                telemetryM.addData("Area", LimeLight.getArea());
+                telemetry.addData("Target heading", LimeLight.getHeading());
+                telemetry.addData("Distance", LimeLight.getDistance());
+                telemetry.addData("Area", LimeLight.getArea());
             } else {
-                telemetryM.addLine("Waiting for stream..");
+                telemetry.addLine("Waiting for stream..");
 
             }
+            telemetryM.addData("Is object nearby?",ColorDetection.isBallInStorage());
+            telemetryM.addData("Is storage spinning",Storage.IsStorageSpinning());
+            telemetryM.addData("Storage pos",Math.toDegrees(Storage.FromVtoRads()));
+            telemetryM.addData("Target pos",Math.toDegrees(Storage.target));
             telemetryM.addData("Voltage",voltageSensor.getVoltage());
             telemetryM.addData("Flywheel velocity", FlyWheel.getVelocity());
             telemetryM.addData("Target Velocity",ShooterCalculator.fwVel(Odo.distance()));

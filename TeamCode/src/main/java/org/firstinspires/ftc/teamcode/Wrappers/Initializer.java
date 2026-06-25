@@ -48,10 +48,6 @@ public class Initializer {
     public static WebcamName webcam;
     public static Limelight3A limelight3A;
     public static void start(HardwareMap hwMap){
-        allHubs = hardwareMap.getAll(LynxModule.class);
-        for (LynxModule hub : allHubs) {
-            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-        }
         Voltage = 12.90/hwMap.getAll(VoltageSensor.class).get(0).getVoltage();
         prevgm1 = new Gamepad();
         prevgm2 = new Gamepad();

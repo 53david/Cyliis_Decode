@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
 import org.firstinspires.ftc.teamcode.Wrappers.LimeLight;
 
-@TeleOp
+@TeleOp(name = "Vlad e slab, David rege Blue")
 public class TeleopBlue extends LinearOpMode {
 
     Intake intake;
@@ -50,20 +50,20 @@ public class TeleopBlue extends LinearOpMode {
         Hood.state = Hood.State.IDLE;
         waitForStart();
         while (opModeIsActive()) {
-            for (LynxModule hub : Initializer.allHubs) {
-                hub.clearBulkCache();
-            }
             gm1.copy(gamepad1);
             gm2.copy(gamepad2);
             intake.update();
-            drive.update();
             shooter.update();
+            drive.update();
             odo.update();
             prevgm1.copy(gm1);
             prevgm2.copy(gm2);
 
             if (gamepad1.psWasPressed()){
                 odo.reset();
+            }
+            if (Storage.isTransferReady){
+                gamepad1.rumble(200);
             }
             telemetry.addData("ALLIANCE",Turret.allianceState);
             telemetry.addData("X",Odo.getX());
@@ -85,6 +85,10 @@ public class TeleopBlue extends LinearOpMode {
                 telemetry.addLine("Waiting for stream..");
 
             }
+            telemetryM.addData("Is object nearby?",ColorDetection.isBallInStorage());
+            telemetryM.addData("Is storage spinning",Storage.IsStorageSpinning());
+            telemetryM.addData("Storage pos",Math.toDegrees(Storage.FromVtoRads()));
+            telemetryM.addData("Target pos",Math.toDegrees(Storage.target));
             telemetryM.addData("Voltage",voltageSensor.getVoltage());
             telemetryM.addData("Flywheel velocity", FlyWheel.getVelocity());
             telemetryM.addData("Target Velocity",ShooterCalculator.fwVel(Odo.distance()));

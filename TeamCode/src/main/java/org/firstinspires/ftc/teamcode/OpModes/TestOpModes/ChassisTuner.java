@@ -15,13 +15,22 @@ import org.firstinspires.ftc.teamcode.Wrappers.Pose2D;
 @TeleOp
 public class ChassisTuner extends LinearOpMode {
     Chassis chassis;
+    Odo odo;
     @Override
     public void runOpMode() throws InterruptedException{
+        Initializer.start(hardwareMap);
         chassis = new Chassis(Chassis.State.PID);
+        odo = new Odo();
+        odo.reset();
         waitForStart();
         while(opModeIsActive()){
             chassis.update();
+            odo.update();
             chassis.setTargetPosition(0,0,0);
+            telemetryM.addData("X",Odo.getX());
+            telemetryM.addData("Y",Odo.getY());
+            telemetryM.addData("Heading",Odo.getHeading());
+            telemetryM.update();
         }
     }
 }

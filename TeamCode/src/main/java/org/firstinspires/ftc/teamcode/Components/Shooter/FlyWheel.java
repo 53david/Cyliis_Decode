@@ -34,7 +34,7 @@ public class FlyWheel {
     public static double rpm = 0;
     public FlyWheel(){
         shoot1.setDirection(DcMotorSimple.Direction.REVERSE);
-        shoot2.setDirection(DcMotorSimple.Direction.REVERSE);
+        shoot2.setDirection(DcMotorSimple.Direction.FORWARD);
     }
     public void updateState(){
         switch (state){

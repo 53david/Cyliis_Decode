@@ -8,15 +8,14 @@ import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.gm1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.pp;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.prevgm1;
 
-import com.arcrobotics.ftclib.controller.PIDController;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
+import org.firstinspires.ftc.teamcode.Math.PIDController;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 import org.firstinspires.ftc.teamcode.Wrappers.Pose2D;
 @Configurable
@@ -36,7 +35,7 @@ public class Chassis{
     public static double lateralMultiplier=1.5;
     public static  double realHeading;
 
-    public static double kp=0.1 , kd=0;
+    public static double kp=0.01 , kd=0;
     public static double KP=1.6 , KD=0.1;
     public PIDController controllerX=new PIDController(kp, 0, kd);
     public PIDController controllerY=new PIDController(kp, 0, kd);
@@ -125,17 +124,6 @@ public class Chassis{
 
     public void update() {
 
-        controllerX.setPID(kp,0,kd);
-        controllerY.setPID(kp,0,kd);
-        controllerHeading.setPID(KP,0,KD);
-
-        if (Turret.state == Turret.State.IDLE && gm1.dpad_up && prevgm1.dpad_up != gm1.dpad_up){
-            state = State.PID;
-            setTargetPosition(Odo.getX(),Odo.getY(),Turret.getTargetAngle());
-            if (inPosition(30,30,0.08)){
-                state = State.DRIVE;
-            }
-        }
         if (state == State.DRIVE && Turret.allianceState == Turret.AllianceState.BLUE) {
 
             double X = gm1.left_stick_x;
@@ -157,6 +145,14 @@ public class Chassis{
             setTargetVector(x, y, rx);
         }
         else {
+            controllerX.kp=kp;
+            controllerY.kp=kp;
+
+            controllerX.kd=kd;
+            controllerY.kd=kd;
+
+            controllerHeading.kp=KP;
+            controllerHeading.kd=KD;
             if (Double.isNaN(Odo.x) || Double.isNaN(Odo.y) || Double.isNaN(Odo.heading)) {
                 return;
             }
@@ -170,7 +166,7 @@ public class Chassis{
             error = targetHeading - realHeading;
             if (Math.abs(error) > Math.PI)
                 error = -Math.signum(error) * (2 * Math.PI - Math.abs(error));
-            rotation = controllerHeading.calculate(error, 0);
+            rotation = controllerHeading.calculate(error, 0.0);
 
             setTargetVector(y * Math.cos(-heading) - x * Math.sin(-heading), y * Math.sin(-heading) + x * Math.cos(-heading), rotation);
 

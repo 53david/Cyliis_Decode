@@ -20,16 +20,13 @@ public class Storage {
     public static boolean isTransferReady = false;
     public static double target = Math.PI/4.0;
     public static double nrBalls =  0;
-    public static double resetPos = Math.toRadians(77);
-    public static double specialPos = Math.toRadians(318);
-    public static double ballPos1 = Math.PI/4.0,ballPos2 = ballPos1 + Math.PI *2/3,ballPos3 = ballPos2 + Math.PI*2/3;
-    public static double Kp = 0.65;
-    public static double Kd = 0.011;
-    public static double P = 1.5;
-    public static double D = 0.025;
+    public static double resetPos = Math.toRadians(120);
+    public static double specialPos = Math.toRadians(250);
+    public static double ballPos1 = Math.toRadians(70),ballPos2 = Math.toRadians(190),ballPos3 = Math.toRadians(310);
+    public static double Kp = 0.6;
+    public static double Kd = 0.02;
     public static double Ks = 0;
     PIDController pid = new PIDController(Kp,0,Kd);
-    PIDController special = new PIDController(P,0,D);
     public enum State{
         BALL1,
         BALL2,
@@ -79,7 +76,6 @@ public class Storage {
                 break;
 
             case TRANSFER:
-
                 target = specialPos;
                 isTransferReady = false;
                 if(!IsStorageSpinning() && timer.seconds()>0.25){
@@ -94,7 +90,6 @@ public class Storage {
             case SHOOT:
 
                 Hood.state = Hood.State.SHOOT;
-                ShooterCalculator.Ka = 0.00735;
                 spin.setPower(Odo.power);
 
                 if (timer.seconds()>0.5){
@@ -104,11 +99,9 @@ public class Storage {
                 break;
 
             case RESET:
-                ShooterCalculator.Ka = 0.00635;
                 target = resetPos;
                 nrBalls = 0;
                 pid.setPID(Kp,0,Kd);
-                pid.setPID(P,0,D);
                 Hood.state = Hood.State.IDLE;
 
                 if (!IsStorageSpinning()){
@@ -136,23 +129,16 @@ public class Storage {
     public void spinUpdate(){
         if (state == State.SHOOT){
             pid.setPID(0,0,0);
-            special.setPID(0,0,0);
         }
         else {
-            if (Math.toDegrees(Math.abs(FromVtoRads()-target)) >= 10) {
                 pid.setPID(Kp,0,Kd);
                 spin.setPower(pid.calculate(FromVtoRads(), target) + Ks * Math.signum(target-FromVtoRads()));
-            }
-            else {
-                special.setPID(P,0,D);
-                spin.setPower(special.calculate(FromVtoRads(), target) + Ks * Math.signum(target-FromVtoRads()));
-            }
         }
         }
     public static double FromVtoRads(){
         return Math.abs(encoder.getVoltage() / 3.3) *2.0 * Math.PI;
     }
-    public boolean IsStorageSpinning(){
+    public static boolean IsStorageSpinning(){
         return Math.abs(target-FromVtoRads()) > Math.toRadians(11);
     }
 

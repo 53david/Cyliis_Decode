@@ -26,7 +26,7 @@ public class ColorDetection {
         color.enableLed(true);
     }
     public void update() {
-        if (state != State.SORT && isBallInStorage() && !storage.IsStorageSpinning()) {
+        if (state == State.SORT && isBallInStorage() && !storage.IsStorageSpinning()) {
             red = color.red();
             blue = color.blue();
             green = color.green();
@@ -61,12 +61,7 @@ public class ColorDetection {
         }
     }
     public static boolean isBallInStorage(){
-        if (state == State.RAPID) {
-            return !proximitySensor.getState() || color.getDistance(DistanceUnit.MM) < a;
-        }
-        else{
-            return color.getDistance(DistanceUnit.MM) < a;
-        }
+        return !proximitySensor.getState();
     }
     public float distance(float r1, float g1 , float b1, float r2, float g2, float b2) {
         return (float)Math.sqrt( (r1-r2)*(r1-r2) + (b1-b2)*(b1-b2) + (g1-g2)*(g1-g2));

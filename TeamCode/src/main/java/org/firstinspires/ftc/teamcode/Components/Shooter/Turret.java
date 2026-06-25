@@ -10,6 +10,7 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
 import org.firstinspires.ftc.teamcode.Wrappers.LimeLight;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
@@ -57,8 +58,9 @@ public class Turret {
     }
     public void updateAngle() {
 
-        double dx = goalPositionX - Odo.getX();
-        double dy = goalPositionY - Odo.getY();
+        double t = Odo.distance()/ShooterCalculator.exitVelocity(Odo.distance());
+        double dx = goalPositionX - (Odo.velX() * t)- Odo.getRawX();
+        double dy = goalPositionY - (Odo.velY() * t) - Odo.getRawY();
         targetAngle = Math.atan2(dy,dx);
 
     }
@@ -73,10 +75,10 @@ public class Turret {
     public void stateUpdate(){
         switch (allianceState){
             case BLUE:
-                goalPositionX = 0; goalPositionY = 840;
+                goalPositionX = -20; goalPositionY = 820;
                 break;
             case RED:
-                goalPositionX = -20; goalPositionY = -840;
+                goalPositionX = -20; goalPositionY = -820;
                 break;
         }
         switch (state){
