@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
 import org.firstinspires.ftc.teamcode.Wrappers.LimeLight;
 
-@TeleOp(name = "Vlad e slab, David rege Red")
+@TeleOp(name = "We Ioan")
 public class TeleopRed extends LinearOpMode {
 
     Intake intake;
@@ -91,8 +91,8 @@ public class TeleopRed extends LinearOpMode {
             telemetryM.addData("Target pos",Math.toDegrees(Storage.target));
             telemetryM.addData("Voltage",voltageSensor.getVoltage());
             telemetryM.addData("Flywheel velocity", FlyWheel.getVelocity());
-            telemetryM.addData("Target Velocity",ShooterCalculator.fwVel(Odo.distance()));
-            telemetryM.addData("Hood Angle",ShooterCalculator.hoodAngle(Odo.distance()));
+            telemetryM.addData("Target Velocity",ShooterCalculator.vel);
+            telemetryM.addData("Hood Angle",ShooterCalculator.hoodPos);
             telemetryM.update();
             telemetry.update();
         }

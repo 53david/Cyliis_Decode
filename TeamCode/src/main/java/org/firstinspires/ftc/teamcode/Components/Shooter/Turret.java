@@ -20,6 +20,10 @@ public class Turret {
     public static double targetAngle = 0;
     public double targetPosition = 0.5;
     public double maxAngle = Math.PI*2;
+    public static double dx =0;
+    public static double dy = 0;
+    public static double a = 1.1;
+    public double t = 0;
     public static double angleOffset = 0;
     public enum State{
         IDLE,
@@ -43,9 +47,9 @@ public class Turret {
     }
 
     private void updateServosPosition() {
-        double rAngle = targetAngle - Odo.getHeading();
+        double rAngle = ShooterCalculator.targetAngle - Odo.getHeading();
         if (LimeLight.streamState == LimeLight.StreamState.STREAM && LimeLight.getPipeline() == 2){
-            rAngle += Math.toRadians(LimeLight.getHeading()) + angleOffset;
+            rAngle += Math.toRadians(LimeLight.getHeading());
         }
         rAngle = normalizeRadians(rAngle);
         rAngle = rAngle / maxAngle;
@@ -57,10 +61,8 @@ public class Turret {
 
     }
     public void updateAngle() {
-
-        double t = Odo.distance()/ShooterCalculator.exitVelocity(Odo.distance());
-        double dx = goalPositionX - (Odo.velX() * t)- Odo.getRawX();
-        double dy = goalPositionY - (Odo.velY() * t) - Odo.getRawY();
+        dx = goalPositionX - Odo.getRawX();
+        dy = goalPositionY - Odo.getRawY();
         targetAngle = Math.atan2(dy,dx);
 
     }
@@ -75,7 +77,7 @@ public class Turret {
     public void stateUpdate(){
         switch (allianceState){
             case BLUE:
-                goalPositionX = -20; goalPositionY = 820;
+                goalPositionX = 0; goalPositionY = 800;
                 break;
             case RED:
                 goalPositionX = -20; goalPositionY = -820;
@@ -96,9 +98,6 @@ public class Turret {
         if (angle < 0) angle += (2.0 * Math.PI);
         return angle;
 
-    }
-    public static double getTargetAngle(){
-        return targetAngle;
     }
     public void test(){
 

@@ -15,6 +15,7 @@ import static org.firstinspires.ftc.teamcode.Math.ShooterCalculator.Kv;
 
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
@@ -30,7 +31,7 @@ public class FlyWheel {
     }
     public static double errorThreshold = 100;
     public static State state = State.SHOOT;
-    public static double vel = 1400;
+    public static double vel = 0;
     public static double rpm = 0;
     public FlyWheel(){
         shoot1.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -39,10 +40,10 @@ public class FlyWheel {
     public void updateState(){
         switch (state){
             case IDLE :
-                vel = 1200;
+                vel = 0;
                 break;
             case SHOOT:
-                vel = ShooterCalculator.fwVel(Odo.distance());
+                vel = ShooterCalculator.vel;
                 break;
         }
     }

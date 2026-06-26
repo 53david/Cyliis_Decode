@@ -1,17 +1,16 @@
 package org.firstinspires.ftc.teamcode.Components.Intake;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.gm1;
+import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.isAutonomousActive;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.prevgm1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.encoder;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.spin;
 
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.bylazar.configurables.annotations.Configurable;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Components.Shooter.FlyWheel;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Hood;
-import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
+import org.firstinspires.ftc.teamcode.Math.PIDController;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
 @Configurable
@@ -23,10 +22,14 @@ public class Storage {
     public static double resetPos = Math.toRadians(120);
     public static double specialPos = Math.toRadians(250);
     public static double ballPos1 = Math.toRadians(70),ballPos2 = Math.toRadians(190),ballPos3 = Math.toRadians(310);
-    public static double Kp = 0.6;
-    public static double Kd = 0.02;
+    public static double Kp = 0.65;
+    public static double Kd = 0.011;
+    public static double KP = 1.3;
+    public static double KD = 0.022;
     public static double Ks = 0;
     PIDController pid = new PIDController(Kp,0,Kd);
+    PIDController special = new PIDController(KP,0,KD);
+
     public enum State{
         BALL1,
         BALL2,
@@ -85,10 +88,15 @@ public class Storage {
                     state = State.SHOOT;
                     timer.reset();
                 }
+                if (isAutonomousActive){
+                    timer.reset();
+                }
                 break;
 
             case SHOOT:
 
+                pid.kp = 0; special.kp = 0;
+                pid.kd = 0; special.kd = 0;
                 Hood.state = Hood.State.SHOOT;
                 spin.setPower(Odo.power);
 
@@ -99,15 +107,13 @@ public class Storage {
                 break;
 
             case RESET:
-                target = resetPos;
-                nrBalls = 0;
-                pid.setPID(Kp,0,Kd);
-                Hood.state = Hood.State.IDLE;
 
-                if (!IsStorageSpinning()){
-                    Latch.state = Latch.State.IDLE;
-                }
-                if (!IsStorageSpinning() && Latch.state == Latch.State.IDLE) {
+                pid.kp = Kp; special.kp = KP;
+                pid.kd = Kd; special.kd = KD;
+                target = resetPos; nrBalls = 0;
+                Latch.state = Latch.State.IDLE;
+                Hood.state = Hood.State.IDLE;
+                if (!IsStorageSpinning()) {
                     state = State.BALL1;
                 }
                 break;
@@ -127,19 +133,19 @@ public class Storage {
         }
     }
     public void spinUpdate(){
-        if (state == State.SHOOT){
-            pid.setPID(0,0,0);
+        if (Math.abs(target-FromVtoRads()) > Math.toRadians(7.5)) {
+            spin.setPower(pid.calculate(FromVtoRads(), target) + Ks * Math.signum(target - FromVtoRads()));
         }
         else {
-                pid.setPID(Kp,0,Kd);
-                spin.setPower(pid.calculate(FromVtoRads(), target) + Ks * Math.signum(target-FromVtoRads()));
+            spin.setPower(special.calculate(FromVtoRads(), target) + Ks * Math.signum(target - FromVtoRads()));
         }
-        }
+
+    }
     public static double FromVtoRads(){
-        return Math.abs(encoder.getVoltage() / 3.3) *2.0 * Math.PI;
+        return Math.abs(encoder.getVoltage() / encoder.getMaxVoltage()) *2.0 * Math.PI;
     }
     public static boolean IsStorageSpinning(){
-        return Math.abs(target-FromVtoRads()) > Math.toRadians(11);
+        return Math.abs(target-FromVtoRads()) > Math.toRadians(5);
     }
 
 }

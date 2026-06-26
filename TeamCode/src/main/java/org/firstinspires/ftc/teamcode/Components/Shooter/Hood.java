@@ -20,11 +20,10 @@ public class Hood {
     public void updateState(){
         switch (state){
             case IDLE :
-                hood.setPosition(ShooterCalculator.hoodAngle(Odo.distance()));
+                hood.setPosition(ShooterCalculator.hoodPos);
                 break;
             case SHOOT:
-                hood.setPosition(ShooterCalculator.hoodAngle(Odo.distance())
-                        - (FlyWheel.vel - FlyWheel.getVelocity())*ShooterCalculator.regression);
+                hood.setPosition(ShooterCalculator.hoodPos - (FlyWheel.vel - FlyWheel.getVelocity())*ShooterCalculator.regression);
                 break;
         }
     }
@@ -33,8 +32,6 @@ public class Hood {
     }
     public void update(){
         updateState();
-        telemetryM.addData("Pos", ShooterCalculator.hoodAngle(FlyWheel.getVelocity()));
-        telemetryM.update();
     }
     public void tune(){
         hood.setPosition(pos);
