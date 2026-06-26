@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Wrappers;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
+import static org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit.MM;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.pp;
 
 import com.bylazar.configurables.annotations.Configurable;
@@ -28,7 +29,7 @@ public class Odo {
     public Odo(){
         pp.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED , org.firstinspires.ftc.teamcode.Wrappers.GoBildaPinpointDriver.EncoderDirection.FORWARD);
         pp.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        pp.setOffsets(129.503 , -78.001, DistanceUnit.MM);
+        pp.setOffsets(129.503 , -78.001, MM);
     }
 
     public static double getHeading() {
@@ -41,21 +42,23 @@ public class Odo {
         return predictedY;
     }
     public static double getRawX(){
-        return pp.getPosX(DistanceUnit.MM);
+        return pp.getPosX(MM);
     }
     public static double getRawY(){
-        return pp.getPosY(DistanceUnit.MM);
+        return pp.getPosY(MM);
     }
     public static double velX(){
-        return pp.getVelX(DistanceUnit.MM);
+        return pp.getVelX(MM);
     }
     public static double velY(){
-        return pp.getVelY(DistanceUnit.MM);
+        return pp.getVelY(MM);
     }
     public void reset() {
-        pp.setPosition(new Pose2D(DistanceUnit.MM , 0 , 0 , RADIANS , 0));
+        pp.setPosition(new Pose2D(MM , 0 , 0 , RADIANS , 0));
     }
-
+    public void recalibrate(){
+        pp.recalibrateIMU();
+    }
     public static double filterParameter = 0.8;
     private static final LowPassFilter xVelocityFilter = new LowPassFilter(filterParameter, 0);
     private static final LowPassFilter yVelocityFilter = new LowPassFilter(filterParameter, 0);
@@ -85,6 +88,15 @@ public class Odo {
                         (predictedY - Turret.goalPositionY) * (predictedY - Turret.goalPositionY)
         );
     }
+    public static double rawDistance(){
+        return Math.sqrt(
+                (pp.getPosX(DistanceUnit.MM) - Turret.goalPositionX) * (pp.getPosX(DistanceUnit.MM) - Turret.goalPositionX) +
+                        (pp.getPosY(DistanceUnit.MM) - Turret.goalPositionY) * (pp.getPosY(DistanceUnit.MM) - Turret.goalPositionY)
+        );
+    }
+    public static double avgVel(){
+        return Math.hypot(pp.getVelX(MM),pp.getVelY(MM));
+    }
     public void stateUpdate(){
         switch (state){
             case FAR :
@@ -106,13 +118,14 @@ public class Odo {
     public void update() {
         pp.update();
         heading=pp.getHeading(RADIANS);
-        x=pp.getPosX(DistanceUnit.MM);
-        y=pp.getPosY(DistanceUnit.MM);
-        xVelocity = xVelocityFilter.getValue(pp.getVelocity().getX(DistanceUnit.MM));
-        yVelocity = yVelocityFilter.getValue(pp.getVelocity().getY(DistanceUnit.MM));
+        x=pp.getPosX(MM);
+        y=pp.getPosY(MM);
+        xVelocity = xVelocityFilter.getValue(pp.getVelocity().getX(MM));
+        yVelocity = yVelocityFilter.getValue(pp.getVelocity().getY(MM));
         updateGlide();
         stateUpdate();
         predictedX = x + xGlide;
         predictedY = y + yGlide;
+        ShooterCalculator.updateTrajectory(pp.getPosX(MM),pp.getPosY(MM),pp.getVelX(MM),pp.getVelY(MM),Turret.goalPositionX,Turret.goalPositionY);
     }
 }

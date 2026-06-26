@@ -39,7 +39,12 @@ public class ActiveIntake {
         stateUpdate();
         if (!Initializer.isAutonomousActive){
             if (gm1.right_bumper){
-                Intake.state = Intake.State.INTAKE;
+                if (Storage.state == Storage.State.TRANSFER){
+                    Intake.state = Intake.State.REVERSE;
+                }
+                else {
+                    Intake.state = Intake.State.INTAKE;
+                }
             }
             else if (gm1.left_bumper){
                 Intake.state = Intake.State.REVERSE;

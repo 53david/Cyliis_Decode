@@ -26,7 +26,7 @@ public class ColorDetection {
         color.enableLed(true);
     }
     public void update() {
-        if (state == State.SORT && isBallInStorage() && !storage.IsStorageSpinning()) {
+        if (state == State.SORT && isBallInStorage() && !Storage.IsStorageSpinning()) {
             red = color.red();
             blue = color.blue();
             green = color.green();
@@ -40,17 +40,17 @@ public class ColorDetection {
             }
 
             if (Storage.state == Storage.State.BALL1
-                    && isBallInStorage() && !storage.IsStorageSpinning()) {
+                    && isBallInStorage() && !Storage.IsStorageSpinning()) {
                 ball1 = currentBall;
             }
 
             if (Storage.state == Storage.State.BALL2
-                    && isBallInStorage() && !storage.IsStorageSpinning()) {
+                    && isBallInStorage() && !Storage.IsStorageSpinning()) {
                 ball2 = currentBall;
             }
 
             if (Storage.state == Storage.State.BALL3
-                    && isBallInStorage() && !storage.IsStorageSpinning()) {
+                    && isBallInStorage() && !Storage.IsStorageSpinning()) {
                 ball3 = currentBall;
             }
             if (Storage.state == Storage.State.RESET) {

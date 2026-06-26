@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.Trajectories;
 
+import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.telemetryM;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Components.Intake.Intake;
+import org.firstinspires.ftc.teamcode.Components.Intake.Latch;
 import org.firstinspires.ftc.teamcode.Components.Intake.Storage;
 import org.firstinspires.ftc.teamcode.Components.Shooter.FlyWheel;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Shooter;
@@ -24,72 +27,74 @@ public class CloseRedBetter {
     Intake intake;
     boolean ok = true;
     public static Pose2D[] shootPos = {
-            new Pose2D(0,0,0),
-            new Pose2D(0,0,0),
-            new Pose2D(0,0,0),
-            new Pose2D(0,0,0),
-            new Pose2D(0,0,0),
-            new Pose2D(0,0,0),
+            new Pose2D(-1600,725,-Math.PI/2),
+            new Pose2D(-1300,450,-Math.PI/3),
+            new Pose2D(-1300,450,-Math.PI/3),
+            new Pose2D(-1300,450,-Math.PI/3),
+            new Pose2D(-1300,450,-Math.PI/4),
+            new Pose2D(-1300,450,-Math.PI/4),
+            new Pose2D(-800,500,-Math.PI/6),
 
     };
     public static Pose2D[] gatePos = {
-            new Pose2D(),
-            new Pose2D(),
+            new Pose2D(-1720,560,-Math.PI/2),
+            new Pose2D(-1881,755,-Math.PI*2/3),
+
     };
-    public static Pose2D spike1Pos = new Pose2D(0,0,0);
-    public static Pose2D spike2Pos =new Pose2D();
-    public static Pose2D loadingPos= new Pose2D();
-    Node shoot,spike1,spike2,gate,loading;
+    public static Pose2D parkPos = new Pose2D(-800,-500,-Math.PI/3);
+    public static Pose2D spike1Pos = new Pose2D(-1200,610,-Math.PI/2);
+    public static Pose2D spike2Pos =new Pose2D(-1950,760,-Math.PI*2/3);
+    Node shoot,spike1,spike2,gate,loading,park;
     public Node currentNode;
     public CloseRedBetter(HardwareMap hardwareMap){
+        timer = new ElapsedTime();
         Initializer.start(hardwareMap);
         odo = new Odo();
         chassis = new Chassis(Chassis.State.PID);
         intake = new Intake();
         shooter = new Shooter(Shooter.State.SHOOT);
         Turret.allianceState = Turret.AllianceState.BLUE;
-        Storage.state=Storage.State.TRANSFER;
+        Storage.state = Storage.State.TRANSFER;
+        timer.startTime();
+        shoot = new Node("shoot");
+        spike1 =  new Node("spike1");
+        spike2 = new Node("spike2");
+        gate = new Node("gate");
+        loading = new Node("loading");
+        park = new Node("park");
+        currentNode = shoot;
         odo.reset();
         shoot.addConditions(
                 ()->{
-                    if (Storage.state != Storage.State.TRANSFER && Storage.state !=Storage.State.RESET && Storage.state!= Storage.State.SHOOT){
-                        Storage.state = Storage.State.TRANSFER;
-                    }
-                    if ((Intake.state == Intake.State.INTAKE || Intake.state == Intake.State.REVERSE) && chassis.inPosition(100,100,0.2)){
+                    chassis.setTargetPosition(shootPos[Math.min(shoot.index,shootPos.length-1)]);
+                    if ((Intake.state == Intake.State.INTAKE || Intake.state == Intake.State.REVERSE) && Storage.state == Storage.State.TRANSFER){
                         Intake.state = Intake.State.IDLE;
                     }
-                    else if (Storage.state == Storage.State.TRANSFER && !chassis.inPosition(100,100,0.2)){
-                        Intake.state = Intake.State.REVERSE;
-                    }
-                    if (Storage.state == Storage.State.TRANSFER && chassis.inPosition(60,60,0.17) && Math.abs(Initializer.pp.getVelX(DistanceUnit.MM))<40
-                            && Math.abs(Initializer.pp.getVelY(DistanceUnit.MM))<40 && FlyWheel.isReady() && ok){
+                    if (chassis.inPosition(60,60,0.5) && FlyWheel.isReady() && ok){
                         Storage.state = Storage.State.SHOOT;
                         ok = false;
                     }
-                    Shooter.state = Shooter.State.SHOOT;
-                    chassis.setTargetPosition(shootPos[Math.min(shoot.index,shootPos.length-1)]);
-
                 },
                 ()->{
-                    if (Storage.state == Storage.State.RESET){
-                        timer.reset(); ok =true;
-                        gate.index = 0;
+                    if (Storage.state == Storage.State.RESET && !ok) {
+                        ok = true; timer.reset();
+                        gate.index =0;
                         return true;
                     }
                     return false;
                 },
-                new Node[]{spike1,spike2,gate,gate,gate,loading}
+                new Node[]{spike2,gate,gate,spike1,gate,gate,gate,park}
         );
         spike1.addConditions(
                 ()->{
-                    Shooter.state = Shooter.State.IDLE;
-                    Intake.state = Intake.State.INTAKE;
                     chassis.setTargetPosition(spike1Pos);
+                    Intake.state = Intake.State.INTAKE;
 
                 },
                 ()->{
-                    if (chassis.inPosition(30,30,0.1) || Storage.state == Storage.State.TRANSFER){
-                        timer.reset();
+                    if (chassis.inPosition(30,30,0.1)){
+                        Intake.state = Intake.State.REVERSE;
+                        Storage.state = Storage.State.TRANSFER;
                         return true;
                     }
                     return false;
@@ -98,29 +103,12 @@ public class CloseRedBetter {
         );
         spike2.addConditions(
                 ()->{
-                    Shooter.state = Shooter.State.IDLE;
-                    Intake.state = Intake.State.INTAKE;
                     chassis.setTargetPosition(spike2Pos);
-
-                },
-                ()->{
-                    if (chassis.inPosition(30,30,0.1) || Storage.state == Storage.State.TRANSFER){
-                        timer.reset();
-                        return true;
-                    }
-                    return false;
-                },
-                new Node[]{shoot}
-        );
-        loading.addConditions(
-                ()->{
                     Intake.state = Intake.State.INTAKE;
-                    chassis.setTargetPosition(loadingPos);
-                    Shooter.state = Shooter.State.IDLE;
                 },
                 ()->{
-                    if (chassis.inPosition(30,30,0.1) || Storage.state == Storage.State.TRANSFER) {
-                        timer.reset();
+                    if (chassis.inPosition(30,30,0.1)){
+                        Storage.state = Storage.State.TRANSFER;
                         return true;
                     }
                     return false;
@@ -129,32 +117,50 @@ public class CloseRedBetter {
         );
         gate.addConditions(
                 ()->{
-                    chassis.setTargetPosition(gatePos[Math.min(gate.index, gatePos.length-1)]);
                     Intake.state = Intake.State.INTAKE;
-                    Shooter.state = Shooter.State.IDLE;
-
+                    chassis.setTargetPosition(gatePos[Math.min(gate.index, gatePos.length-1)]);
                 },
                 ()->{
-                    if (gate.index!=1 && chassis.inPosition(100,100,0.2)){
+                    if (gate.index ==0) {
                         timer.reset();
-                        return true;
+                        return chassis.inPosition(30, 30, 0.08);
                     }
-                    else if (gate.index == 1 && (Storage.state == Storage.State.TRANSFER || timer.seconds()>3.5)){
-                        timer.reset();
-                        return true;
+                    else if (gate.index == 1){
+                        if (Storage.state == Storage.State.TRANSFER){
+                            Intake.state = Intake.State.REVERSE;
+                            return true;
+                        }
+                        else if (timer.seconds()>3.25){
+                            Intake.state = Intake.State.REVERSE;
+                            Storage.state = Storage.State.TRANSFER;
+                            return true;
+                        }
                     }
                     return false;
                 },
-                new Node[]{shoot}
+                new Node[]{gate,shoot}
+        );
+        park.addConditions(
+                ()->{
+                    Shooter.state = Shooter.State.IDLE;
+                    Intake.state = Intake.State.IDLE;
+                    chassis.setTargetPosition(parkPos);
+                },
+                ()->{
+                    return true;
+                },
+                new Node[]{park}
         );
     }
     public void update(){
         currentNode.run();
         chassis.update();
         shooter.update();
+        odo.update();
         intake.update();
         if (currentNode.transition()){
             currentNode = currentNode.next[Math.min(currentNode.index++,currentNode.next.length-1)];
         }
+
     }
 }

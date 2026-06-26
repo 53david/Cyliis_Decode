@@ -18,7 +18,7 @@ public class Latch {
         TRANSFER,
     };
     public static State state;
-    public static double maxVel=20, acc=15, dec=16;
+    public static double maxVel=20, acc=16, dec=16;
     BetterMotionProfile profile;
     public Latch(){
         transfer.setPosition(idlePos);
@@ -32,7 +32,9 @@ public class Latch {
     public void update(){
         stateUpdate();
         profile.update();
-        transfer.setPosition(currentPos);
+        if(profile.finalPosition != currentPos)
+            profile.setMotion(profile.getPosition(), currentPos, profile.getVelocity());
+        transfer.setPosition(profile.getPosition());
     }
     public void stateUpdate(){
         switch (state){
@@ -45,12 +47,13 @@ public class Latch {
         }
     }
     public void test(){
+        stateUpdate();
+        profile.update();
         if(profile.finalPosition != currentPos)
             profile.setMotion(profile.getPosition(), currentPos, profile.getVelocity());
-        profile.update();
+        transfer.setPosition(profile.getPosition());
         telemetryM.addData("pos",profile.getPosition());
         telemetryM.addData("vel",profile.getVelocity());
         telemetryM.update();
-        transfer.setPosition(profile.getPosition());
     }
 }

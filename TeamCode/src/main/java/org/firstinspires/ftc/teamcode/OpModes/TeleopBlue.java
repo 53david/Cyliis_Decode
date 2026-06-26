@@ -6,8 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.Voltage;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.gm1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.isAutonomousActive;
+import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.pp;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.prevgm1;
 
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.gm2;
@@ -15,6 +17,7 @@ import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.prevgm2;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.telemetryM;
 
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Components.Intake.ColorDetection;
 import org.firstinspires.ftc.teamcode.Components.Intake.Intake;
@@ -29,7 +32,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
 import org.firstinspires.ftc.teamcode.Wrappers.LimeLight;
 
-@TeleOp(name = "Vlad e slab, David rege Blue")
+@TeleOp(name = "We Toma")
 public class TeleopBlue extends LinearOpMode {
 
     Intake intake;
@@ -85,14 +88,14 @@ public class TeleopBlue extends LinearOpMode {
                 telemetry.addLine("Waiting for stream..");
 
             }
-            telemetryM.addData("Is object nearby?",ColorDetection.isBallInStorage());
-            telemetryM.addData("Is storage spinning",Storage.IsStorageSpinning());
-            telemetryM.addData("Storage pos",Math.toDegrees(Storage.FromVtoRads()));
-            telemetryM.addData("Target pos",Math.toDegrees(Storage.target));
+            Voltage = 12.90 / voltageSensor.getVoltage();
+            telemetryM.addData("Velocity X", pp.getVelX(DistanceUnit.MM));
+            telemetryM.addData("Velocity Y",pp.getVelY(DistanceUnit.MM));
+            telemetryM.addData("Distance",Odo.distance());
             telemetryM.addData("Voltage",voltageSensor.getVoltage());
             telemetryM.addData("Flywheel velocity", FlyWheel.getVelocity());
-            telemetryM.addData("Target Velocity",ShooterCalculator.fwVel(Odo.distance()));
-            telemetryM.addData("Hood Angle",ShooterCalculator.hoodAngle(Odo.distance()));
+            telemetryM.addData("Target Velocity",ShooterCalculator.vel);
+            telemetryM.addData("Hood Angle",ShooterCalculator.hoodPos);
             telemetryM.update();
             telemetry.update();
         }

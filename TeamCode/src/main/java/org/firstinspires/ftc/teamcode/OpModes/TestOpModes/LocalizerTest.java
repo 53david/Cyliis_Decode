@@ -16,6 +16,9 @@ public class LocalizerTest extends LinearOpMode {
     public void runOpMode()throws InterruptedException{
         Initializer.start(hardwareMap);
         odo = new Odo();
+        odo.reset();
+        odo.recalibrate();
+        waitForStart();
         while (opModeIsActive()){
             odo.update();
             telemetryM.addData("X",Odo.getX());
