@@ -21,7 +21,11 @@ public class BetterGamepad {
         if (!cross()){
             timer.reset();
         }
-       return timer.seconds()>time;
+        if (timer.seconds()>time) {
+            timer.reset();
+            return true;
+        }
+        return false;
     }
     public boolean wasCrossPressed(){
         return gm1.crossWasPressed();
@@ -33,7 +37,11 @@ public class BetterGamepad {
         if (!circle()){
             timer.reset();
         }
-        return timer.seconds()>time;
+        if (timer.seconds()>time) {
+            timer.reset();
+            return true;
+        }
+        return false;
     }
     public boolean wasCirclePressed(){
         return gm1.crossWasPressed();
@@ -45,7 +53,11 @@ public class BetterGamepad {
         if (!square()){
             timer.reset();
         }
-        return timer.seconds()>time;
+        if (timer.seconds()>time) {
+            timer.reset();
+            return true;
+        }
+        return false;
     }
     public boolean wasSquarePressed(){
         return gm1.crossWasPressed();
@@ -63,7 +75,11 @@ public class BetterGamepad {
         if (!triangle()){
             timer.reset();
         }
-        return timer.seconds()>time;
+        if (timer.seconds()>time) {
+            timer.reset();
+            return true;
+        }
+        return false;
     }
     public boolean getInput(){
         return gm1.cross || gm1.triangle || gm1.circle || gm1.square || gm1.dpad_up || gm1.dpad_down || gm1.dpad_left || gm1.dpad_right;
