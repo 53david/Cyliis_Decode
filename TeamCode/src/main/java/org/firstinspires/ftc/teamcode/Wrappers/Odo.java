@@ -11,6 +11,7 @@ import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
+import org.firstinspires.ftc.teamcode.Components.Intake.Storage;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
 import org.firstinspires.ftc.teamcode.Math.LowPassFilter;
 import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
@@ -64,7 +65,7 @@ public class Odo {
     private static final LowPassFilter yVelocityFilter = new LowPassFilter(filterParameter, 0);
 
 
-    public static double xDeceleration = 100 * 20 , yDeceleration = 150 * 20;
+    public static double xDeceleration = 100 * 23 , yDeceleration = 150 * 23;
     public static double xRobotVelocity, yRobotVelocity;
     public static double forwardGlide, lateralGlide;
     public static double xGlide, yGlide;
@@ -86,12 +87,6 @@ public class Odo {
         return Math.sqrt(
                 (predictedX - Turret.goalPositionX) * (predictedX - Turret.goalPositionX) +
                         (predictedY - Turret.goalPositionY) * (predictedY - Turret.goalPositionY)
-        );
-    }
-    public static double rawDistance(){
-        return Math.sqrt(
-                (pp.getPosX(DistanceUnit.MM) - Turret.goalPositionX) * (pp.getPosX(DistanceUnit.MM) - Turret.goalPositionX) +
-                        (pp.getPosY(DistanceUnit.MM) - Turret.goalPositionY) * (pp.getPosY(DistanceUnit.MM) - Turret.goalPositionY)
         );
     }
     public static double avgVel(){
@@ -127,5 +122,9 @@ public class Odo {
         predictedX = x + xGlide;
         predictedY = y + yGlide;
         ShooterCalculator.updateTrajectory(pp.getPosX(MM),pp.getPosY(MM),pp.getVelX(MM),pp.getVelY(MM),Turret.goalPositionX,Turret.goalPositionY);
+        if (LimeLight.getTagAngle() != 1e9 && Storage.state != Storage.State.TRANSFER && Storage.state != Storage.State.SHOOT){
+            pp.setPosX(LimeLight.absoluteX,MM);
+            pp.setPosY(LimeLight.absoluteY,MM);
+        }
     }
 }

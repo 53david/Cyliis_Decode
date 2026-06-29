@@ -17,6 +17,8 @@ public class LimeLight {
         STREAM,
     }
     public boolean ok;
+    public static double absoluteX = 0;
+    public static double absoluteY = 0;
     public static StreamState streamState;
     public static State state;
     public static double allianceID= 0;
@@ -98,12 +100,17 @@ public class LimeLight {
         return limelight3A.isRunning();
     }
     public static double getTagAngle(){
-        if (result!=null && !result.getFiducialResults().isEmpty()) {
-            for (var tag : result.getFiducialResults()) {
-                if (tag.getFiducialId() == allianceID) {
-                    return tag.getTargetXDegrees();
+        if (streamState!=StreamState.CLOSE) {
+            if (result != null && !result.getFiducialResults().isEmpty()) {
+                for (var tag : result.getFiducialResults()) {
+                    if (tag.getFiducialId() == allianceID) {
+                        absoluteX = result.getBotpose().getPosition().x * 0.001;
+                        absoluteY = result.getBotpose().getPosition().y * 0.001;
+                        return tag.getTargetXDegrees();
+                    }
                 }
             }
+            return 1e9;
         }
         return 1e9;
     }

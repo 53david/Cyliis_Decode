@@ -44,7 +44,7 @@ public class ShooterCalculator {
         double turretOffset = Math.atan2(vPerpendicular, vCompensation);
 
         targetAngle = gAngle + turretOffset;
-        hoodPos = FromRadsToPos(Math.clamp(newAlpha, Math.PI/6, Math.PI/3));
+        hoodPos = FromRadsToPos(newAlpha);
         vel = FromVelocityToTicks(velocity);
     }
 
