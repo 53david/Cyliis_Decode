@@ -5,7 +5,8 @@ import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.isAutonomousAc
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Trajectories.FarRed;
+import org.firstinspires.ftc.teamcode.LogicNodes.FarRed;
+
 @Autonomous
 public class RedFar extends LinearOpMode {
     public FarRed farRed;
