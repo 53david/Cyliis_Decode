@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Components.Intake.Intake;
+import org.firstinspires.ftc.teamcode.Components.Intake.Latch;
 import org.firstinspires.ftc.teamcode.Components.Intake.Storage;
 import org.firstinspires.ftc.teamcode.Components.Shooter.FlyWheel;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Shooter;
@@ -46,21 +47,27 @@ public class CloseBlue {
         loading = new Node("loading");
         park = new Node("park");
         currentNode = shoot;
-        odo.reset();
         shoot.addConditions(
                 ()->{
                     chassis.setTargetPosition(shootPos[Math.min(shoot.index,shootPos.length-1)]);
-                    if ((Intake.state == Intake.State.INTAKE || Intake.state == Intake.State.REVERSE) && Storage.state == Storage.State.TRANSFER){
-                        Intake.state = Intake.State.IDLE;
+                    if (!Storage.IsStorageSpinning() && !chassis.inPosition(70,70,0.4)){
+                        Storage.state = Storage.State.TRANSFER;
+                        Intake.state = Intake.State.REVERSE;
                     }
-                    if (chassis.inPosition(60,60,0.5) && FlyWheel.isReady() && ok){
+                    if (Latch.state != Latch.State.TRANSFER && ok && !Storage.IsStorageSpinning()){
+                        Latch.state = Latch.State.TRANSFER;
+                    }
+
+                    if (chassis.inPosition(30,30,0.05) && Odo.xVelocity<20 && Odo.yVelocity<20 && FlyWheel.isReady() && ok){
+                        Intake.state = Intake.State.INTAKE;
                         Storage.state = Storage.State.SHOOT;
                         ok = false;
                     }
                 },
                 ()->{
-                    if (Storage.state == Storage.State.RESET && !ok) {
+                    if (Storage.state == Storage.State.RESET) {
                         ok = true; timer.reset();
+                        Latch.state = Latch.State.IDLE;
                         gate.index =0;
                         return true;
                     }
@@ -70,33 +77,24 @@ public class CloseBlue {
         );
         spike1.addConditions(
                 ()->{
-                    chassis.setTargetPosition(spike1Pos);
+                    chassis.setTargetPosition(spike1Pos[Math.min(spike1.index,spike1Pos.length-1)]);
                     Intake.state = Intake.State.INTAKE;
 
                 },
                 ()->{
-                    if (chassis.inPosition(30,30,0.1)){
-                        Intake.state = Intake.State.REVERSE;
-                        Storage.state = Storage.State.TRANSFER;
-                        return true;
-                    }
-                    return false;
+                    return chassis.inPosition(30,30,0.2) || Storage.state == Storage.State.TRANSFER;
                 },
-                new Node[]{shoot}
+                new Node[]{spike1,shoot}
         );
         spike2.addConditions(
                 ()->{
-                    chassis.setTargetPosition(spike2Pos);
+                    chassis.setTargetPosition(spike2Pos[Math.min(spike2.index,spike1Pos.length-1)]);
                     Intake.state = Intake.State.INTAKE;
                 },
                 ()->{
-                    if (chassis.inPosition(30,30,0.1)){
-                        Storage.state = Storage.State.TRANSFER;
-                        return true;
-                    }
-                    return false;
+                    return chassis.inPosition(30,30,0.2) || Storage.state == Storage.State.TRANSFER;
                 },
-                new Node[]{shoot}
+                new Node[]{spike2,shoot}
         );
         gate.addConditions(
                 ()->{
@@ -106,18 +104,10 @@ public class CloseBlue {
                 ()->{
                     if (gate.index ==0) {
                         timer.reset();
-                        return chassis.inPosition(30, 30, 0.08);
+                        return chassis.inPosition(200, 200, 0.6);
                     }
                     else if (gate.index == 1){
-                        if (Storage.state == Storage.State.TRANSFER){
-                            Intake.state = Intake.State.REVERSE;
-                            return true;
-                        }
-                        else if (timer.seconds()>3.25){
-                            Intake.state = Intake.State.REVERSE;
-                            Storage.state = Storage.State.TRANSFER;
-                            return true;
-                        }
+                       return timer.seconds()>2.5 || Storage.state == Storage.State.TRANSFER;
                     }
                     return false;
                 },

@@ -20,10 +20,10 @@ public class Hood {
     public void updateState(){
         switch (state){
             case IDLE :
-                hood.setPosition(ShooterCalculator.hoodPos);
+                hood.setPosition(ShooterCalculator.hoodAngle(Odo.distance()));
                 break;
             case SHOOT:
-                hood.setPosition(ShooterCalculator.hoodPos - (FlyWheel.vel - FlyWheel.getVelocity())*ShooterCalculator.regression);
+                hood.setPosition(ShooterCalculator.hoodAngle(Odo.distance()) - (FlyWheel.vel - FlyWheel.getVelocity())*ShooterCalculator.regression);
                 break;
         }
     }

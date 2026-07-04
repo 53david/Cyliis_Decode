@@ -89,13 +89,9 @@ public class TeleopBlue extends LinearOpMode {
 
             }
             Voltage = 12.90 / voltageSensor.getVoltage();
-            telemetryM.addData("Velocity X", pp.getVelX(DistanceUnit.MM));
-            telemetryM.addData("Velocity Y",pp.getVelY(DistanceUnit.MM));
-            telemetryM.addData("Distance",Odo.distance());
-            telemetryM.addData("Voltage",voltageSensor.getVoltage());
-            telemetryM.addData("Flywheel velocity", FlyWheel.getVelocity());
-            telemetryM.addData("Target Velocity",ShooterCalculator.vel);
-            telemetryM.addData("Hood Angle",ShooterCalculator.hoodPos);
+            telemetryM.addData("State",Storage.state);
+            telemetryM.addData("Error",Storage.error);
+            telemetryM.addData("Angle",Storage.angle);
             telemetryM.update();
             telemetry.update();
         }

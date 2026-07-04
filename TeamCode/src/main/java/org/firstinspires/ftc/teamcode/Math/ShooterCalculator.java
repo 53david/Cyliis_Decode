@@ -15,13 +15,14 @@ public class ShooterCalculator {
     public static double Ka = 0.00635;
     public static double regression = 0.00045;
     public static double g = 9810.0;
-    public static double goalHeight = 67.5;
-    public static double theta = -Math.PI / 6;
+    public static double goalHeight = 735;
+    public static double theta = -Math.toRadians(30);
     public static double targetAngle = 0;
     public static double hoodPos = 0.5;
     public static double vel = 1200;
+    public static double gv = 0;
 
-    public static void updateTrajectory(double robotX, double robotY, double velX, double velY, double goalX, double goalY) {
+    public void updateTrajectory(double robotX, double robotY, double velX, double velY, double goalX, double goalY) {
         double distance = Math.hypot(goalX - robotX, goalY - robotY);
         double gAngle = Math.atan2(goalY - robotY, goalX - robotX);
 
@@ -39,21 +40,26 @@ public class ShooterCalculator {
         double vy = v0 * Math.sin(alpha);
 
         double newAlpha = Math.atan2(vy, vx);
-        double velocity = Math.hypot(vx, vy);
-
-        double turretOffset = Math.atan2(vPerpendicular, vCompensation);
-
-        targetAngle = gAngle + turretOffset;
+        double velocity = Math.hypot(vx,vy);
         hoodPos = FromRadsToPos(newAlpha);
         vel = FromVelocityToTicks(velocity);
-    }
 
+        double turretOffset = Math.atan2(vPerpendicular, vCompensation);
+        targetAngle = gAngle -turretOffset;
+    }
+    public static double fwVel(double delta) {
+        return Math.clamp(0.318182*delta+1081.81818 - 75,1300,2300);
+    }
+    public static double hoodAngle(double delta){
+        return Math.clamp((-0.0000631481*Math.pow(delta,2)
+                +0.413426*delta-180.32593) * 0.001,0.11,0.496);
+    }
     private static double FromRadsToPos(double angle) {
-        return Math.clamp(0.742308 * angle-0.276,0.11,0.496);
+        return Math.clamp(-0.742308*angle+0.882,0.11,0.496);
     }
 
     private static double FromVelocityToTicks(double velocity) {
-        return Math.clamp(((velocity / (Math.PI * 72)) * 28), 1300, 2200);
+        return Math.clamp(velocity / Math.PI, 1300, 2200);
 
     }
 }

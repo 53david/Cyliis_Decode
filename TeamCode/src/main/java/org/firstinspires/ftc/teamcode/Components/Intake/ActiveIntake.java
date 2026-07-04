@@ -39,7 +39,7 @@ public class ActiveIntake {
         stateUpdate();
         if (!Initializer.isAutonomousActive){
             if (gm1.right_bumper){
-                if (Storage.state == Storage.State.TRANSFER){
+                if (Storage.state == Storage.State.TRANSFER && !Storage.IsStorageSpinning()){
                     Intake.state = Intake.State.REVERSE;
                 }
                 else {
@@ -53,6 +53,9 @@ public class ActiveIntake {
                 Intake.state =Intake.State.IDLE;
             }
         }
+    }
+    public void test(double x){
+        intakeMotor.setPower(x);
     }
 
 }

@@ -47,7 +47,13 @@ public class Turret {
     }
 
     private void updateServosPosition() {
-        double rAngle = ShooterCalculator.targetAngle - Odo.getHeading();
+        double rAngle = -Odo.getHeading();
+        if (Odo.avgVel()>750){
+            rAngle += ShooterCalculator.targetAngle;
+        }
+        else {
+            rAngle += targetAngle;
+        }
         if (LimeLight.streamState == LimeLight.StreamState.STREAM && LimeLight.getPipeline() == 2){
             rAngle += Math.toRadians(LimeLight.getHeading());
         }
@@ -77,10 +83,18 @@ public class Turret {
     public void stateUpdate(){
         switch (allianceState){
             case BLUE:
-                goalPositionX = 0; goalPositionY = 800;
+                if(gm1.right_stick_y>0.5 && prevgm1.right_stick_y<0.5)Odo.offsetY+=40;
+                if(gm1.right_stick_y<-0.5 && prevgm1.right_stick_y>-0.5)Odo.offsetY-=40;
+                if(gm1.right_stick_x>0.5 && prevgm1.right_stick_x<0.5)Odo.offsetX-=40;
+                if(gm1.right_stick_x<-0.5 && gm1.right_stick_x>-0.5)Odo.offsetX+=40;
+                goalPositionX = 20; goalPositionY = 820;
                 break;
             case RED:
                 goalPositionX = -20; goalPositionY = -820;
+                if(gm1.right_stick_y>0.5 && prevgm1.right_stick_y<0.5)Odo.offsetY-=40;
+                if(gm1.right_stick_y<-0.5 && prevgm1.right_stick_y>-0.5)Odo.offsetY+=40;
+                if(gm1.right_stick_x>0.5 && prevgm1.right_stick_x<0.5)Odo.offsetX+=40;
+                if(gm1.right_stick_x<-0.5 && gm1.right_stick_x>-0.5)Odo.offsetX-=40;
                 break;
         }
         switch (state){

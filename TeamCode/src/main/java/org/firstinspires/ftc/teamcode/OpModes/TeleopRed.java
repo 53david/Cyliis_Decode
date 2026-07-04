@@ -87,7 +87,6 @@ public class TeleopRed extends LinearOpMode {
             }
             telemetryM.addData("Is object nearby?",ColorDetection.isBallInStorage());
             telemetryM.addData("Is storage spinning",Storage.IsStorageSpinning());
-            telemetryM.addData("Storage pos",Math.toDegrees(Storage.FromVtoRads()));
             telemetryM.addData("Target pos",Math.toDegrees(Storage.target));
             telemetryM.addData("Voltage",voltageSensor.getVoltage());
             telemetryM.addData("Flywheel velocity", FlyWheel.getVelocity());

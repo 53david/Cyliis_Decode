@@ -43,14 +43,13 @@ public class CloseRed{
     loading = new Node("loading");
     park = new Node("park");
     currentNode = shoot;
-    odo.reset();
     shoot.addConditions(
             ()->{
                 chassis.setTargetPosition(shootPos[Math.min(shoot.index,shootPos.length-1)]);
                 if ((Intake.state == Intake.State.INTAKE || Intake.state == Intake.State.REVERSE) && Storage.state == Storage.State.TRANSFER){
                     Intake.state = Intake.State.IDLE;
                 }
-                if (chassis.inPosition(60,60,0.5) && FlyWheel.isReady() && ok){
+                if (chassis.inPosition(100,100,0.5) && FlyWheel.isReady() && ok){
                     Storage.state = Storage.State.SHOOT;
                     ok = false;
                 }

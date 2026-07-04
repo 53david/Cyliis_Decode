@@ -40,7 +40,7 @@ public class FlyWheel {
     public void updateState(){
         switch (state){
             case IDLE :
-                vel = 0;
+                vel = 450;
                 break;
             case SHOOT:
                 vel = ShooterCalculator.vel;

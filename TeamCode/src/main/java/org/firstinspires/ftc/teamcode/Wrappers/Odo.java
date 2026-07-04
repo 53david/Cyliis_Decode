@@ -26,7 +26,8 @@ public class Odo {
     }
     public static double power = -1;
     public static State state = State.CLOSE;
-    public  static double heading,x ,y, xVelocity, yVelocity, predictedX, predictedY;
+    public  static double heading,x ,y, xVelocity, yVelocity, predictedX, predictedY,offsetX = 0,offsetY = 0;
+    ShooterCalculator shooterCalculator = new ShooterCalculator();
     public Odo(){
         pp.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED , org.firstinspires.ftc.teamcode.Wrappers.GoBildaPinpointDriver.EncoderDirection.FORWARD);
         pp.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
@@ -49,10 +50,10 @@ public class Odo {
         return pp.getPosY(MM);
     }
     public static double velX(){
-        return pp.getVelX(MM);
+        return xVelocity;
     }
     public static double velY(){
-        return pp.getVelY(MM);
+        return yVelocity;
     }
     public void reset() {
         pp.setPosition(new Pose2D(MM , 0 , 0 , RADIANS , 0));
@@ -113,18 +114,20 @@ public class Odo {
     public void update() {
         pp.update();
         heading=pp.getHeading(RADIANS);
-        x=pp.getPosX(MM);
-        y=pp.getPosY(MM);
+        x=pp.getPosX(MM) + offsetX;
+        y=pp.getPosY(MM) + offsetY;
         xVelocity = xVelocityFilter.getValue(pp.getVelocity().getX(MM));
         yVelocity = yVelocityFilter.getValue(pp.getVelocity().getY(MM));
         updateGlide();
         stateUpdate();
         predictedX = x + xGlide;
         predictedY = y + yGlide;
-        ShooterCalculator.updateTrajectory(pp.getPosX(MM),pp.getPosY(MM),pp.getVelX(MM),pp.getVelY(MM),Turret.goalPositionX,Turret.goalPositionY);
-        if (LimeLight.getTagAngle() != 1e9 && Storage.state != Storage.State.TRANSFER && Storage.state != Storage.State.SHOOT){
-            pp.setPosX(LimeLight.absoluteX,MM);
-            pp.setPosY(LimeLight.absoluteY,MM);
+        shooterCalculator.updateTrajectory(pp.getPosX(MM),pp.getPosY(MM),xVelocity,yVelocity,Turret.goalPositionX,Turret.goalPositionY);
+        if (LimeLight.streamState == LimeLight.StreamState.STREAM) {
+            if (LimeLight.getTagAngle() != 1e9 && Storage.state != Storage.State.TRANSFER && Storage.state != Storage.State.SHOOT) {
+                pp.setPosX(LimeLight.absoluteX, MM);
+                pp.setPosY(LimeLight.absoluteY, MM);
+            }
         }
     }
 }

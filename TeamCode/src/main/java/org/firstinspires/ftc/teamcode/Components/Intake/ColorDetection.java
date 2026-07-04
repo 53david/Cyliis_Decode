@@ -59,6 +59,7 @@ public class ColorDetection {
                 ball3 = "Waiting for artifact...";
             }
         }
+
     }
     public static boolean isBallInStorage(){
         return !proximitySensor.getState();
