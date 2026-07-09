@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Pose2D;
 public class Chassis{
 
     public enum State{
-        DRIVE , PID;
+        DRIVE , PID, IDLE;
     }
     public static State state;
 
@@ -144,7 +144,7 @@ public class Chassis{
             double y = X * Math.sin(heading) + Y * Math.cos(heading);
             setTargetVector(x, y, rx);
         }
-        else {
+        else if (state == State.PID){
             controllerX.kp=kp;
             controllerY.kp=kp;
 
@@ -170,6 +170,12 @@ public class Chassis{
 
             setTargetVector(y * Math.cos(-heading) - x * Math.sin(-heading), y * Math.sin(-heading) + x * Math.cos(-heading), rotation);
 
+        }
+        else if (state == State.IDLE){
+            frontLeft.setPower(0);
+            backLeft.setPower(0);
+            frontRight.setPower(0);
+            backRight.setPower(0);
         }
     }
 

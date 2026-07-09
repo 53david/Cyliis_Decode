@@ -39,7 +39,7 @@ public class Storage {
         SHOOT,
         RESET,
     }
-    public static State state;
+    public static State state,nextState;
     public Storage(){
         timer.startTime();
         state = State.RESET;
@@ -50,41 +50,32 @@ public class Storage {
         error = target - angle;
         switch (state){
             case BALL1:
+                nrBalls = 1;
                 target = ballPos1;
-                if (ColorDetection.isBallInStorage() && !IsStorageSpinning()){
-                    state = State.BALL2;
-                    nrBalls = 1;
-                }
+                nextState = State.BALL2;
                 break;
 
             case BALL2:
                 target = ballPos2;
-
-                if (ColorDetection.isBallInStorage() && !IsStorageSpinning()){
-                    state = State.BALL3;
-                    nrBalls = 2;
-                }
+                nrBalls = 1;
+                nextState = State.BALL3;
                 break;
 
             case BALL3:
                 target = ballPos3;
-
-                if (ColorDetection.isBallInStorage() && !IsStorageSpinning()){
-                    state = State.TRANSFER;
-                    nrBalls = 3;
-                    isTransferReady = true;
-                }
+                nrBalls = 2;
+                nextState = State.TRANSFER;
                 break;
 
             case TRANSFER:
                 target = specialPos;
-                isTransferReady = false;
+                nextState = State.SHOOT;
                 if(!IsStorageSpinning()){
+                    isTransferReady = false;
                     Latch.state = Latch.State.TRANSFER;
                 }
-                if (!IsStorageSpinning() && gm1.cross && prevgm1.cross != gm1.cross){
-                    state = State.SHOOT;
-                    timer.reset();
+                else {
+                    isTransferReady = true;
                 }
                 if (isAutonomousActive){
                     timer.reset();
@@ -94,10 +85,9 @@ public class Storage {
             case SHOOT:
                 Hood.state = Hood.State.SHOOT;
                 spin.setPower(Odo.power);
-
+                nextState = State.RESET;
                 if (timer.seconds()>0.5){
-                    state = State.RESET;
-                    timer.reset();
+                    goNext();
                 }
                 break;
 
@@ -105,18 +95,20 @@ public class Storage {
                 target = ballPos1; nrBalls = 0;
                 Latch.state = Latch.State.IDLE;
                 Hood.state = Hood.State.IDLE;
-                if (!IsStorageSpinning()) {
-                    state = State.BALL1;
-                }
+                nextState = State.BALL1;
                 break;
 
         }
     }
+    public void goNext(){
+        state = nextState;
+    }
     public void update(){
+        updatePID();
         stateUpdate();
+        updateAngle();
         spinUpdate();
-        updateHardware();
-        if (IsStorageSpinning()){
+        if (IsStorageSpinning() && !isAutonomousActive){
             if (failSafe.seconds()>1 && failSafe.seconds()<2){
                 spin.setPower(0);
                 return;
@@ -125,18 +117,22 @@ public class Storage {
                 failSafe.reset();
             }
         }
-        else {
+        else if (!IsStorageSpinning() && !isAutonomousActive){
             failSafe.reset();
-        }
-        if (state == State.TRANSFER && gm1.cross && prevgm1.cross != gm1.cross){
-            state = State.SHOOT;
-            timer.reset();
-
         }
         if (gm1.circle && prevgm1.circle!= gm1.circle && nrBalls>=1){
             state = State.TRANSFER;
         }
-
+        if ((state == State.BALL1 || state == State.BALL2 || state ==State.BALL3) && !IsStorageSpinning() && ColorDetection.isBallInStorage()){
+            goNext();
+        }
+        if (state == State.TRANSFER && gm1.cross && prevgm1.cross != gm1.cross){
+            timer.reset();
+            goNext();
+        }
+        if (state == State.RESET && !IsStorageSpinning()){
+            goNext();
+        }
     }
     public void spinUpdate(){
             double power = pid.calculate(0,-error) + Ks *Math.signum(error);
@@ -145,27 +141,29 @@ public class Storage {
             }
 
     }
-    public void updateHardware(){
+    public void updatePID(){
+        if (state == State.SHOOT){
+            pid.kp = 0;
+            pid.kd = 0;
+        }
+        else {
+            if (Math.abs(error) > 0.24) {
+                pid.kp = Kp;
+                pid.kd = Kd;
+            } else {
+                pid.kp = KP;
+                pid.kd = KD;
+            }
+        }
+    }
+    public void updateAngle(){
         angle = Math.abs(encoder.getVoltage()/encoder.getMaxVoltage()) * Math.PI*2;
         error = target - angle;
         if (Math.abs(error)>Math.PI){
             error = -Math.signum (error) * ( 2 * Math.PI - Math.abs(error));
-        }
-        if (Math.abs(error)>0.24){
-            pid.kp = Kp;
-            pid.kd = Kd;
-        }
-        else {
-            pid.kp =KP;
-            pid.kd = KD;
         }
     }
     public static boolean IsStorageSpinning(){
-        angle = Math.abs(encoder.getVoltage()/encoder.getMaxVoltage()) * Math.PI*2;
-        error = target - angle;
-        if (Math.abs(error)>Math.PI){
-            error = -Math.signum (error) * ( 2 * Math.PI - Math.abs(error));
-        }
         return Math.abs(error) > 0.26;
     }
 

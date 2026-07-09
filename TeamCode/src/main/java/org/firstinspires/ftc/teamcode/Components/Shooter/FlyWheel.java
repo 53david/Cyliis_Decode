@@ -29,7 +29,7 @@ public class FlyWheel {
         IDLE,
         SHOOT,
     }
-    public static double errorThreshold = 100;
+    public static double errorThreshold = 80;
     public static State state = State.SHOOT;
     public static double vel = 0;
     public static double rpm = 0;
@@ -43,7 +43,7 @@ public class FlyWheel {
                 vel = 450;
                 break;
             case SHOOT:
-                vel = ShooterCalculator.vel;
+                vel = ShooterCalculator.fwVel(Odo.distance());
                 break;
         }
     }

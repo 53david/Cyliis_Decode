@@ -71,8 +71,8 @@ public class BetterMotor {
         this.ki = ki;
         this.kd = kd;
     }
-    public void setPower(double a){
-        power = a;
+    public void setPower(double power){
+        power = power;
     }
     public void setCurrentPos(double a){
         currentPos = a;

@@ -7,10 +7,9 @@ import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.pp;
 
 import com.bylazar.configurables.annotations.Configurable;
 
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.firstinspires.ftc.teamcode.Components.Intake.Storage;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
 import org.firstinspires.ftc.teamcode.Math.LowPassFilter;
@@ -56,7 +55,7 @@ public class Odo {
         return yVelocity;
     }
     public void reset() {
-        pp.setPosition(new Pose2D(MM , 0 , 0 , RADIANS , 0));
+        pp.setPosition(new Pose2D(MM,0,0,RADIANS,0));
     }
     public void recalibrate(){
         pp.recalibrateIMU();
@@ -93,15 +92,23 @@ public class Odo {
     public static double avgVel(){
         return Math.hypot(pp.getVelX(MM),pp.getVelY(MM));
     }
+    public static void setPosition(org.firstinspires.ftc.teamcode.Wrappers.Pose2D pose2D){
+        pp.setPosX(pose2D.x,MM);
+        pp.setPosY(pose2D.y,MM);
+        pp.setHeading(pose2D.heading,RADIANS);
+    }
+    public static void setPosition(double posX,double posY,double h){
+        pp.setPosX(posX,MM);
+        pp.setPosY(posY,MM);
+        pp.setHeading(h,RADIANS);
+    }
     public void stateUpdate(){
         switch (state){
             case FAR :
                 power = -0.9;
-                Turret.angleOffset = 4;
                 break;
             case CLOSE:
                 power = -1;
-                Turret.angleOffset = 0;
                 break;
         }
         if (distance()>2800){

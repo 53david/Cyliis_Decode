@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Wrappers;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
@@ -11,6 +12,7 @@ public class BetterServo {
         PROFILE,
         NORMAL,
     };
+
     public State state;
     public double targetPos;
     public ServoImplEx servo;
@@ -34,8 +36,8 @@ public class BetterServo {
         profile.acceleration = acc;
         profile.deceleration = dec;
     }
-    public void setTargetPos(double a){
-        targetPos = a;
+    public void setTargetPos(double position){
+        targetPos = position;
     }
     public void setPWMRange(double usPulseLower, double usPulseUpper){
         servo.setPwmRange(new PwmControl.PwmRange(usPulseLower,usPulseUpper));

@@ -48,14 +48,14 @@ public class ShooterCalculator {
         targetAngle = gAngle -turretOffset;
     }
     public static double fwVel(double delta) {
-        return Math.clamp(0.318182*delta+1081.81818 - 75,1300,2300);
+        return Math.clamp(0.318182*delta+1081.81818 - 25,1300,2300);
     }
     public static double hoodAngle(double delta){
         return Math.clamp((-0.0000631481*Math.pow(delta,2)
-                +0.413426*delta-180.32593) * 0.001,0.11,0.496);
+                +0.413426*delta-180.32593) * 0.001,0.11,0.55);
     }
     private static double FromRadsToPos(double angle) {
-        return Math.clamp(-0.742308*angle+0.882,0.11,0.496);
+        return Math.clamp(-0.742308*angle+0.882,0.11,0.55);
     }
 
     private static double FromVelocityToTicks(double velocity) {

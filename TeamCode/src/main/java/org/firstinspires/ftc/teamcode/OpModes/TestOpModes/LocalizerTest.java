@@ -6,6 +6,7 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Trajectories.FarBlue;
 import org.firstinspires.ftc.teamcode.Wrappers.Initializer;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 @Configurable
@@ -16,8 +17,7 @@ public class LocalizerTest extends LinearOpMode {
     public void runOpMode()throws InterruptedException{
         Initializer.start(hardwareMap);
         odo = new Odo();
-        odo.reset();
-        odo.recalibrate();
+        Odo.setPosition(FarBlue.startPos);
         waitForStart();
         while (opModeIsActive()){
             odo.update();

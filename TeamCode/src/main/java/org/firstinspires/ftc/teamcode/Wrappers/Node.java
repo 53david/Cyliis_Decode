@@ -24,6 +24,12 @@ public class Node {
     {
         return condition.get();
     }
+    public String getName(){
+        if (name!=null) {
+            return name;
+        }
+        return "Unknown";
+    }
     public void reset(){
         index = 0;
     }

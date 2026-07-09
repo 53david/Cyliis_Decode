@@ -19,27 +19,28 @@ public class Turret {
     public static double goalPositionX = 0, goalPositionY = 0;
     public static double targetAngle = 0;
     public double targetPosition = 0.5;
-    public double maxAngle = Math.PI*2;
-    public static double dx =0;
+    public double maxAngle = Math.PI * 2;
+    public double offset = 0;
+    public static double dx = 0;
     public static double dy = 0;
-    public static double a = 1.1;
-    public double t = 0;
-    public static double angleOffset = 0;
-    public enum State{
+
+    public enum State {
         IDLE,
         ACTIVE,
     }
+
     public enum AllianceState {
         RED,
         BLUE,
     }
+
     public static AllianceState allianceState;
     public static State state;
 
     public Turret() {
         state = State.ACTIVE;
-        servo1.setPwmRange(new PwmControl.PwmRange(500 , 2500));
-        servo2.setPwmRange(new PwmControl.PwmRange(500 , 2500));
+        servo1.setPwmRange(new PwmControl.PwmRange(500, 2500));
+        servo2.setPwmRange(new PwmControl.PwmRange(500, 2500));
 
         servo1.setDirection(Servo.Direction.REVERSE);
         servo2.setDirection(Servo.Direction.REVERSE);
@@ -47,16 +48,7 @@ public class Turret {
     }
 
     private void updateServosPosition() {
-        double rAngle = -Odo.getHeading();
-        if (Odo.avgVel()>750){
-            rAngle += ShooterCalculator.targetAngle;
-        }
-        else {
-            rAngle += targetAngle;
-        }
-        if (LimeLight.streamState == LimeLight.StreamState.STREAM && LimeLight.getPipeline() == 2){
-            rAngle += Math.toRadians(LimeLight.getHeading());
-        }
+        double rAngle = targetAngle-Odo.getHeading();
         rAngle = normalizeRadians(rAngle);
         rAngle = rAngle / maxAngle;
         targetPosition = rAngle;
@@ -66,38 +58,44 @@ public class Turret {
         servo2.setPosition(targetPosition);
 
     }
+
     public void updateAngle() {
         dx = goalPositionX - Odo.getRawX();
         dy = goalPositionY - Odo.getRawY();
-        targetAngle = Math.atan2(dy,dx);
+        targetAngle = Math.atan2(dy, dx);
+        targetAngle += Math.toRadians(1)*offset;
 
     }
 
     public void update() {
         stateUpdate();
         updateAngle();
-        if (gm1.dpad_down && prevgm1.dpad_down){
+        if (gm1.dpad_down && prevgm1.dpad_down) {
             state = State.IDLE;
         }
+        if (gm1.ps && prevgm1.ps!=gm1.ps){
+            offset = 0;
+        }
     }
-    public void stateUpdate(){
-        switch (allianceState){
+
+    public void stateUpdate() {
+        switch (allianceState) {
             case BLUE:
-                if(gm1.right_stick_y>0.5 && prevgm1.right_stick_y<0.5)Odo.offsetY+=40;
-                if(gm1.right_stick_y<-0.5 && prevgm1.right_stick_y>-0.5)Odo.offsetY-=40;
-                if(gm1.right_stick_x>0.5 && prevgm1.right_stick_x<0.5)Odo.offsetX-=40;
-                if(gm1.right_stick_x<-0.5 && gm1.right_stick_x>-0.5)Odo.offsetX+=40;
-                goalPositionX = 20; goalPositionY = 820;
+                goalPositionX = 0;
+                goalPositionY = 840;
+                if (gm1.right_stick_x>0.5){
+                    offset -=0.5;
+                }
+                if (gm1.right_stick_x<-0.5){
+                    offset +=0.5;
+                }
                 break;
             case RED:
-                goalPositionX = -20; goalPositionY = -820;
-                if(gm1.right_stick_y>0.5 && prevgm1.right_stick_y<0.5)Odo.offsetY-=40;
-                if(gm1.right_stick_y<-0.5 && prevgm1.right_stick_y>-0.5)Odo.offsetY+=40;
-                if(gm1.right_stick_x>0.5 && prevgm1.right_stick_x<0.5)Odo.offsetX+=40;
-                if(gm1.right_stick_x<-0.5 && gm1.right_stick_x>-0.5)Odo.offsetX-=40;
+                goalPositionX = 0;
+                goalPositionY = -840;
                 break;
         }
-        switch (state){
+        switch (state) {
             case IDLE:
                 servo1.setPosition(0.05);
                 servo2.setPosition(0.05);
@@ -107,24 +105,11 @@ public class Turret {
                 break;
         }
     }
-    public double normalizeRadians(double angle){
+
+    public double normalizeRadians(double angle) {
         angle %= (2.0 * Math.PI);
         if (angle < 0) angle += (2.0 * Math.PI);
         return angle;
-
-    }
-    public void test(){
-
-        telemetryM.addData("Angle",targetAngle);
-        telemetryM.addData("X",Odo.getX());
-        telemetryM.addData("y",Odo.getY());
-        telemetryM.addData("Heading",Odo.getHeading());
-        telemetryM.addData("Goal X",goalPositionX);
-        telemetryM.addData("Goal Y",goalPositionY);
-        telemetryM.update();
-        stateUpdate();
-        updateAngle();
-        updateServosPosition();
 
     }
 }

@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.Trajectories.FarBlue.loadingPos;
 import static org.firstinspires.ftc.teamcode.Trajectories.FarBlue.parkPos;
 import static org.firstinspires.ftc.teamcode.Trajectories.FarBlue.shootPos;
 import static org.firstinspires.ftc.teamcode.Trajectories.FarBlue.spike3Pos;
+import static org.firstinspires.ftc.teamcode.Trajectories.FarBlue.startPos;
 import static org.firstinspires.ftc.teamcode.Trajectories.FarBlue.tunnelPos;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Components.Intake.Intake;
+import org.firstinspires.ftc.teamcode.Components.Intake.Latch;
 import org.firstinspires.ftc.teamcode.Components.Intake.Storage;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Shooter;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
@@ -45,23 +47,24 @@ public class FarBlue {
         tunnel = new Node("tunnel");
         park = new Node("park");
         currentNode = shoot;
+        Odo.setPosition(startPos);
         shoot.addConditions(
                 ()->{
-                    if ((Intake.state == Intake.State.INTAKE || Intake.state == Intake.State.REVERSE)
-                            && !storage.IsStorageSpinning()){
-                        Intake.state = Intake.State.IDLE;
+                    if (shoot.index == 0){
+                        chassis.setTargetPosition(startPos);
                     }
-                    Shooter.state = Shooter.State.SHOOT;
                     chassis.setTargetPosition(shootPos);
-                    if (Storage.state != Storage.State.TRANSFER && Storage.state!=Storage.State.RESET){
+                    if (chassis.inPosition(60,60,0.45)){
                         Storage.state = Storage.State.TRANSFER;
+                        Latch.state = Latch.State.TRANSFER;
                     }
-                    if (chassis.inPosition(60,60,0.25) && Storage.state == Storage.State.TRANSFER){
+                    if (chassis.inPosition(30,30,0.25) && Storage.state == Storage.State.TRANSFER){
                         Storage.state = Storage.State.SHOOT;
                     }
                 },
                 ()->{
                     if (Storage.state == Storage.State.RESET){
+                        Latch.state = Latch.State.IDLE;
                         timer.reset();
                         return true;
                     }
@@ -98,10 +101,10 @@ public class FarBlue {
                         Intake.state = Intake.State.REVERSE;
                     }
                     Shooter.state = Shooter.State.IDLE;
-                    chassis.setTargetPosition(spike3Pos[Math.min(tunnel.index, tunnelPos.length-1)]);
+                    chassis.setTargetPosition(tunnelPos);
                 },
                 ()->{
-                    if (Storage.state == Storage.State.TRANSFER || timer.seconds()>2.3){
+                    if (Storage.state == Storage.State.TRANSFER || chassis.inPosition(20,20,0.1)){
                         timer.reset();
                         return true;
                     }
@@ -133,7 +136,6 @@ public class FarBlue {
                 ()->{
                     chassis.setTargetPosition(parkPos);
                     Intake.state = Intake.State.IDLE;
-                    Shooter.state = Shooter.State.IDLE;
                 },
                 ()->{
                     return chassis.inPosition(60,60,0.15);
