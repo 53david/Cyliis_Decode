@@ -27,7 +27,7 @@ public class CloseRed {
     };
     public static Pose2D[] gatePos = {
             new Pose2D(-1720, 560, -Math.PI / 2),
-            new Pose2D(-1881, 755, -Math.PI * 2 / 3),
+            new Pose2D(-1880, 755, -Math.PI * 2 / 3),
 
     };
     public static Pose2D parkPos = new Pose2D(-800, -500, -Math.PI / 3);

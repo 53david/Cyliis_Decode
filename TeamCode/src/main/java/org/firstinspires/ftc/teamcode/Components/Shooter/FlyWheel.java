@@ -15,9 +15,7 @@ import static org.firstinspires.ftc.teamcode.Math.ShooterCalculator.Kv;
 
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.bylazar.configurables.annotations.Configurable;
-import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
@@ -25,6 +23,8 @@ import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
 @Configurable
 public class FlyWheel {
     PIDController controller = new PIDController(Kp,Ki,Kd);
+    public static double a = 1200;
+    public static double offset = 0;
     public enum State{
         IDLE,
         SHOOT,
@@ -40,10 +40,10 @@ public class FlyWheel {
     public void updateState(){
         switch (state){
             case IDLE :
-                vel = 450;
+                vel = a;
                 break;
             case SHOOT:
-                vel = ShooterCalculator.fwVel(Odo.distance());
+                vel = ShooterCalculator.fwVel(Odo.distance()) + offset;
                 break;
         }
     }

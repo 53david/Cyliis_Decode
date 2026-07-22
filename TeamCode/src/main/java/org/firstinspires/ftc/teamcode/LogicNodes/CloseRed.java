@@ -37,13 +37,13 @@ public class CloseRed{
         Storage.state = Storage.State.TRANSFER;
         timer.startTime();
         shoot = new Node("shoot");
-    spike1 =  new Node("spike1");
-    spike2 = new Node("spike2");
-    gate = new Node("gate");
-    loading = new Node("loading");
-    park = new Node("park");
-    currentNode = shoot;
-    shoot.addConditions(
+        spike1 =  new Node("spike1");
+        spike2 = new Node("spike2");
+        gate = new Node("gate");
+        loading = new Node("loading");
+        park = new Node("park");
+        currentNode = shoot;
+        shoot.addConditions(
             ()->{
                 chassis.setTargetPosition(shootPos[Math.min(shoot.index,shootPos.length-1)]);
                 if ((Intake.state == Intake.State.INTAKE || Intake.state == Intake.State.REVERSE) && Storage.state == Storage.State.TRANSFER){

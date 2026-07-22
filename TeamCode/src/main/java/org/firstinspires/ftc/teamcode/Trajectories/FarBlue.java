@@ -16,13 +16,12 @@ import org.firstinspires.ftc.teamcode.Wrappers.LimeLight;
 
 public class FarBlue {
 
-    public static Pose2D shootPos = new Pose2D(-3420, -235, Math.toRadians(165));
-    public static Pose2D loadingPos = new Pose2D(-2440, -10, Math.PI);
+    public static Pose2D shootPos = new Pose2D(-25, 950, Math.PI/2*3);
+    public static Pose2D loadingPos = new Pose2D(-55, 60, Math.PI/2*3);
     public static Pose2D[] spike3Pos = {
-            new Pose2D(-3260, -790, Math.PI),
-            new Pose2D(-2600, -790, Math.PI),
+            new Pose2D(-720, -880, Math.PI/2*3),
+            new Pose2D(-720, -250, Math.PI/2*3),
     };
-    public static Pose2D startPos = new Pose2D(-3245,-60,Math.PI);
-    public static Pose2D tunnelPos = new Pose2D(-2465, -705, Math.toRadians(165));
-    public static Pose2D parkPos = new Pose2D(-3375, -515, Math.toRadians(165));
+    public static Pose2D tunnelPos = new Pose2D(-435, 60, Math.PI/2*3);
+    public static Pose2D parkPos = new Pose2D(-275, 815, Math.PI/2*3);
 }

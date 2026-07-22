@@ -72,7 +72,7 @@ public class BetterMotor {
         this.kd = kd;
     }
     public void setPower(double power){
-        power = power;
+        this.power = power;
     }
     public void setCurrentPos(double a){
         currentPos = a;
@@ -94,7 +94,7 @@ public class BetterMotor {
             pid.kp = kp;
             pid.ki = ki;
             pid.kd = kd;
-            motor.setPower(pid.calculate(currentPos,targetPos));
+            motor.setPower(pid.calculate(targetPos,currentPos));    
         }
     }
 }

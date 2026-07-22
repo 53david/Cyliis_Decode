@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.proximitySenso
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.telemetryM;
 
 import org.firstinspires.ftc.teamcode.Components.Intake.ColorDetection;
+import org.firstinspires.ftc.teamcode.Components.Intake.Storage;
 
 @TeleOp
 public class BBTest extends LinearOpMode {
@@ -15,7 +16,7 @@ public class BBTest extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()){
             telemetryM.addData("Is Object Nearby?",!proximitySensor.getState());
-            telemetryM.addData("Is Object Nearby?", ColorDetection.isBallInStorage());
+            telemetryM.addData("Is Object Nearby?", Storage.isBallInStorage());
             telemetryM.update();
         }
     }

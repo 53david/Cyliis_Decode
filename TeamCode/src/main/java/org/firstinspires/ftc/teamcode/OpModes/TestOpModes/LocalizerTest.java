@@ -17,7 +17,7 @@ public class LocalizerTest extends LinearOpMode {
     public void runOpMode()throws InterruptedException{
         Initializer.start(hardwareMap);
         odo = new Odo();
-        Odo.setPosition(FarBlue.startPos);
+        odo.reset();
         waitForStart();
         while (opModeIsActive()){
             odo.update();

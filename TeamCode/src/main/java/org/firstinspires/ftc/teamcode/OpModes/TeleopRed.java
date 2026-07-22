@@ -56,6 +56,17 @@ public class TeleopRed extends LinearOpMode {
             shooter.update();
             drive.update();
             odo.update();
+            if(gm1.dpad_right && prevgm1.dpad_right!=gm1.dpad_right)Turret.offset-=Odo.offset;
+            if(gm1.dpad_left && prevgm1.dpad_left!=gm1.dpad_left)Turret.offset+=Odo.offset;
+
+            if(gm1.dpad_up && prevgm1.dpad_up!=gm1.dpad_up){
+                FlyWheel.offset += 15;
+                Hood.offset += 0.005;
+            }
+            if(gm1.dpad_down && prevgm1.dpad_down!=gm1.dpad_down){
+                FlyWheel.offset -= 15;
+                Hood.offset -= 0.005;
+            }
             prevgm1.copy(gm1);
             prevgm2.copy(gm2);
 
@@ -85,7 +96,7 @@ public class TeleopRed extends LinearOpMode {
                 telemetry.addLine("Waiting for stream..");
 
             }
-            telemetryM.addData("Is object nearby?",ColorDetection.isBallInStorage());
+            telemetryM.addData("Is object nearby?",Storage.isBallInStorage());
             telemetryM.addData("Is storage spinning",Storage.IsStorageSpinning());
             telemetryM.addData("Target pos",Math.toDegrees(Storage.target));
             telemetryM.addData("Voltage",voltageSensor.getVoltage());

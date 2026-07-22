@@ -37,6 +37,7 @@ public class StorageTuner extends LinearOpMode {
             latch.update();
             colorDetection.update();
             telemetryM.addData("Target pos",Math.toDegrees(Storage.target));
+            telemetryM.addData("Current pos",Math.toDegrees(Storage.angle));
             telemetryM.update();
         }
     }

@@ -59,6 +59,17 @@ public class TeleopBlue extends LinearOpMode {
             shooter.update();
             drive.update();
             odo.update();
+            if(gm1.right_stick_x>0.65 && prevgm1.right_stick_x<0.65)Turret.offset-=Odo.offset;
+            if(gm1.right_stick_x<-0.65 && prevgm1.right_stick_x>-0.65)Turret.offset+=Odo.offset;
+
+            if(gm1.right_stick_y>0.65 && prevgm1.right_stick_y<0.65){
+                FlyWheel.offset -= 15;
+                Hood.offset -= 0.005;
+            }
+            if(gm1.right_stick_y<-0.65 && prevgm1.right_stick_y>-0.65){
+                FlyWheel.offset += 15;
+                Hood.offset += 0.005;
+            }
             prevgm1.copy(gm1);
             prevgm2.copy(gm2);
 
@@ -68,6 +79,7 @@ public class TeleopBlue extends LinearOpMode {
             if (Storage.isTransferReady){
                 gamepad1.rumble(200);
             }
+            telemetryM.addData("Distance",Odo.distance());
             telemetry.addData("ALLIANCE",Turret.allianceState);
             telemetry.addData("X",Odo.getX());
             telemetry.addData("Y",Odo.getY());
@@ -88,10 +100,10 @@ public class TeleopBlue extends LinearOpMode {
                 telemetry.addLine("Waiting for stream..");
 
             }
+
             Voltage = 12.90 / voltageSensor.getVoltage();
-            telemetryM.addData("State",Storage.state);
-            telemetryM.addData("Error",Storage.error);
-            telemetryM.addData("Angle",Storage.angle);
+            telemetryM.addData("right stick",gm1.right_stick_x);
+            telemetryM.addData("Turret offset",Turret.offset);
             telemetryM.update();
             telemetry.update();
         }

@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 public class Hood {
     public static double pos = 0.3;
     public static double IdlePos = 0.5;
+    public static double offset = 0;
     public enum State{
         IDLE,
         SHOOT,
@@ -20,10 +21,10 @@ public class Hood {
     public void updateState(){
         switch (state){
             case IDLE :
-                hood.setPosition(ShooterCalculator.hoodAngle(Odo.distance()));
+                hood.setPosition(ShooterCalculator.hoodAngle(Odo.distance()) + offset);
                 break;
             case SHOOT:
-                hood.setPosition(ShooterCalculator.hoodAngle(Odo.distance()) - (FlyWheel.vel - FlyWheel.getVelocity())*ShooterCalculator.regression);
+                hood.setPosition(ShooterCalculator.hoodAngle(Odo.distance()) - (FlyWheel.vel - FlyWheel.getVelocity())*ShooterCalculator.regression + offset);
                 break;
         }
     }

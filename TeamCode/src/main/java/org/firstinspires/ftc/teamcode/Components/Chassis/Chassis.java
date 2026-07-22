@@ -6,7 +6,6 @@ import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.frontLeft;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.frontRight;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.gm1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.pp;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.prevgm1;
 
 
 import com.bylazar.configurables.annotations.Configurable;
@@ -29,14 +28,14 @@ public class Chassis{
     public  double targetX , targetY ,x=0 ,y=0;
     public static double targetHeading;
     public static double error;
-    double rotation;
+    double rotation,heading;
     public boolean usingTargetHeading=true;
 
     public static double lateralMultiplier=1.5;
     public static  double realHeading;
 
-    public static double kp=0.0068 , kd=0;
-    public static double KP=1.25 , KD=0.15;
+    public static double kp=0.0065 , kd=0;
+    public static double KP=1.2 , KD=0.15;
     public PIDController controllerX=new PIDController(kp, 0, kd);
     public PIDController controllerY=new PIDController(kp, 0, kd);
     public PIDController controllerHeading=new PIDController(KP, 0, KD);
@@ -121,62 +120,68 @@ public class Chassis{
         targetHeading=position.heading;
         usingTargetHeading=true;
     }
+    public void stateUpdate(){
+        switch (state){
+            case IDLE :
 
-    public void update() {
+                frontLeft.setPower(0);
+                frontRight.setPower(0);
+                backLeft.setPower(0);
+                backRight.setPower(0);
 
-        if (state == State.DRIVE && Turret.allianceState == Turret.AllianceState.BLUE) {
-
-            double X = gm1.left_stick_x;
-            double Y = -gm1.left_stick_y;
-            double rx = (gm1.right_trigger - gm1.left_trigger);
-            double heading = -Odo.getHeading() + Math.PI / 2;
-            double x = X * Math.cos(heading) - Y * Math.sin(heading);
-            double y = X * Math.sin(heading) + Y * Math.cos(heading);
-            setTargetVector(x, y, rx);
-        }
-        else if (state == State.DRIVE && Turret.allianceState == Turret.AllianceState.RED) {
-
-            double X = gm1.left_stick_x;
-            double Y = -gm1.left_stick_y;
-            double rx = (gm1.right_trigger - gm1.left_trigger);
-            double heading = -Odo.getHeading() - Math.PI / 2;
-            double x = X * Math.cos(heading) - Y * Math.sin(heading);
-            double y = X * Math.sin(heading) + Y * Math.cos(heading);
-            setTargetVector(x, y, rx);
-        }
-        else if (state == State.PID){
-            controllerX.kp=kp;
-            controllerY.kp=kp;
-
-            controllerX.kd=kd;
-            controllerY.kd=kd;
-
-            controllerHeading.kp=KP;
-            controllerHeading.kd=KD;
-            if (Double.isNaN(Odo.x) || Double.isNaN(Odo.y) || Double.isNaN(Odo.heading)) {
+                break;
+            case PID:
+                if (Double.isNaN(Odo.x) || Double.isNaN(Odo.y) || Double.isNaN(Odo.heading)) {
                 return;
             }
-            x = controllerX.calculate(targetX, Odo.predictedX);
-            y = -controllerY.calculate(targetY, Odo.predictedY);
+                x = controllerX.calculate(targetX, Odo.predictedX);
+                y = -controllerY.calculate(targetY, Odo.predictedY);
 
-            double heading = Odo.getHeading();
-            if (heading < 0) realHeading = Math.abs(heading);
-            else realHeading = 2 * Math.PI - heading;
+                heading = Odo.getHeading();
+                if (heading < 0) realHeading = Math.abs(heading);
+                else realHeading = 2 * Math.PI - heading;
 
-            error = targetHeading - realHeading;
-            if (Math.abs(error) > Math.PI)
-                error = -Math.signum(error) * (2 * Math.PI - Math.abs(error));
-            rotation = controllerHeading.calculate(error, 0.0);
+                error = targetHeading - realHeading;
+                if (Math.abs(error) > Math.PI) {
+                    error = -Math.signum(error) * (2 * Math.PI - Math.abs(error));
+                }
+                rotation = controllerHeading.calculate(error, 0.0);
 
-            setTargetVector(y * Math.cos(-heading) - x * Math.sin(-heading), y * Math.sin(-heading) + x * Math.cos(-heading), rotation);
+                setTargetVector(y * Math.cos(-heading) - x * Math.sin(-heading), y * Math.sin(-heading) + x * Math.cos(-heading), rotation);
+            break;
+
+            case DRIVE:
+                if (Turret.allianceState == Turret.AllianceState.BLUE) {
+                    heading = -Odo.getHeading() + Math.PI / 2;
+                }
+                else {
+                    heading = -Odo.getHeading() - Math.PI / 2;
+                }
+                double X = gm1.left_stick_x;
+                double Y = -gm1.left_stick_y;
+                double rx = (gm1.right_trigger - gm1.left_trigger);
+                double x = X * Math.cos(heading) - Y * Math.sin(heading);
+                double y = X * Math.sin(heading) + Y * Math.cos(heading);
+                setTargetVector(x, y, rx);
+
+                break;
 
         }
-        else if (state == State.IDLE){
-            frontLeft.setPower(0);
-            backLeft.setPower(0);
-            frontRight.setPower(0);
-            backRight.setPower(0);
-        }
+    }
+    public void pidUpdate(){
+        controllerX.kp=kp;
+        controllerY.kp=kp;
+
+        controllerX.kd=kd;
+        controllerY.kd=kd;
+
+        controllerHeading.kp=KP;
+        controllerHeading.kd=KD;
+    }
+
+    public void update() {
+        pidUpdate();
+        stateUpdate();
     }
 
 }

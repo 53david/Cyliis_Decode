@@ -3,6 +3,7 @@ import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.gm1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.isAutonomousActive;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.prevgm1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.encoder;
+import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.proximitySensor;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.spin;
 
 import com.bylazar.configurables.annotations.Configurable;
@@ -24,9 +25,9 @@ public class Storage {
     public static double specialPos = Math.toRadians(250);
     public static double ballPos1 = Math.toRadians(70),ballPos3 = Math.toRadians(190),ballPos2 = Math.toRadians(310);
     public static double Kp = 0.57;
-    public static double KP = 0.9;
-    public static double Kd = 0.02;
-    public static double KD = 0.023;
+    public static double KP = 0.57;
+    public static double Kd = 0.013;
+    public static double KD = 0.013;
     public static double Ks = 0;
     PIDController pid = new PIDController(Kp,0,Kd);
     public static double error = 0;
@@ -123,7 +124,7 @@ public class Storage {
         if (gm1.circle && prevgm1.circle!= gm1.circle && nrBalls>=1){
             state = State.TRANSFER;
         }
-        if ((state == State.BALL1 || state == State.BALL2 || state ==State.BALL3) && !IsStorageSpinning() && ColorDetection.isBallInStorage()){
+        if ((state == State.BALL1 || state == State.BALL2 || state ==State.BALL3) && !IsStorageSpinning() && Storage.isBallInStorage()){
             goNext();
         }
         if (state == State.TRANSFER && gm1.cross && prevgm1.cross != gm1.cross){
@@ -163,8 +164,11 @@ public class Storage {
             error = -Math.signum (error) * ( 2 * Math.PI - Math.abs(error));
         }
     }
+    public static boolean isBallInStorage(){
+        return !proximitySensor.getState();
+    }
     public static boolean IsStorageSpinning(){
-        return Math.abs(error) > 0.26;
+        return Math.abs(error) > 0.24;
     }
 
 }
