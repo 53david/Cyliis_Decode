@@ -6,13 +6,14 @@ import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.shoot1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.shoot2;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.frontLeft;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
-@Configurable
+@Config
 public class FlyWheel {
     PIDController controller = new PIDController(Kp,Ki,Kd);
     public static double Kp = 0;

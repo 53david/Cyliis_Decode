@@ -20,6 +20,7 @@ import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.telemetryM;
 
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Components.Intake.Intake;
+import org.firstinspires.ftc.teamcode.Components.Intake.Latch;
 import org.firstinspires.ftc.teamcode.Components.Intake.Storage;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Hood;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Shooter;
@@ -83,7 +84,7 @@ public class TeleopBlue extends LinearOpMode {
             if (Storage.state == Storage.State.GOINGTRANSFER){
                 gamepad1.rumble(50);
             }
-            if (Storage.state == Storage.State.TRANSFER && gm1.crossWasPressed())Intake.state = Intake.State.SHOOT;
+            if (Storage.state == Storage.State.TRANSFER && Latch.state == Latch.State.TRANSFER && gm1.crossWasPressed())Intake.state = Intake.State.SHOOT;
             else if (Storage.state != Storage.State.TRANSFER && Storage.state!= Storage.State.SHOOT && gm1.right_bumper) Intake.state = Intake.State.INTAKE;
             else if ((Storage.state == Storage.State.GOINGTRANSFER || Storage.state == Storage.State.TRANSFER) && gm1.right_bumper) Intake.state = Intake.State.REVERSE;
             else if (Storage.state != Storage.State.TRANSFER && Storage.state!= Storage.State.SHOOT && gm1.left_bumper) Intake.state = Intake.State.REVERSE;

@@ -2,12 +2,13 @@ package org.firstinspires.ftc.teamcode.Components.Shooter;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.hood;
 
 
+import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
-@Configurable
+@Config
 public class Hood {
     public static double k = 0.00045;
     public static double pos = 0;

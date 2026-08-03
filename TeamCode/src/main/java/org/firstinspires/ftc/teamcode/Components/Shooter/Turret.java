@@ -3,13 +3,14 @@ package org.firstinspires.ftc.teamcode.Components.Shooter;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.servo1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.servo2;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
-@Configurable
+@Config
 public class Turret {
     public static double goalPositionX = 0, goalPositionY = 840;
     public static double targetAngle = 0;

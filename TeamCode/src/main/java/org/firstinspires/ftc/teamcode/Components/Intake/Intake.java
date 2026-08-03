@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Components.Intake;
 
 
+import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.proximitySensor;
+
 public class Intake {
     public ActiveIntake activeIntake;
     public Storage storage;
@@ -25,8 +27,15 @@ public class Intake {
         latch.update();
         storage.update();
         activeIntake.update();
+
     }
     public void stateUpdate(){
+        if (Storage.state == Storage.State.TRANSFER){
+            Latch.state = Latch.State.GOINGTRANSFER;
+        }
+        if (Storage.state == Storage.State.GOINGBALL1){
+            Latch.state = Latch.State.GOINGIDLE;
+        }
         switch (state){
             case IDLE:
                 ActiveIntake.state = ActiveIntake.State.IDLE;
@@ -40,8 +49,11 @@ public class Intake {
             case SHOOT:
                 Storage.shoot();
                 ActiveIntake.state = ActiveIntake.State.SHOOT;
-                if (Storage.state == Storage.State.RESET) state = State.IDLE;
+                if (Storage.state == Storage.State.GOINGBALL1) state = State.IDLE;
                 break;
         }
+    }
+    public static boolean isBallInStorage(){
+        return !proximitySensor.getState();
     }
 }
