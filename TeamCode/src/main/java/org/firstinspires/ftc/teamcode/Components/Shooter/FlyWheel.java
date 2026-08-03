@@ -41,9 +41,6 @@ public class FlyWheel {
         IDLE(idlePower),
         SHOOT(shootPower);
         double power;
-        State(){
-
-        }
         State(double power){
             this.power = power;
         }

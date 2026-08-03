@@ -29,9 +29,6 @@ public class Hood {
         IDLE(pos),
         SHOOT(pos);
         double position;
-        State(){
-
-        }
         State(double position){
             this.position = position;
         }
