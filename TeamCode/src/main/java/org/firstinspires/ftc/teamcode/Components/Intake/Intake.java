@@ -27,15 +27,14 @@ public class Intake {
         latch.update();
         storage.update();
         activeIntake.update();
-
-    }
-    public void stateUpdate(){
         if (Storage.state == Storage.State.TRANSFER){
             Latch.state = Latch.State.GOINGTRANSFER;
         }
         if (Storage.state == Storage.State.GOINGBALL1){
             Latch.state = Latch.State.GOINGIDLE;
         }
+    }
+    public void stateUpdate(){
         switch (state){
             case IDLE:
                 ActiveIntake.state = ActiveIntake.State.IDLE;
