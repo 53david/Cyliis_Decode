@@ -11,7 +11,7 @@ public class BetterMotor {
         PID,
         NORMAL
     };
-    double kp = 0, ki = 0, kd = 0;
+    double kp = 0, ki = 0, kd = 0, kv = 0, ks = 0, ka = 0;
     int x=0;
     State state;
     public DcMotorEx motor;
@@ -71,6 +71,11 @@ public class BetterMotor {
         this.ki = ki;
         this.kd = kd;
     }
+    public void setFeedForwardCoefficients(double ks,double kv, double ka){
+        this.ks = ks;
+        this.kv = kv;
+        this.ka = ka;
+    }
     public void setPower(double power){
         this.power = power;
     }
@@ -94,7 +99,8 @@ public class BetterMotor {
             pid.kp = kp;
             pid.ki = ki;
             pid.kd = kd;
-            motor.setPower(pid.calculate(targetPos,currentPos));    
+            motor.setPower(pid.calculate(targetPos,currentPos)
+                    + ks * Math.signum(targetPos-currentPos)+ kv*targetPos + ka * (targetPos- currentPos));
         }
     }
 }

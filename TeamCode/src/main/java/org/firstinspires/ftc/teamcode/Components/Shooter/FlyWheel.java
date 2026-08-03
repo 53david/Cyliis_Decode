@@ -6,28 +6,47 @@ import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.shoot1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.shoot2;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.frontLeft;
 
-import static org.firstinspires.ftc.teamcode.Math.ShooterCalculator.Kd;
-import static org.firstinspires.ftc.teamcode.Math.ShooterCalculator.Ka;
-import static org.firstinspires.ftc.teamcode.Math.ShooterCalculator.Ki;
-import static org.firstinspires.ftc.teamcode.Math.ShooterCalculator.Kp;
-import static org.firstinspires.ftc.teamcode.Math.ShooterCalculator.Ks;
-import static org.firstinspires.ftc.teamcode.Math.ShooterCalculator.Kv;
-
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
-import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
 
 @Configurable
 public class FlyWheel {
     PIDController controller = new PIDController(Kp,Ki,Kd);
-    public static double a = 1200;
-    public static double offset = 0;
+    public static double Kp = 0;
+    public static double Ki = 0;
+    public static double Kd = 0;
+    public static double Ks = 0;
+    public static double Kv = 0.000435;
+    public static double Ka = 0.0055;
+    public int[] v = {
+            1300,
+            1435,
+            1480,
+            1520,
+            1550,
+            1600,
+            1630,
+            1700,
+            1740,
+            1775,
+            1820,
+            // sunt scoase din pula
+    };
+    public static double shootPower = 0,idlePower = 1200,currentVelocity = 0,targetVelocity =0;
     public enum State{
-        IDLE,
-        SHOOT,
+        IDLE(idlePower),
+        SHOOT(shootPower);
+        double power;
+        State(){
+
+        }
+        State(double power){
+            this.power = power;
+        }
+
     }
     public static double errorThreshold = 80;
     public static State state = State.SHOOT;
@@ -39,30 +58,31 @@ public class FlyWheel {
     }
     public void updateState(){
         switch (state){
-            case IDLE :
-                vel = a;
-                break;
+            case IDLE:
             case SHOOT:
-                vel = ShooterCalculator.fwVel(Odo.distance()) + offset;
+                int i = Math.max((Odo.delta%100-8),0);
+                i = Math.min(i,v.length-1);
+                shootPower = v[i];
                 break;
         }
     }
     public void update(){
-        controller.setPID(Kp,0,Kd);
+        targetVelocity = state.power;
+        currentVelocity = getVelocity();
         updateState();
         updateShooter();
 
     }
     public void updateShooter(){
-        rpm = controller.calculate(getVelocity(),vel) + Kv * vel
-                + Ks * Math.signum(vel-getVelocity()) + (vel-getVelocity()) * Ka;
-        rpm = rpm * Voltage;
+        rpm = controller.calculate(currentVelocity,targetVelocity) + Kv * targetVelocity
+                + Ks * Math.signum(targetVelocity- currentVelocity) + (targetVelocity-currentVelocity) * Ka;
+        rpm *=Voltage;
         shoot1.setPower(rpm);
         shoot2.setPower(rpm);
 
     }
     public static boolean isReady(){
-        return Math.abs(vel-getVelocity()) < errorThreshold;
+        return Math.abs(vel-currentVelocity) < errorThreshold;
     }
     public static double getVelocity(){
         return Math.abs(frontLeft.getVelocity());

@@ -7,6 +7,7 @@ public class Shooter {
     public enum State{
         IDLE,
         SHOOT,
+        ACTIVE,
     }
     public static State state = State.SHOOT;
     public Shooter(State state1){
@@ -17,11 +18,13 @@ public class Shooter {
     }
     public void updateState(){
         switch (state){
-            case IDLE:
-                FlyWheel.state = FlyWheel.State.IDLE;
+            case ACTIVE:
+                FlyWheel.state = FlyWheel.State.SHOOT;
+                Hood.state = Hood.State.IDLE;
                 break;
             case SHOOT:
                 FlyWheel.state = FlyWheel.State.SHOOT;
+                Hood.state = Hood.State.SHOOT;
                 break;
         }
 

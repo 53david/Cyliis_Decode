@@ -1,46 +1,57 @@
 package org.firstinspires.ftc.teamcode.Components.Intake;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.gm1;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.isAutonomousActive;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.prevgm1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.encoder;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.proximitySensor;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.spin;
 
-import com.bylazar.configurables.annotations.Configurable;
-
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.Components.Shooter.Hood;
 import org.firstinspires.ftc.teamcode.Math.PIDController;
-import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
-@Configurable
+
 public class Storage {
     ElapsedTime timer = new ElapsedTime();
     ElapsedTime failSafe = new ElapsedTime();
     public static double angle;
     public static boolean isTransferReady = false;
-    public static double target = Math.PI/4.0;
-    public static double nrBalls =  0;
+    public double position = 0;
     public static double specialPos = Math.toRadians(250);
     public static double ballPos1 = Math.toRadians(70),ballPos3 = Math.toRadians(190),ballPos2 = Math.toRadians(310);
-    public static double Kp = 0.57;
+    public static double Kp = 0.9;
     public static double KP = 0.57;
-    public static double Kd = 0.013;
-    public static double KD = 0.013;
+    public static double Kd = 0.023;
+    public static double KD = 0.02;
     public static double Ks = 0;
     PIDController pid = new PIDController(Kp,0,Kd);
     public static double error = 0;
 
     public enum State{
-        BALL1,
-        BALL2,
-        BALL3,
-        TRANSFER,
-        SHOOT,
         RESET,
+        BALL1(ballPos1),
+        BALL2(ballPos2),
+        BALL3(ballPos3),
+        GOINGBALL1(BALL1,ballPos1),
+        GOINGBALL2(BALL2,ballPos2),
+        GOINGBALL3(BALL3,ballPos3),
+        TRANSFER(specialPos),
+        GOINGTRANSFER(TRANSFER,specialPos),
+        SHOOT(RESET);
+        State nextState;
+        double position;
+        State(){
+
+        }
+        State(State nextState){
+            this.nextState = nextState;
+            this.position = 1e9;
+        }
+        State(State nextState,double position){
+            this.position = position;
+            this.nextState = nextState;
+        }
+        State(double position){
+            this.position = position;
+        }
     }
-    public static State state,nextState;
+    public static State state;
     public Storage(){
         timer.startTime();
         state = State.RESET;
@@ -48,68 +59,41 @@ public class Storage {
         isTransferReady = false;
     }
     public void stateUpdate(){
-        error = target - angle;
+        State.BALL1.nextState = State.GOINGBALL2;
+        State.BALL2.nextState = State.GOINGBALL3;
+        State.BALL1.nextState = State.TRANSFER;
         switch (state){
+            case GOINGBALL1:
+            case GOINGBALL2:
+            case GOINGBALL3:
+                break;
+            case GOINGTRANSFER:
+                if (Math.abs(error)<0.32)state = state.nextState;
+                break;
             case BALL1:
-                nrBalls = 1;
-                target = ballPos1;
-                nextState = State.BALL2;
-                break;
-
             case BALL2:
-                target = ballPos2;
-                nrBalls = 1;
-                nextState = State.BALL3;
-                break;
-
             case BALL3:
-                target = ballPos3;
-                nrBalls = 2;
-                nextState = State.TRANSFER;
                 break;
-
             case TRANSFER:
-                target = specialPos;
-                nextState = State.SHOOT;
-                if(!IsStorageSpinning()){
-                    isTransferReady = false;
-                    Latch.state = Latch.State.TRANSFER;
-                }
-                else {
-                    isTransferReady = true;
-                }
-                if (isAutonomousActive){
-                    timer.reset();
-                }
+                Latch.state = Latch.State.TRANSFER;
+                timer.reset();
                 break;
-
             case SHOOT:
-                Hood.state = Hood.State.SHOOT;
-                spin.setPower(Odo.power);
-                nextState = State.RESET;
-                if (timer.seconds()>0.5){
-                    goNext();
-                }
-                break;
-
+                spin.setPower(-1);
+                if (timer.seconds()>0.35)state = state.nextState;
             case RESET:
-                target = ballPos1; nrBalls = 0;
-                Latch.state = Latch.State.IDLE;
-                Hood.state = Hood.State.IDLE;
-                nextState = State.BALL1;
+                position = specialPos;
+                state.nextState = State.GOINGBALL1;
                 break;
 
         }
     }
-    public void goNext(){
-        state = nextState;
-    }
     public void update(){
-        updatePID();
         stateUpdate();
         updateAngle();
         spinUpdate();
-        if (IsStorageSpinning() && !isAutonomousActive){
+        updatePID();
+        if (!isMoving()){
             if (failSafe.seconds()>1 && failSafe.seconds()<2){
                 spin.setPower(0);
                 return;
@@ -118,28 +102,21 @@ public class Storage {
                 failSafe.reset();
             }
         }
-        else if (!IsStorageSpinning() && !isAutonomousActive){
-            failSafe.reset();
+        if ((state == State.GOINGBALL1 || state == State.GOINGBALL2 || state == State.GOINGBALL3 || state == State.GOINGTRANSFER) && !isMoving()) {
+            state = state.nextState;
         }
-        if (gm1.circle && prevgm1.circle!= gm1.circle && nrBalls>=1){
-            state = State.TRANSFER;
-        }
-        if ((state == State.BALL1 || state == State.BALL2 || state ==State.BALL3) && !IsStorageSpinning() && Storage.isBallInStorage()){
-            goNext();
-        }
-        if (state == State.TRANSFER && gm1.cross && prevgm1.cross != gm1.cross){
-            timer.reset();
-            goNext();
-        }
-        if (state == State.RESET && !IsStorageSpinning()){
-            goNext();
+        if ((state == State.BALL1 || state == State.BALL2 || state == State.BALL3) && isBallInStorage()) {
+            state = state.nextState;
         }
     }
+    public static void shoot(){
+        if (Storage.state == State.TRANSFER) state = State.SHOOT;
+    }
     public void spinUpdate(){
-            double power = pid.calculate(0,-error) + Ks *Math.signum(error);
-            if (state != State.SHOOT){
-                spin.setPower(power);
-            }
+        double power = pid.calculate(0,-error) + Ks *Math.signum(error);
+        if (state != State.SHOOT){
+            spin.setPower(power);
+        }
 
     }
     public void updatePID(){
@@ -159,7 +136,7 @@ public class Storage {
     }
     public void updateAngle(){
         angle = Math.abs(encoder.getVoltage()/encoder.getMaxVoltage()) * Math.PI*2;
-        error = target - angle;
+        error = position - angle;
         if (Math.abs(error)>Math.PI){
             error = -Math.signum (error) * ( 2 * Math.PI - Math.abs(error));
         }
@@ -167,8 +144,8 @@ public class Storage {
     public static boolean isBallInStorage(){
         return !proximitySensor.getState();
     }
-    public static boolean IsStorageSpinning(){
-        return Math.abs(error) > 0.24;
+    public static boolean isMoving(){
+        return (Storage.state != State.TRANSFER && Math.abs(error) > 0.24) || (Math.abs(error)> 0.12 && Storage.state == State.TRANSFER);
     }
 
 }

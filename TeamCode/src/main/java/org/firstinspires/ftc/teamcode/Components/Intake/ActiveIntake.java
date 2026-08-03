@@ -1,61 +1,42 @@
 package org.firstinspires.ftc.teamcode.Components.Intake;
 
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.gm1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.intakeMotor;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.Wrappers.Initializer;
-
 
 @Configurable
 public class ActiveIntake {
+    public double power = 0;
     public enum State{
-        IDLE,
-        INTAKE,
-        REVERSE,
+        IDLE(0),
+        INTAKE(1),
+        REVERSE(-0.5),
+        SHOOT(0.5);
+        double power = 0;
+        State(){
+        }
+        State(double power){
+            this.power = power;
+        }
     }
-    public static State state;
+    public static State state = State.IDLE;
     public ActiveIntake() {
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        state = State.IDLE;
-
     }
     public void stateUpdate() {
         switch (state){
             case INTAKE:
-                intakeMotor.setPower(1);
-                break;
             case IDLE:
-                intakeMotor.setPower(0);
-                break;
             case REVERSE:
-                intakeMotor.setPower(-1);
+            case SHOOT:
                 break;
         }
     }
     public void update(){
         stateUpdate();
-        if (!Initializer.isAutonomousActive){
-            if (gm1.right_bumper){
-                if (Storage.state == Storage.State.TRANSFER && !Storage.IsStorageSpinning()){
-                    Intake.state = Intake.State.REVERSE;
-                }
-                else {
-                    Intake.state = Intake.State.INTAKE;
-                }
-            }
-            else if (gm1.left_bumper){
-                Intake.state = Intake.State.REVERSE;
-            }
-            else {
-                Intake.state =Intake.State.IDLE;
-            }
-        }
-    }
-    public void test(double x){
-        intakeMotor.setPower(x);
+        power = state.power;
     }
 
 }

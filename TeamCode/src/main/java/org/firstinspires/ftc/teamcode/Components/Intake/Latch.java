@@ -9,40 +9,40 @@ import org.firstinspires.ftc.teamcode.Math.BetterMotionProfile;
 @Configurable
 public class Latch {
 
-    public static double transPos = 0.385;
+    public static double transPos = 0.39;
     public static double idlePos = 0.16;
-    public double currentPos;
+    public double target;
 
         public enum State{
-        IDLE,
-        TRANSFER,
+        IDLE(idlePos),
+        TRANSFER(transPos);
+        double position;
+        State(){
+
+        }
+        State(double position){
+            this.position = position;
+        }
     };
     public static State state;
     public static double maxVel=20, acc=16, dec=16;
     BetterMotionProfile profile;
     public Latch(){
-        transfer.setPosition(idlePos);
-        state = State.IDLE;
-        currentPos = idlePos;
         profile = new BetterMotionProfile(maxVel,acc,dec);
-        profile.setMotion(currentPos, currentPos, 0);
-
-
+        profile.setMotion(target, target, 0);
     }
     public void update(){
         stateUpdate();
         profile.update();
-        if(profile.finalPosition != currentPos)
-            profile.setMotion(profile.getPosition(), currentPos, profile.getVelocity());
+        target = state.position;
+        if(profile.finalPosition != target)
+            profile.setMotion(profile.getPosition(), target, profile.getVelocity());
         transfer.setPosition(profile.getPosition());
     }
     public void stateUpdate(){
         switch (state){
             case IDLE:
-                currentPos = idlePos;
-                break;
             case TRANSFER:
-                currentPos = transPos;
                 break;
         }
     }

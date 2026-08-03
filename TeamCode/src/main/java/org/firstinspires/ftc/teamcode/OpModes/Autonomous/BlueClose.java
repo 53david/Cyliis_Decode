@@ -4,10 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
+import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.LogicNodes.CloseBlue;
 import org.firstinspires.ftc.teamcode.Wrappers.Initializer;
 
-@Autonomous
+@Autonomous(name="Sper_ca_merge-BLUE")
 public class BlueClose extends LinearOpMode {
     public CloseBlue closeBlue;
     @Override
@@ -16,6 +17,7 @@ public class BlueClose extends LinearOpMode {
         closeBlue = new CloseBlue(hardwareMap);
         waitForStart();
         while(opModeIsActive()){
+            Chassis.state = Chassis.State.PID;
             closeBlue.update();
         }
     }

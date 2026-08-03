@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.proximitySensor;
 import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.telemetryM;
 
-import org.firstinspires.ftc.teamcode.Components.Intake.ColorDetection;
 import org.firstinspires.ftc.teamcode.Components.Intake.Storage;
 
 @TeleOp

@@ -28,7 +28,6 @@ public class FarRed {
     Node shoot,spike3,loading,tunnel,park;
     public Node currentNode;
     public FarRed(HardwareMap hardwareMap){
-        Turret.allianceState = Turret.AllianceState.RED;
         Initializer.start(hardwareMap);
         timer = new ElapsedTime();
         timer.startTime();
@@ -45,101 +44,7 @@ public class FarRed {
         tunnel = new Node("tunnel");
         park = new Node("park");
         currentNode = shoot;
-        shoot.addConditions(
-                ()->{
-                    if ((Intake.state == Intake.State.INTAKE || Intake.state == Intake.State.REVERSE)
-                            && !storage.IsStorageSpinning()){
-                        Intake.state = Intake.State.IDLE;
-                    }
-                    Shooter.state = Shooter.State.SHOOT;
-                    chassis.setTargetPosition(shootPos);
-                    if (Storage.state != Storage.State.TRANSFER && Storage.state!=Storage.State.RESET){
-                        Storage.state = Storage.State.TRANSFER;
-                    }
-                    if (chassis.inPosition(60,60,0.25) && Storage.state == Storage.State.TRANSFER){
-                        Storage.state = Storage.State.SHOOT;
-                    }
-                },
-                ()->{
-                    if (Storage.state == Storage.State.RESET){
-                        timer.reset();
-                        return true;
-                    }
-                    return false;
-                },
-                new Node[]{spike3,loading,tunnel,loading,tunnel,loading,park}
-        );
-        spike3.addConditions(
-                ()->{
-                    if (Storage.state != Storage.State.TRANSFER) {
-                        Intake.state = Intake.State.INTAKE;
-                    }
-                    else {
-                        Intake.state = Intake.State.REVERSE;
-                    }
-                    Shooter.state = Shooter.State.IDLE;
-                    chassis.setTargetPosition(spike3Pos[Math.min(spike3.index, spike3Pos.length-1)]);
-                },
-                ()->{
-                    if (Storage.state == Storage.State.TRANSFER || timer.seconds()>2){
-                        timer.reset();
-                        return true;
-                    }
-                    return false;
-                },
-                new Node[]{shoot}
-        );
-        tunnel.addConditions(
-                ()->{
-                    if (Storage.state != Storage.State.TRANSFER) {
-                        Intake.state = Intake.State.INTAKE;
-                    }
-                    else {
-                        Intake.state = Intake.State.REVERSE;
-                    }
-                    Shooter.state = Shooter.State.IDLE;
-                    chassis.setTargetPosition(spike3Pos[Math.min(tunnel.index, tunnelPos.length-1)]);
-                },
-                ()->{
-                    if (Storage.state == Storage.State.TRANSFER || timer.seconds()>2.3){
-                        timer.reset();
-                        return true;
-                    }
-                    return false;
-                },
-                new Node[]{tunnel,shoot}
-        );
-        loading.addConditions(
-                ()->{
-                    if (Storage.state != Storage.State.TRANSFER) {
-                        Intake.state = Intake.State.INTAKE;
-                    }
-                    else {
-                        Intake.state = Intake.State.REVERSE;
-                    }
-                    Shooter.state = Shooter.State.IDLE;
-                    chassis.setTargetPosition(loadingPos);
-                },
-                ()->{
-                    if (Storage.state == Storage.State.TRANSFER || chassis.inPosition(40,40,0.2)){
-                        timer.reset();
-                        return true;
-                    }
-                    return false;
-                },
-                new Node[]{shoot}
-        );
-        park.addConditions(
-                ()->{
-                    chassis.setTargetPosition(parkPos);
-                    Intake.state = Intake.State.IDLE;
-                    Shooter.state = Shooter.State.IDLE;
-                },
-                ()->{
-                    return chassis.inPosition(60,60,0.15);
-                },
-                new Node[]{park}
-        );
+
     }
     public void update(){
         odo.update();

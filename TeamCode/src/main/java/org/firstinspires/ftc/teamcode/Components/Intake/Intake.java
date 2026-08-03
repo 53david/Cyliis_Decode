@@ -2,20 +2,20 @@ package org.firstinspires.ftc.teamcode.Components.Intake;
 
 
 public class Intake {
-    public ColorDetection colorDetection;
     public ActiveIntake activeIntake;
     public Storage storage;
     public Latch latch;
+    boolean ok = false;
 
     public enum State{
         IDLE,
         REVERSE,
         INTAKE,
+        SHOOT,
     }
     public static State state;
     public Intake(){
         state = State.IDLE;
-        colorDetection = new ColorDetection();
         activeIntake = new ActiveIntake();
         storage = new Storage();
         latch = new Latch();
@@ -36,6 +36,11 @@ public class Intake {
                 break;
             case REVERSE:
                 ActiveIntake.state = ActiveIntake.State.REVERSE;
+                break;
+            case SHOOT:
+                Storage.shoot();
+                ActiveIntake.state = ActiveIntake.State.SHOOT;
+                if (Storage.state == Storage.State.RESET) state = State.IDLE;
                 break;
         }
     }

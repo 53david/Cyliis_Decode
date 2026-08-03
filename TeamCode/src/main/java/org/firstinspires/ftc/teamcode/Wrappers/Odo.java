@@ -1,38 +1,38 @@
     package org.firstinspires.ftc.teamcode.Wrappers;
 
     import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
-    import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeRadians;
     import static org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit.MM;
+
+    import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.imu;
     import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.pp;
 
     import com.bylazar.configurables.annotations.Configurable;
+    import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+    import com.qualcomm.robotcore.hardware.IMU;
+    import com.qualcomm.robotcore.util.ElapsedTime;
 
 
     import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
     import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-    import org.firstinspires.ftc.teamcode.Components.Intake.Storage;
     import org.firstinspires.ftc.teamcode.Components.Shooter.FlyWheel;
     import org.firstinspires.ftc.teamcode.Components.Shooter.Hood;
     import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
     import org.firstinspires.ftc.teamcode.Math.LowPassFilter;
-    import org.firstinspires.ftc.teamcode.Math.ShooterCalculator;
 
     import java.lang.Math;
 
     @Configurable
     public class Odo {
-        public enum State{
-            CLOSE,
-            FAR,
-        }
+
         public static double power = -1;
-        public static State state = State.CLOSE;
-        public static double heading,x ,y, xVelocity, yVelocity, predictedX, predictedY,offsetX = 0,offsetY = 0, offset = 0;
-        ShooterCalculator shooterCalculator = new ShooterCalculator();
+        public static double heading,x ,y, xVelocity, yVelocity, predictedX, predictedY,offsetX = 0,offsetY = 0, offset = 0,prevX = 0, prevY = 0;
+        public static int delta = 0;
         public Odo(){
             pp.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED , org.firstinspires.ftc.teamcode.Wrappers.GoBildaPinpointDriver.EncoderDirection.FORWARD);
             pp.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
             pp.setOffsets(128.5 , -76.999+17.798, DistanceUnit.MM);
+            imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
+            imu.resetYaw();
 
 
 
@@ -60,18 +60,8 @@
             return yVelocity;
         }
         public void reset() {
-            offsetY = 0;
-            offsetX = 0;
-            FlyWheel.offset = 0;
-            Hood.offset = 0;
-            Turret.offset = 0;
             pp.setPosition(new Pose2D(MM,0,0,RADIANS,0));
-        }
-        public void recalibrate(){
-            offsetY = 0;
-            offsetX = 0;
-            pp.setPosition(new Pose2D(MM,0,0,RADIANS,0));
-            pp.recalibrateIMU();
+            imu.resetYaw();
         }
         public static double filterParameter = 0.8;
         private static final LowPassFilter xVelocityFilter = new LowPassFilter(filterParameter, 0);
@@ -98,9 +88,8 @@
 
         public static double distance(){
             return Math.sqrt(
-                    (predictedX - Turret.goalPositionX) * (predictedX - Turret.goalPositionX) +
-                            (predictedY - Turret.goalPositionY) * (predictedY - Turret.goalPositionY)
-            );
+                    (Turret.goalPositionX - (x + Turret.tx*Math.cos(heading) + xRobotVelocity * Turret.a)) * (Turret.goalPositionX - (x + Turret.tx*Math.cos(heading) + xRobotVelocity * Turret.a)) +
+                            (Turret.goalPositionY - (y + Turret.tx*Math.sin(heading) + yRobotVelocity * Turret.a)) * (Turret.goalPositionY -(y + Turret.tx*Math.sin(heading) + yRobotVelocity * Turret.a)));
         }
         public static double avgVel(){
             return Math.hypot(pp.getVelX(MM),pp.getVelY(MM));
@@ -115,42 +104,18 @@
             pp.setPosY(posY,MM);
             pp.setHeading(h,RADIANS);
         }
-        public void stateUpdate(){
-            switch (state){
-                case FAR :
-                    power = -0.9;
-                    offset = Math.toRadians(1);
-                    break;
-                case CLOSE:
-                    power = -1;
-                    offset = Math.toRadians(1);
-                    break;
-            }
-            if (distance()>2800){
-                state = State.FAR;
-            }
-            else {
-                state = State.CLOSE;
-            }
-        }
-        public void update() {
+        public void update(){
             pp.update();
+            delta = (int)distance();
             heading=pp.getHeading(RADIANS);
             x=pp.getPosX(MM) + offsetX;
             y=pp.getPosY(MM) + offsetY;
             xVelocity = xVelocityFilter.getValue(pp.getVelocity().getX(MM));
             yVelocity = yVelocityFilter.getValue(pp.getVelocity().getY(MM));
             updateGlide();
-            stateUpdate();
             predictedX = x + xGlide;
             predictedY = y + yGlide;
-            shooterCalculator.updateTrajectory(predictedX,predictedY
-                    ,xVelocity,yVelocity,Turret.goalPositionX,Turret.goalPositionY);
-            if (LimeLight.streamState == LimeLight.StreamState.STREAM) {
-                if (LimeLight.getTagAngle() != 1e9 && Storage.state != Storage.State.TRANSFER && Storage.state != Storage.State.SHOOT) {
-                    pp.setPosX(LimeLight.absoluteX, MM);
-                    pp.setPosY(LimeLight.absoluteY, MM);
-                }
-            }
+            prevX = x;
+            prevY = y;
         }
     }
