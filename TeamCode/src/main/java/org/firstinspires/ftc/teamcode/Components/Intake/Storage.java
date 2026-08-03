@@ -61,7 +61,7 @@ public class Storage {
     public void stateUpdate(){
         State.BALL1.nextState = State.GOINGBALL2;
         State.BALL2.nextState = State.GOINGBALL3;
-        State.BALL1.nextState = State.TRANSFER;
+        State.BALL3.nextState = State.TRANSFER;
         switch (state){
             case GOINGBALL1:
             case GOINGBALL2:
