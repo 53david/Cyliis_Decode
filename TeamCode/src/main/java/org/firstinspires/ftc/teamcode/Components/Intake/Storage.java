@@ -149,5 +149,8 @@ public class Storage {
     {
         if (state == State.BALL1 || state == State.BALL2 || state == State.BALL3) state=state.nextState;
     }
+    public void byPass(){
+        if (state != State.TRANSFER && state!=State.GOINGTRANSFER) this.state = State.GOINGTRANSFER;
+    }
 
 }

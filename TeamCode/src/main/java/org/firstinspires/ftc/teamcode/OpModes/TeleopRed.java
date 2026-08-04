@@ -85,6 +85,7 @@ public class TeleopRed extends LinearOpMode {
             if (gamepad1.psWasPressed()){
                 odo.reset();
             }
+            if (gm1.circleWasPressed())intake.storage.byPass();
             prevgm1.copy(gm1);
             prevgm2.copy(gm2);
             telemetry.update();

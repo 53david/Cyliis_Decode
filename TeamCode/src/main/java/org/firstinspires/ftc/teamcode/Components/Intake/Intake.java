@@ -8,7 +8,7 @@ public class Intake {
     public ActiveIntake activeIntake;
     public Storage storage;
     public Latch latch;
-    public DigitalChannel bb;
+    DigitalChannel bb;
 
     public enum State{
         IDLE,
@@ -25,20 +25,21 @@ public class Intake {
         latch = new Latch();
     }
     public void update(){
-        stateUpdate();
+        updateState();
         latch.update();
         storage.update();
         activeIntake.update();
 
         if (storage.getState() == Storage.State.TRANSFER)latch.setState(Latch.State.GOINGTRANSFER);
     }
-    public void stateUpdate(){
-        if (isBallInStorage())storage.goNext();
+    public void updateState(){
         switch (state){
             case IDLE:
                 activeIntake.setState(ActiveIntake.State.IDLE);
                 break;
             case INTAKE:
+                if (isBallInStorage())storage.goNext();
+
                 activeIntake.setState(ActiveIntake.State.INTAKE);
                 break;
             case REVERSE:
@@ -53,7 +54,7 @@ public class Intake {
 
     }
     public void setState(State state){
-        this.state = state;
+        if (state != State.SHOOT) this.state = state;
     }
     public boolean isBallInStorage(){
         return !bb.getState();
