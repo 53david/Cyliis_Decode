@@ -67,7 +67,7 @@ public class FlyWheel {
         switch (state){
             case IDLE:
             case SHOOT:
-                int i = Math.max((Odo.delta%100-8),0);
+                int i = Math.max((Odo.delta/100-8),0);
                 i = Math.min(i,v.length-1);
                 shootPower = v[i];
                 break;
@@ -88,7 +88,7 @@ public class FlyWheel {
         return Math.abs(vel-currentVelocity) < errorThreshold;
     }
     public double getVelocity(){
-        return Math.abs(encoder.getVelocity());
+        return encoder.getVelocity();
     }
     public void setState(State state){
         this.state = state;
