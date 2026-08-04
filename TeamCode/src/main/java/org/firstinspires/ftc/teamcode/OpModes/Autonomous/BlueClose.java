@@ -6,14 +6,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.LogicNodes.CloseBlue;
-import org.firstinspires.ftc.teamcode.Wrappers.Initializer;
 
 @Autonomous(name="Sper_ca_merge-BLUE")
 public class BlueClose extends LinearOpMode {
     public CloseBlue closeBlue;
     @Override
     public void runOpMode() throws InterruptedException{
-        Initializer.isAutonomousActive = true;
         closeBlue = new CloseBlue(hardwareMap);
         waitForStart();
         while(opModeIsActive()){

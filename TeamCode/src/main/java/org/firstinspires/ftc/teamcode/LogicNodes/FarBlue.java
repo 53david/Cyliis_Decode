@@ -17,9 +17,10 @@ import org.firstinspires.ftc.teamcode.Components.Shooter.FlyWheel;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Shooter;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
 import org.firstinspires.ftc.teamcode.Trajectories.CloseBlue;
-import org.firstinspires.ftc.teamcode.Wrappers.Initializer;
+import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Node;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
+import org.slf4j.impl.HandroidLoggerAdapter;
 
 public class FarBlue {
     ElapsedTime timer;
@@ -31,11 +32,10 @@ public class FarBlue {
     Node shoot,spike3,loading,tunnel,park;
     public Node currentNode;
     public FarBlue(HardwareMap hardwareMap){
-        Initializer.start(hardwareMap);
+        Hardware.init(hardwareMap);
         timer = new ElapsedTime();
         timer.startTime();
         timer.reset();
-        Storage.state = Storage.State.TRANSFER;
         Shooter.state = Shooter.State.SHOOT;
         chassis = new Chassis(Chassis.State.PID);
         storage = new Storage();

@@ -8,8 +8,10 @@ import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Components.Shooter.FlyWheel;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Hood;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
-import org.firstinspires.ftc.teamcode.Wrappers.Initializer;
+import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
+
+import java.io.CharArrayReader;
 
 @TeleOp
 @Configurable
@@ -20,21 +22,19 @@ public class ShooterAjustments extends LinearOpMode {
     Odo odo;
     @Override
     public void runOpMode() throws InterruptedException{
-        Initializer.start(hardwareMap);
+            Hardware.init(hardwareMap);
            flyWheel = new FlyWheel();
            hood = new Hood();
            odo = new Odo();
            chassis = new Chassis(Chassis.State.DRIVE);
-           Turret.allianceState= Turret.AllianceState.BLUE;
            FlyWheel.state = FlyWheel.State.IDLE;
            waitForStart();
            while (opModeIsActive()){
                flyWheel.update();
-               hood.tune();
                odo.update();
 
                telemetry.addData("Delta",Odo.distance());
-               telemetry.addData("Velocity",FlyWheel.getVelocity());
+               telemetry.addData("Velocity",flyWheel.getVelocity());
                telemetry.update();
            }
     }

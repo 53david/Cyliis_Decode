@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.Components.Intake;
 
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.proximitySensor;
+import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 
 public class Intake {
     public ActiveIntake activeIntake;
     public Storage storage;
     public Latch latch;
-    boolean ok = false;
+    public static DigitalChannel bb;
 
     public enum State{
         IDLE,
@@ -15,8 +16,9 @@ public class Intake {
         INTAKE,
         SHOOT,
     }
-    public static State state;
+    public State state;
     public Intake(){
+        bb = Hardware.bb;
         state = State.IDLE;
         activeIntake = new ActiveIntake();
         storage = new Storage();
@@ -27,32 +29,33 @@ public class Intake {
         latch.update();
         storage.update();
         activeIntake.update();
-        if (Storage.state == Storage.State.TRANSFER){
-            Latch.state = Latch.State.GOINGTRANSFER;
-        }
-        if (Storage.state == Storage.State.GOINGBALL1){
-            Latch.state = Latch.State.GOINGIDLE;
-        }
+
+        if (storage.getState() == Storage.State.TRANSFER)latch.setState(Latch.State.GOINGTRANSFER);
     }
     public void stateUpdate(){
+        if (isBallInStorage())storage.goNext();
         switch (state){
             case IDLE:
-                ActiveIntake.state = ActiveIntake.State.IDLE;
+                activeIntake.setState(ActiveIntake.State.IDLE);
                 break;
             case INTAKE:
-                ActiveIntake.state = ActiveIntake.State.INTAKE;
+                activeIntake.setState(ActiveIntake.State.INTAKE);
                 break;
             case REVERSE:
-                ActiveIntake.state = ActiveIntake.State.REVERSE;
+                activeIntake.setState(ActiveIntake.State.REVERSE);
                 break;
             case SHOOT:
-                Storage.shoot();
-                ActiveIntake.state = ActiveIntake.State.SHOOT;
-                if (Storage.state == Storage.State.GOINGBALL1) state = State.IDLE;
+                storage.shoot();
+                activeIntake.setState(ActiveIntake.State.SHOOT);
+                if (storage.state == Storage.State.GOINGBALL1) {state = State.IDLE; latch.setState(Latch.State.GOINGIDLE);}
                 break;
         }
+
+    }
+    public void setState(State state){
+        this.state = state;
     }
     public static boolean isBallInStorage(){
-        return !proximitySensor.getState();
+        return !bb.getState();
     }
 }

@@ -1,21 +1,19 @@
 package org.firstinspires.ftc.teamcode.Components.Shooter;
 
-
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.Voltage;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.shoot1;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.shoot2;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.frontLeft;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
 @Config
 public class FlyWheel {
-    PIDController controller = new PIDController(Kp,Ki,Kd);
+    CRServo shoot1,shoot2;
+    DcMotorEx encoder;
     public static double Kp = 0;
     public static double Ki = 0;
     public static double Kd = 0;
@@ -34,9 +32,9 @@ public class FlyWheel {
             1740,
             1775,
             1820,
-            // sunt scoase din pula
     };
     public static double shootPower = 0,idlePower = 1200,currentVelocity = 0,targetVelocity =0;
+    PIDController controller = new PIDController(Kp,Ki,Kd);
     public enum State{
         IDLE(idlePower),
         SHOOT(shootPower);
@@ -51,8 +49,19 @@ public class FlyWheel {
     public static double vel = 0;
     public static double rpm = 0;
     public FlyWheel(){
+        encoder = Hardware.mch3;
+        shoot1 = Hardware.sch1;
+        shoot2 = Hardware.sch2;
         shoot1.setDirection(DcMotorSimple.Direction.REVERSE);
         shoot2.setDirection(DcMotorSimple.Direction.FORWARD);
+    }
+    public void update(){
+        targetVelocity = state.power;
+        currentVelocity = getVelocity();
+        updateState();
+        updatePower();
+        updateShooter();
+
     }
     public void updateState(){
         switch (state){
@@ -64,17 +73,13 @@ public class FlyWheel {
                 break;
         }
     }
-    public void update(){
-        targetVelocity = state.power;
-        currentVelocity = getVelocity();
-        updateState();
-        updateShooter();
-
+    public void updatePower(){
+        State.SHOOT.power = shootPower;
+        State.IDLE.power = idlePower;
     }
     public void updateShooter(){
         rpm = controller.calculate(currentVelocity,targetVelocity) + Kv * targetVelocity
                 + Ks * Math.signum(targetVelocity- currentVelocity) + (targetVelocity-currentVelocity) * Ka;
-        rpm *=Voltage;
         shoot1.setPower(rpm);
         shoot2.setPower(rpm);
 
@@ -82,8 +87,8 @@ public class FlyWheel {
     public static boolean isReady(){
         return Math.abs(vel-currentVelocity) < errorThreshold;
     }
-    public static double getVelocity(){
-        return Math.abs(frontLeft.getVelocity());
+    public double getVelocity(){
+        return Math.abs(encoder.getVelocity());
     }
 
 }

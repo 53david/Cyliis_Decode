@@ -8,15 +8,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.Voltage;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.gm1;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.isAutonomousActive;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.prevgm1;
-
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.gm2;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.prevgm2;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.telemetryM;
-
+import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.gm1;
+import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.gm2;
+import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.prevgm1;
+import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.prevgm2;
 
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Components.Intake.Intake;
@@ -26,7 +21,7 @@ import org.firstinspires.ftc.teamcode.Components.Shooter.Hood;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Shooter;
 
 import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
-import org.firstinspires.ftc.teamcode.Wrappers.Initializer;
+import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
 @TeleOp
@@ -45,8 +40,7 @@ public class TeleopRed extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
-        isAutonomousActive = false;
-        Initializer.start(hardwareMap);
+        Hardware.init(hardwareMap);
         timer = new ElapsedTime();
         timer.startTime();
         timer.reset();
@@ -81,20 +75,18 @@ public class TeleopRed extends LinearOpMode {
             double y = X * Math.sin(heading) + Y * Math.cos(heading);
             drive.setTargetVector(x, y, rx);
 
-            if (Storage.state == Storage.State.GOINGTRANSFER){
+            if (intake.storage.getState() == Storage.State.GOINGTRANSFER){
                 gamepad1.rumble(50);
             }
-            if (Storage.state == Storage.State.TRANSFER && Latch.state == Latch.State.TRANSFER && gm1.crossWasPressed())Intake.state = Intake.State.SHOOT;
-            else if (Storage.state != Storage.State.TRANSFER && Storage.state!= Storage.State.SHOOT && gm1.right_bumper) Intake.state = Intake.State.INTAKE;
-            else if ((Storage.state == Storage.State.GOINGTRANSFER || Storage.state == Storage.State.TRANSFER) && gm1.right_bumper) Intake.state = Intake.State.REVERSE;
-            else if (Storage.state != Storage.State.TRANSFER && Storage.state!= Storage.State.SHOOT && gm1.left_bumper) Intake.state = Intake.State.REVERSE;
+            if (intake.storage.getState() == Storage.State.TRANSFER && intake.latch.getState() == Latch.State.TRANSFER && gm1.crossWasPressed())intake.setState(Intake.State.SHOOT);
+            else if (intake.storage.getState() != Storage.State.TRANSFER && intake.storage.getState()!= Storage.State.SHOOT && gm1.right_bumper) intake.setState(Intake.State.INTAKE);
+            else if ((intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER) && gm1.right_bumper) intake.setState(Intake.State.REVERSE);
+            else if (intake.storage.getState() != Storage.State.TRANSFER && intake.storage.getState()!= Storage.State.SHOOT && gm1.left_bumper) intake.setState(Intake.State.REVERSE);
             if (gamepad1.psWasPressed()){
                 odo.reset();
             }
-            Voltage = 12.0/currentVoltage;
             prevgm1.copy(gm1);
             prevgm2.copy(gm2);
-            telemetryM.update();
             telemetry.update();
 
         }

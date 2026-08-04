@@ -3,8 +3,7 @@
     import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
     import static org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit.MM;
 
-    import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.imu;
-    import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.pp;
+    import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.pp;
 
     import com.bylazar.configurables.annotations.Configurable;
     import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -31,10 +30,6 @@
             pp.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED , org.firstinspires.ftc.teamcode.Wrappers.GoBildaPinpointDriver.EncoderDirection.FORWARD);
             pp.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
             pp.setOffsets(128.5 , -76.999+17.798, DistanceUnit.MM);
-            imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
-            imu.resetYaw();
-
-
 
         }
 
@@ -61,7 +56,6 @@
         }
         public void reset() {
             pp.setPosition(new Pose2D(MM,0,0,RADIANS,0));
-            imu.resetYaw();
         }
         public static double filterParameter = 0.8;
         private static final LowPassFilter xVelocityFilter = new LowPassFilter(filterParameter, 0);

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.OpModes.TestOpModes;
 
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.telemetryM;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -16,9 +15,9 @@ public class VelocityTest extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()){
             odo.update();
-            telemetryM.addData("Xvelocity",Odo.xRobotVelocity);
-            telemetryM.addData("Yvelocity",Odo.yRobotVelocity);
-            telemetryM.update();
+            telemetry.addData("Xvelocity",Odo.xRobotVelocity);
+            telemetry.addData("Yvelocity",Odo.yRobotVelocity);
+            telemetry.update();
         }
     }
 }

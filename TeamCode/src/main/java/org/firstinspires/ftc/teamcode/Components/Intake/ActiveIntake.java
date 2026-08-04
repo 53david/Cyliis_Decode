@@ -1,51 +1,50 @@
 package org.firstinspires.ftc.teamcode.Components.Intake;
 
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.intakeMotor;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 
 
 @Config
 public class ActiveIntake {
     public static double idlePower = 0,intakePower = 1, reversePower = -0.5,shootPower = 1;
-    public double power = 0;
+    CRServo motor;
     public enum State{
         IDLE(idlePower),
         INTAKE(intakePower),
         REVERSE(reversePower),
         SHOOT(shootPower);
-        double power = 0;
-        State(){
-        }
+        double power;
         State(double power){
             this.power = power;
         }
     }
-    public static State state = State.IDLE;
+    public State state = State.IDLE;
     public ActiveIntake() {
-        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        motor= Hardware.sch0;
+        motor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
-    public void updatePower(){
+    private void updatePower(){
         State.IDLE.power = idlePower;
         State.INTAKE.power = intakePower;
         State.REVERSE.power = reversePower;
         State.SHOOT.power = shootPower;
     }
-    public void stateUpdate() {
-        switch (state){
-            case INTAKE:
-            case IDLE:
-            case REVERSE:
-            case SHOOT:
-                break;
-        }
-    }
-    public void update(){
-        stateUpdate();
-        updatePower();
-        power = state.power;
+
+    private void updateHardware()
+    {
+        motor.setPower(state.power);
     }
 
+    public void update(){
+
+        updateHardware();
+        updatePower();
+    }
+    public void setState(State state){
+        this.state = state;
+    }
 }

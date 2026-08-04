@@ -1,11 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components.Chassis;
 
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.backLeft;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.backRight;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.frontLeft;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.frontRight;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.gm1;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.pp;
+import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.pp;
 
 
 import com.bylazar.configurables.annotations.Configurable;
@@ -16,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
 import org.firstinspires.ftc.teamcode.Math.PIDController;
+import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 import org.firstinspires.ftc.teamcode.Wrappers.Pose2D;
 @Configurable
@@ -25,6 +21,7 @@ public class Chassis{
         DRIVE , PID;
     }
     public static State state;
+    DcMotorEx frontLeft,frontRight,backLeft,backRight;
     public static boolean stop = false;
     public  double targetX , targetY ,x=0 ,y=0;
     public static double targetHeading;
@@ -43,6 +40,11 @@ public class Chassis{
 
     public Chassis(State initialState)
     {
+        frontLeft= Hardware.mch3;
+        frontRight= Hardware.mch1;
+        backLeft=Hardware.mch2;
+        backRight=Hardware.mch0;
+
         state=initialState;
         backRight.setDirection(DcMotorEx.Direction.REVERSE);
         frontRight.setDirection(DcMotorEx.Direction.REVERSE);

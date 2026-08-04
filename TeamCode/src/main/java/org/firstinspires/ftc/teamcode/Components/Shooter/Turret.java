@@ -1,17 +1,16 @@
 package org.firstinspires.ftc.teamcode.Components.Shooter;
 
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.servo1;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.servo2;
-
 import com.acmerobotics.dashboard.config.Config;
-import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
 @Config
 public class Turret {
+    ServoImplEx servo1,servo2;
     public static double goalPositionX = 0, goalPositionY = 840;
     public static double targetAngle = 0;
     public static double a = 0.05;
@@ -23,6 +22,8 @@ public class Turret {
     public static double dy = 0, ty = 0;
 
     public Turret() {
+        servo1 = Hardware.ssh1;
+        servo2 = Hardware.ssh2;
         servo1.setPwmRange(new PwmControl.PwmRange(500, 2500));
         servo2.setPwmRange(new PwmControl.PwmRange(500, 2500));
 

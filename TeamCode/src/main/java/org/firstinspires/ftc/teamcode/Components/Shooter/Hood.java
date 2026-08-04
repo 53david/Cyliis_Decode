@@ -1,17 +1,19 @@
 package org.firstinspires.ftc.teamcode.Components.Shooter;
-import static org.firstinspires.ftc.teamcode.Wrappers.Initializer.hood;
 
 
 import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
 @Config
 public class Hood {
+    ServoImplEx servo;
     public static double k = 0.00045;
-    public static double pos = 0;
+    public static double idlePos = 0,shootPos = 0;
     int i = 0;
     public double[] v={
             0.11,
@@ -26,35 +28,39 @@ public class Hood {
             0.42,
     };
     public enum State{
-        IDLE(pos),
-        SHOOT(pos);
+        IDLE(idlePos),
+        SHOOT(shootPos);
         double position;
         State(double position){
             this.position = position;
         }
     }
     public static State state = State.IDLE;
+    public Hood(){
+        servo = Hardware.ssh5;
+        servo.setDirection(Servo.Direction.FORWARD);
+    }
+    public void update(){
+        updateState();
+        updatePosition();
+        servo.setPosition(state.position);
+    }
     public void updateState(){
         switch (state){
             case IDLE:
                 i = Math.max((Odo.delta%100-8),0);
                 i = Math.min(i,v.length-1);
-                pos = v[i];
+                idlePos = v[i];
             case SHOOT:
                 i = Math.max((Odo.delta%100-8),0);
                 i = Math.min(i,v.length-1);
-                pos = v[i] + k*(FlyWheel.targetVelocity-FlyWheel.currentVelocity);
+                shootPos = v[i] + k*(FlyWheel.targetVelocity-FlyWheel.currentVelocity);
                 break;
         }
     }
-    public Hood(){
-        hood.setDirection(Servo.Direction.FORWARD);
+    public void updatePosition(){
+        State.IDLE.position = idlePos;
+        State.SHOOT.position = shootPos;
     }
-    public void update(){
-        updateState();
-        hood.setPosition(state.position);
-    }
-    public void tune(){
-        hood.setPosition(pos);
-    }
+
 }
