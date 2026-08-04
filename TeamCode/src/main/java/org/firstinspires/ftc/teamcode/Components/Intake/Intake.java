@@ -8,7 +8,7 @@ public class Intake {
     public ActiveIntake activeIntake;
     public Storage storage;
     public Latch latch;
-    public static DigitalChannel bb;
+    public DigitalChannel bb;
 
     public enum State{
         IDLE,
@@ -55,7 +55,7 @@ public class Intake {
     public void setState(State state){
         this.state = state;
     }
-    public static boolean isBallInStorage(){
+    public boolean isBallInStorage(){
         return !bb.getState();
     }
 }
