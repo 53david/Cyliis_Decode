@@ -35,7 +35,7 @@ public class Hood {
             this.position = position;
         }
     }
-    public static State state = State.IDLE;
+    public State state = State.IDLE;
     public Hood(){
         servo = Hardware.ssh5;
         servo.setDirection(Servo.Direction.FORWARD);
@@ -64,6 +64,12 @@ public class Hood {
     private void updatePosition(){
         State.IDLE.position = idlePos;
         State.SHOOT.position = shootPos;
+    }
+    public void setState(State state){
+        this.state = state;
+    }
+    public State getState(){
+        return state;
     }
 
 }

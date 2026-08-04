@@ -45,7 +45,7 @@ public class FlyWheel {
 
     }
     public static double errorThreshold = 80;
-    public static State state = State.SHOOT;
+    public State state = State.SHOOT;
     public static double vel = 0;
     public static double rpm = 0;
     public FlyWheel(){
@@ -89,6 +89,12 @@ public class FlyWheel {
     }
     public double getVelocity(){
         return Math.abs(encoder.getVelocity());
+    }
+    public void setState(State state){
+        this.state = state;
+    }
+    public State getState(){
+        return state;
     }
 
 }
