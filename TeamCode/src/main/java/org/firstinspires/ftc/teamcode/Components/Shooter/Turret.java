@@ -48,7 +48,7 @@ public class Turret {
 
     }
 
-    public void updateAngle() {
+    private void updateAngle() {
         dx = goalPositionX - (Odo.predictedX + tx*Math.cos(Odo.heading) + Odo.xRobotVelocity * a);
         dy = goalPositionY - (Odo.predictedY + tx*Math.sin(Odo.heading) + Odo.yRobotVelocity * a);
         targetAngle = Math.atan2(dy, dx);
@@ -60,7 +60,7 @@ public class Turret {
         updateServosPosition();
 
     }
-    public double normalizeRadians(double angle) {
+    private double normalizeRadians(double angle) {
         angle %= (2.0 * Math.PI);
         if (angle < 0) angle += (2.0 * Math.PI);
         return angle;

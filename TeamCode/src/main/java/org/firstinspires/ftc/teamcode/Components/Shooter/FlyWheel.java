@@ -63,7 +63,7 @@ public class FlyWheel {
         updateShooter();
 
     }
-    public void updateState(){
+    private void updateState(){
         switch (state){
             case IDLE:
             case SHOOT:
@@ -73,18 +73,18 @@ public class FlyWheel {
                 break;
         }
     }
-    public void updatePower(){
+    private void updatePower(){
         State.SHOOT.power = shootPower;
         State.IDLE.power = idlePower;
     }
-    public void updateShooter(){
+    private void updateShooter(){
         rpm = controller.calculate(currentVelocity,targetVelocity) + Kv * targetVelocity
                 + Ks * Math.signum(targetVelocity- currentVelocity) + (targetVelocity-currentVelocity) * Ka;
         shoot1.setPower(rpm);
         shoot2.setPower(rpm);
 
     }
-    public static boolean isReady(){
+    public boolean isReady(){
         return Math.abs(vel-currentVelocity) < errorThreshold;
     }
     public double getVelocity(){

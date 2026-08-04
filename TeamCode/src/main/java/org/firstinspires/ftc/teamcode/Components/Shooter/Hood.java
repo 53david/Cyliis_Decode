@@ -45,20 +45,20 @@ public class Hood {
         updatePosition();
         servo.setPosition(state.position);
     }
-    public void updateState(){
+    private void updateState(){
         switch (state){
             case IDLE:
-                i = Math.max((Odo.delta%100-8),0);
+                i = Math.max((Odo.delta/100-8),0);
                 i = Math.min(i,v.length-1);
                 idlePos = v[i];
             case SHOOT:
-                i = Math.max((Odo.delta%100-8),0);
+                i = Math.max((Odo.delta/100-8),0);
                 i = Math.min(i,v.length-1);
                 shootPos = v[i] + k*(FlyWheel.targetVelocity-FlyWheel.currentVelocity);
                 break;
         }
     }
-    public void updatePosition(){
+    private void updatePosition(){
         State.IDLE.position = idlePos;
         State.SHOOT.position = shootPos;
     }
