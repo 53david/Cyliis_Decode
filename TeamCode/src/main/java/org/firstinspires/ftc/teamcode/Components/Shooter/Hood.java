@@ -43,6 +43,9 @@ public class Hood {
     public void update(){
         updateState();
         updatePosition();
+        updateHardware();
+    }
+    private void updateHardware(){
         servo.setPosition(state.position);
     }
     private void updateState(){
