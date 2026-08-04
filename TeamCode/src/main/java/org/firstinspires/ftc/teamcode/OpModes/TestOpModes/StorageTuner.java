@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class StorageTuner extends LinearOpMode {
     public static double x =0;
+    Intake intake;
     FlyWheel flyWheel;
     Storage storage;
     Latch latch;
@@ -25,6 +26,7 @@ public class StorageTuner extends LinearOpMode {
     public void runOpMode() throws InterruptedException{
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         Hardware.init(hardwareMap);
+        intake = new Intake();
         latch = new Latch();
         flyWheel = new FlyWheel();
         storage = new Storage();
@@ -34,7 +36,7 @@ public class StorageTuner extends LinearOpMode {
             storage.update();
             latch.update();
             telemetry.addData("Current pos",Math.toDegrees(Storage.angle));
-            telemetry.addData("Is ball in storage", Intake.isBallInStorage());
+            telemetry.addData("Is ball in storage", intake.isBallInStorage());
             telemetry.update();
         }
     }

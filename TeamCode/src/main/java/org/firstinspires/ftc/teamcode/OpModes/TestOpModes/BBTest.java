@@ -21,7 +21,7 @@ public class BBTest extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()){
             telemetry.addData("Is Object Nearby?",!Hardware.bb.getState());
-            telemetry.addData("Is Object Nearby?", Intake.isBallInStorage());
+            telemetry.addData("Is Object Nearby?", intake.isBallInStorage());
             telemetry.update();
         }
     }
