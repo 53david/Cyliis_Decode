@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.Components.Shooter;
 
 public class Shooter {
-    FlyWheel flyWheel;
-    Hood hood;
-    Turret turret;
+    public FlyWheel flyWheel;
+    public Hood hood;
+    public Turret turret;
     public enum State{
         IDLE,
         SHOOT,

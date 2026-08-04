@@ -47,11 +47,9 @@ public class TeleopRed extends LinearOpMode {
         odo = new Odo();
         intake =new Intake();
         drive =new Chassis(Chassis.State.DRIVE);
-        shooter =new Shooter(Shooter.State.SHOOT);
-        Hood.state = Hood.State.IDLE;
+        shooter =new Shooter(Shooter.State.ACTIVE);
         waitForStart();
-        Turret.goalPositionX = 0;
-        Turret.goalPositionY = -840;
+        shooter.turret.setState(Turret.State.RED);
         while (opModeIsActive()) {
 
             currentVoltage = voltageSensor.getVoltage();

@@ -33,7 +33,8 @@ public class FlyWheel {
             1775,
             1820,
     };
-    public static double shootPower = 0,idlePower = 1200,currentVelocity = 0,targetVelocity =0;
+    public static int shootPower = 0,idlePower = 1200;
+    public static double currentVelocity = 0,targetVelocity =0;
     PIDController controller = new PIDController(Kp,Ki,Kd);
     public enum State{
         IDLE(idlePower),
@@ -57,19 +58,20 @@ public class FlyWheel {
     }
     public void update(){
         targetVelocity = state.power;
-        currentVelocity = getVelocity();
+        currentVelocity = encoder.getVelocity();
         updateState();
         updatePower();
-        updateShooter();
+        updateHardware();
 
     }
     private void updateState(){
         switch (state){
             case IDLE:
+                break;
             case SHOOT:
                 int i = Math.max((Odo.delta/100-8),0);
                 i = Math.min(i,v.length-1);
-                shootPower = v[i];
+                shootPower =  (v[i] * (Odo.delta - (800 + i * 100)) + v[i + 1] * ((800 + (i + 1) * 100) - Odo.delta)) /100;
                 break;
         }
     }
@@ -77,18 +79,18 @@ public class FlyWheel {
         State.SHOOT.power = shootPower;
         State.IDLE.power = idlePower;
     }
-    private void updateShooter(){
-        rpm = controller.calculate(currentVelocity,targetVelocity) + Kv * targetVelocity
-                + Ks * Math.signum(targetVelocity- currentVelocity) + (targetVelocity-currentVelocity) * Ka;
+    private void updateHardware(){
+        rpm = controller.calculate(currentVelocity, state.power) + Kv * targetVelocity
+                + Ks * Math.signum(state.power- currentVelocity) + (state.power-currentVelocity) * Ka;
         shoot1.setPower(rpm);
         shoot2.setPower(rpm);
 
     }
     public boolean isReady(){
-        return Math.abs(vel-currentVelocity) < errorThreshold;
+        return Math.abs(vel-state.power) < errorThreshold;
     }
     public double getVelocity(){
-        return encoder.getVelocity();
+        return currentVelocity;
     }
     public void setState(State state){
         this.state = state;

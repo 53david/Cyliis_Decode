@@ -53,11 +53,11 @@ public class Hood {
             case IDLE:
                 i = Math.max((Odo.delta/100-8),0);
                 i = Math.min(i,v.length-1);
-                idlePos = v[i];
+                idlePos = (v[i] * (Odo.delta - (800+i*100)) + v[i+1] * ((800+(i+1)*100)-Odo.delta))/100;
             case SHOOT:
                 i = Math.max((Odo.delta/100-8),0);
                 i = Math.min(i,v.length-1);
-                shootPos = v[i] + k*(FlyWheel.targetVelocity-FlyWheel.currentVelocity);
+                shootPos = (v[i] * (Odo.delta - (800+i*100)) + v[i+1] * ((800+(i+1)*100)-Odo.delta))/100 + k*(FlyWheel.targetVelocity-FlyWheel.currentVelocity);
                 break;
         }
     }

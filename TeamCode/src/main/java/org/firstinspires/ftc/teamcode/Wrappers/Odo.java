@@ -24,6 +24,7 @@
     public class Odo {
 
         public static double power = -1;
+        public static double goalPositionX = 0,goalPositionY;
         public static double heading,x ,y, xVelocity, yVelocity, predictedX, predictedY,offsetX = 0,offsetY = 0, offset = 0,prevX = 0, prevY = 0;
         public static int delta = 0;
         public Odo(){
@@ -82,8 +83,8 @@
 
         public static double distance(){
             return Math.sqrt(
-                    (Turret.goalPositionX - (x + Turret.tx*Math.cos(heading) + xRobotVelocity * Turret.a)) * (Turret.goalPositionX - (x + Turret.tx*Math.cos(heading) + xRobotVelocity * Turret.a)) +
-                            (Turret.goalPositionY - (y + Turret.tx*Math.sin(heading) + yRobotVelocity * Turret.a)) * (Turret.goalPositionY -(y + Turret.tx*Math.sin(heading) + yRobotVelocity * Turret.a)));
+                    (goalPositionX - (x + Turret.tx*Math.cos(heading) + xRobotVelocity * Turret.a)) * (goalPositionX - (x + Turret.tx*Math.cos(heading) + xRobotVelocity * Turret.a)) +
+                            (goalPositionY - (y + Turret.tx*Math.sin(heading) + yRobotVelocity * Turret.a)) * (goalPositionY -(y + Turret.tx*Math.sin(heading) + yRobotVelocity * Turret.a)));
         }
         public static double avgVel(){
             return Math.hypot(pp.getVelX(MM),pp.getVelY(MM));

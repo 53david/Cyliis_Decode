@@ -27,7 +27,7 @@ public class ShooterAjustments extends LinearOpMode {
            hood = new Hood();
            odo = new Odo();
            chassis = new Chassis(Chassis.State.DRIVE);
-           FlyWheel.state = FlyWheel.State.IDLE;
+           flyWheel.setState(FlyWheel.State.IDLE);
            waitForStart();
            while (opModeIsActive()){
                flyWheel.update();
