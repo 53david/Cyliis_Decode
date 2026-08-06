@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 
 @Config
 public class ActiveIntake {
+    public static double x = 0;
     public static double idlePower = 0,intakePower = 1, reversePower = -0.5,shootPower = 1;
     CRServo motor;
     public enum State{
@@ -46,5 +47,8 @@ public class ActiveIntake {
     }
     public void setState(State state){
         this.state = state;
+    }
+    public void test(){
+        motor.setPower(x);
     }
 }

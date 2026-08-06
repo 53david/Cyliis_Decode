@@ -14,7 +14,7 @@ public class Hood {
     ServoImplEx servo;
     public static double k = 0.00045;
     public static double idlePos = 0,shootPos = 0;
-    int i = 0;
+    int i = 0,j=0;
     public double[] v={
             0.11,
             0.15,
@@ -51,13 +51,13 @@ public class Hood {
     private void updateState(){
         switch (state){
             case IDLE:
-                i = Math.max((Odo.delta/100-8),0);
-                i = Math.min(i,v.length-1);
-                idlePos = (v[i] * (Odo.delta - (800+i*100)) + v[i+1] * ((800+(i+1)*100)-Odo.delta))/100;
+                i = Math.max((Odo.delta/100-8),0);i = Math.min(i,v.length-1);
+                j = Math.max((Odo.delta/100-8)+1,0);j = Math.min(j,v.length-1);
+                idlePos = (v[i] * (Odo.delta - (800+i*100)) + v[j] * ((800+j*100)-Odo.delta))/100;
             case SHOOT:
-                i = Math.max((Odo.delta/100-8),0);
-                i = Math.min(i,v.length-1);
-                shootPos = (v[i] * (Odo.delta - (800+i*100)) + v[i+1] * ((800+(i+1)*100)-Odo.delta))/100 + k*(FlyWheel.targetVelocity-FlyWheel.currentVelocity);
+                i = Math.max((Odo.delta/100-8),0);i = Math.min(i,v.length-1);
+                j = Math.max((Odo.delta/100-8)+1,0);j = Math.min(j,v.length-1);
+                shootPos = (v[i] * (Odo.delta - (800+i*100)) + v[j] * ((800+j*100)-Odo.delta))/100 + k*(FlyWheel.targetVelocity-FlyWheel.currentVelocity);
                 break;
         }
     }
@@ -70,6 +70,9 @@ public class Hood {
     }
     public State getState(){
         return state;
+    }
+    public double getPosition(){
+        return state.position;
     }
 
 }

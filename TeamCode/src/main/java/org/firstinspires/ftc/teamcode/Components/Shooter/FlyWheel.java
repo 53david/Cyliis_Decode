@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.Components.Shooter;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.controller.PIDController;
-import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.Math.PIDController;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
@@ -47,7 +46,6 @@ public class FlyWheel {
     }
     public static double errorThreshold = 80;
     public State state = State.SHOOT;
-    public static double vel = 0;
     public static double rpm = 0;
     public FlyWheel(){
         encoder = Hardware.mch3;
@@ -57,10 +55,10 @@ public class FlyWheel {
         shoot2.setDirection(DcMotorSimple.Direction.FORWARD);
     }
     public void update(){
-        targetVelocity = state.power;
         currentVelocity = encoder.getVelocity();
         updateState();
         updatePower();
+        updatePID();
         updateHardware();
 
     }
@@ -69,9 +67,9 @@ public class FlyWheel {
             case IDLE:
                 break;
             case SHOOT:
-                int i = Math.max((Odo.delta/100-8),0);
-                i = Math.min(i,v.length-1);
-                shootPower =  (v[i] * (Odo.delta - (800 + i * 100)) + v[i + 1] * ((800 + (i + 1) * 100) - Odo.delta)) /100;
+                int i = Math.max((Odo.delta/100-8),0);i = Math.min(i,v.length-1);
+                int j = Math.max((Odo.delta/100-8)+1,0);j = Math.min(j,v.length-1);
+                shootPower =  (v[i] * (Odo.delta - (800 + i * 100)) + v[j] * ((800 + j * 100) - Odo.delta)) /100;
                 break;
         }
     }
@@ -80,17 +78,26 @@ public class FlyWheel {
         State.IDLE.power = idlePower;
     }
     private void updateHardware(){
-        rpm = controller.calculate(currentVelocity, state.power) + Kv * targetVelocity
+        rpm = controller.calculate(currentVelocity, state.power) + Kv * state.power
                 + Ks * Math.signum(state.power- currentVelocity) + (state.power-currentVelocity) * Ka;
         shoot1.setPower(rpm);
         shoot2.setPower(rpm);
 
     }
+    private void updatePID(){
+        controller.kp = Kp;
+        controller.ki = Ki;
+        controller.kd = Kd;
+
+    }
     public boolean isReady(){
-        return Math.abs(vel-state.power) < errorThreshold;
+        return Math.abs(currentVelocity-state.power) < errorThreshold;
     }
     public double getVelocity(){
         return currentVelocity;
+    }
+    public double getTargetVelocity(){
+        return state.power;
     }
     public void setState(State state){
         this.state = state;

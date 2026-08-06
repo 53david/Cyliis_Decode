@@ -35,6 +35,7 @@ public class StorageTuner extends LinearOpMode {
         while (opModeIsActive()) {
             storage.update();
             latch.update();
+
             telemetry.addData("Current pos",Math.toDegrees(Storage.angle));
             telemetry.addData("Is ball in storage", intake.isBallInStorage());
             telemetry.update();

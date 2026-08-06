@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 
 import android.text.method.HideReturnsTransformationMethod;
 
-@Configurable
 @TeleOp
 public class LatchTest extends LinearOpMode {
     Latch latch;
