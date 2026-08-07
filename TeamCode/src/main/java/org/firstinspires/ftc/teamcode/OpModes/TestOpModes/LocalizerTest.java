@@ -4,12 +4,9 @@ package org.firstinspires.ftc.teamcode.OpModes.TestOpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
-import org.firstinspires.ftc.teamcode.Trajectories.FarBlue;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 @TeleOp

@@ -13,9 +13,12 @@ public class BlueClose extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException{
         closeBlue = new CloseBlue(hardwareMap);
+        while (opModeInInit()){
+            closeBlue.intake.update();
+        }
         waitForStart();
+
         while(opModeIsActive()){
-            Chassis.state = Chassis.State.PID;
             closeBlue.update();
         }
     }

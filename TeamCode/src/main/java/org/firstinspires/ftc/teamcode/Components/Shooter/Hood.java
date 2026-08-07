@@ -14,19 +14,6 @@ public class Hood {
     ServoImplEx servo;
     public static double k = 0.00045;
     public static double idlePos = 0,shootPos = 0;
-    int i = 0,j=0;
-    public double[] v={
-            0.11,
-            0.15,
-            0.22,
-            0.24,
-            0.25,
-            0.27,
-            0.33,
-            0.34,
-            0.36,
-            0.42,
-    };
     public enum State{
         IDLE(idlePos),
         SHOOT(shootPos);
@@ -51,13 +38,9 @@ public class Hood {
     private void updateState(){
         switch (state){
             case IDLE:
-                i = Math.max((Odo.delta/100-8),0);i = Math.min(i,v.length-1);
-                j = Math.max((Odo.delta/100-8)+1,0);j = Math.min(j,v.length-1);
-                idlePos = (v[i] * (Odo.delta - (800+i*100)) + v[j] * ((800+j*100)-Odo.delta))/100;
+                idlePos = calculateHoodPos(Odo.delta);
             case SHOOT:
-                i = Math.max((Odo.delta/100-8),0);i = Math.min(i,v.length-1);
-                j = Math.max((Odo.delta/100-8)+1,0);j = Math.min(j,v.length-1);
-                shootPos = (v[i] * (Odo.delta - (800+i*100)) + v[j] * ((800+j*100)-Odo.delta))/100 + k*(FlyWheel.targetVelocity-FlyWheel.currentVelocity);
+                shootPos = calculateHoodPos(Odo.delta) + k*(FlyWheel.targetVelocity-FlyWheel.currentVelocity);
                 break;
         }
     }
@@ -73,6 +56,9 @@ public class Hood {
     }
     public double getPosition(){
         return state.position;
+    }
+    public double calculateHoodPos(double distance){
+        return Math.clamp((-1)*(3.31142*Math.pow(10,-8))*Math.pow(distance,2)+0.000287928*distance-0.237023,0.01,0.495);
     }
 
 }

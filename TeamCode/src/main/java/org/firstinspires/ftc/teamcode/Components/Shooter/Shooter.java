@@ -1,7 +1,13 @@
 package org.firstinspires.ftc.teamcode.Components.Shooter;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.Components.Intake.Intake;
+import org.firstinspires.ftc.teamcode.Components.Intake.Storage;
+
 public class Shooter {
     public FlyWheel flyWheel;
+    ElapsedTime timer;
     public Hood hood;
     public Turret turret;
     public enum State{
@@ -9,9 +15,11 @@ public class Shooter {
         SHOOT,
         ACTIVE,
     }
-    public static State state = State.SHOOT;
-    public Shooter(State state1){
-        state = state1;
+    public State state = State.ACTIVE;
+    public Shooter(State state){
+        timer = new ElapsedTime();
+        timer.startTime();
+        this.state = state;
         turret = new Turret();
         flyWheel =new FlyWheel();
         hood = new Hood();
@@ -21,14 +29,17 @@ public class Shooter {
             case IDLE:
                 flyWheel.setState(FlyWheel.State.IDLE);
                 hood.setState(Hood.State.IDLE);
+                timer.reset();
                 break;
             case ACTIVE:
                 flyWheel.setState(FlyWheel.State.SHOOT);
                 hood.setState(Hood.State.IDLE);
+                timer.reset();
                 break;
             case SHOOT:
                 flyWheel.setState(FlyWheel.State.SHOOT);
                 hood.setState(Hood.State.SHOOT);
+                if (timer.seconds()>0.4) state = State.ACTIVE;
                 break;
         }
 
@@ -38,5 +49,8 @@ public class Shooter {
         turret.update();
         hood.update();
         flyWheel.update();
+    }
+    public void setState(State state){
+        this.state=state;
     }
 }

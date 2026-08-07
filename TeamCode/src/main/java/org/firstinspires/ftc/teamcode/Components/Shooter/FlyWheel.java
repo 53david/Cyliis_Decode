@@ -19,20 +19,7 @@ public class FlyWheel {
     public static double Ks = 0;
     public static double Kv = 0.000435;
     public static double Ka = 0.0055;
-    public int[] v = {
-            1300,
-            1435,
-            1480,
-            1520,
-            1550,
-            1600,
-            1630,
-            1700,
-            1740,
-            1775,
-            1820,
-    };
-    public static int shootPower = 0,idlePower = 1200;
+    public static double shootPower = 0,idlePower = 1200;
     public static double currentVelocity = 0,targetVelocity =0;
     PIDController controller = new PIDController(Kp,Ki,Kd);
     public enum State{
@@ -55,6 +42,7 @@ public class FlyWheel {
         shoot2.setDirection(DcMotorSimple.Direction.FORWARD);
     }
     public void update(){
+        targetVelocity = state.power;
         currentVelocity = encoder.getVelocity();
         updateState();
         updatePower();
@@ -67,9 +55,7 @@ public class FlyWheel {
             case IDLE:
                 break;
             case SHOOT:
-                int i = Math.max((Odo.delta/100-8),0);i = Math.min(i,v.length-1);
-                int j = Math.max((Odo.delta/100-8)+1,0);j = Math.min(j,v.length-1);
-                shootPower =  (v[i] * (Odo.delta - (800 + i * 100)) + v[j] * ((800 + j * 100) - Odo.delta)) /100;
+                shootPower = calculatePower(Odo.delta);
                 break;
         }
     }
@@ -104,6 +90,9 @@ public class FlyWheel {
     }
     public State getState(){
         return state;
+    }
+    public double calculatePower(double distance){
+        return Math.clamp(-0.0000247921*Math.pow(distance,2)+0.408875*distance+912.71962,1300,2100);
     }
 
 }

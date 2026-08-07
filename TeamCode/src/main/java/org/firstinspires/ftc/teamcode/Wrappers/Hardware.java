@@ -69,6 +69,8 @@ public class Hardware {
 
         analogInput=hardwareMap.get(AnalogInput.class , "spindexer");
 
+        pp = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
+
 
     }
 

@@ -35,7 +35,7 @@ public class Turret {
             this.y = y;
         }
     }
-    public State state;
+    public State state = State.BLUE;
     public Turret() {
         servo1 = Hardware.ssh1;
         servo2 = Hardware.ssh2;

@@ -66,8 +66,8 @@ public class TeleopBlue extends LinearOpMode {
             if (gm1.right_stick_y<-0.65 && prevgm1.right_stick_y>-0.65) Odo.offsetY -=40;
 
             double heading = -Odo.getHeading() + Math.PI;
-            double X = gm1.left_stick_x;
-            double Y = -gm1.left_stick_y;
+            double X = -gm1.left_stick_y;
+            double Y = -gm1.left_stick_x;
             double rx = (gm1.right_trigger - gm1.left_trigger);
             double x = X * Math.cos(heading) - Y * Math.sin(heading);
             double y = X * Math.sin(heading) + Y * Math.cos(heading);
@@ -76,10 +76,14 @@ public class TeleopBlue extends LinearOpMode {
             if (intake.storage.getState() == Storage.State.GOINGTRANSFER){
                 gamepad1.rumble(50);
             }
-            if (intake.storage.getState() == Storage.State.TRANSFER && intake.latch.getState() == Latch.State.TRANSFER && gm1.crossWasPressed())intake.setState(Intake.State.SHOOT);
+            if (intake.storage.getState() == Storage.State.TRANSFER && intake.latch.getState() == Latch.State.TRANSFER && gm1.crossWasPressed()){
+                intake.setState(Intake.State.SHOOT);
+                shooter.setState(Shooter.State.SHOOT);
+            }
             else if (intake.storage.getState() != Storage.State.TRANSFER && intake.storage.getState()!= Storage.State.SHOOT && gm1.right_bumper) intake.setState(Intake.State.INTAKE);
             else if ((intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER) && gm1.right_bumper) intake.setState(Intake.State.REVERSE);
             else if (intake.storage.getState() != Storage.State.TRANSFER && intake.storage.getState()!= Storage.State.SHOOT && gm1.left_bumper) intake.setState(Intake.State.REVERSE);
+            else if (!gm1.right_bumper && !gm1.left_bumper && intake.state != Intake.State.SHOOT) intake.setState(Intake.State.IDLE);
             if (gamepad1.psWasPressed()){
                 odo.reset();
             }

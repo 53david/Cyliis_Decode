@@ -27,17 +27,14 @@ public class StorageTuner extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         Hardware.init(hardwareMap);
         intake = new Intake();
-        latch = new Latch();
-        flyWheel = new FlyWheel();
-        storage = new Storage();
-        activeIntake = new ActiveIntake();
+        intake.storage.setState(Storage.State.GOINGBALL1);
         waitForStart();
         while (opModeIsActive()) {
-            storage.update();
-            latch.update();
+            intake.update();
 
             telemetry.addData("Current pos",Math.toDegrees(Storage.angle));
             telemetry.addData("Is ball in storage", intake.isBallInStorage());
+            telemetry.addData("Current state", intake.storage.getState());
             telemetry.update();
         }
     }

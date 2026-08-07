@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Components.Intake;
 
 
 import com.acmerobotics.dashboard.config.Config;
-import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.Math.BetterMotionProfile;
@@ -11,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class Latch {
     public double profilePos = 0;
-    public static double transferPos = 0.3975;
+    public static double transferPos = 0.395;
     public static double idlePos = 0.16;
         public enum State{
             TRANSFER(transferPos),
