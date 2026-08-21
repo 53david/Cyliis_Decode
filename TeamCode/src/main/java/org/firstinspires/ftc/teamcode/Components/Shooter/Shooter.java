@@ -28,7 +28,7 @@ public class Shooter {
         switch (state){
             case IDLE:
                 flyWheel.setState(FlyWheel.State.IDLE);
-                hood.setState(Hood.State.IDLE);
+                hood.setState(Hood.State.PAUSE);
                 timer.reset();
                 break;
             case ACTIVE:

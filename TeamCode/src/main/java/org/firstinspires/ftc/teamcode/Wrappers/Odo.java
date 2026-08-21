@@ -23,7 +23,7 @@
     @Configurable
     public class Odo {
 
-        public static double power = -1;
+        public static double power = -1, timerTreshold;
         public static double goalPositionX = 0,goalPositionY;
         public static double heading,x ,y, xVelocity, yVelocity, predictedX, predictedY,offsetX = 0,offsetY = 0, offset = 0,prevX = 0, prevY = 0;
         public static int delta = 0;
@@ -56,6 +56,7 @@
             return yVelocity;
         }
         public void reset() {
+            offsetX = 0; offsetY = 0;
             pp.setPosition(new Pose2D(MM,0,0,RADIANS,0));
         }
         public static double filterParameter = 0.8;
@@ -82,9 +83,8 @@
         }
 
         public static double distance(){
-            return Math.sqrt(
-                    (goalPositionX - (x + Turret.tx*Math.cos(heading) + xRobotVelocity * Turret.a)) * (goalPositionX - (x + Turret.tx*Math.cos(heading) + xRobotVelocity * Turret.a)) +
-                            (goalPositionY - (y + Turret.tx*Math.sin(heading) + yRobotVelocity * Turret.a)) * (goalPositionY -(y + Turret.tx*Math.sin(heading) + yRobotVelocity * Turret.a)));
+            return Math.sqrt((goalPositionX - (x + Turret.tx*Math.cos(Odo.heading))) * (goalPositionX - (x + Turret.tx*Math.cos(Odo.heading)))
+                    + (goalPositionY - (y+ Turret.tx*Math.sin(Odo.heading))) * (goalPositionY - (y+ Turret.tx*Math.sin(Odo.heading))));
         }
         public static double avgVel(){
             return Math.hypot(pp.getVelX(MM),pp.getVelY(MM));
@@ -108,6 +108,15 @@
             xVelocity = xVelocityFilter.getValue(pp.getVelocity().getX(MM));
             yVelocity = yVelocityFilter.getValue(pp.getVelocity().getY(MM));
             updateGlide();
+            if (Odo.delta > 3000){
+                power = -0.6;
+                timerTreshold = 0.7;
+            }
+            else {
+                power = -1;
+                timerTreshold = 0.4;
+            }
+
             predictedX = x + xGlide;
             predictedY = y + yGlide;
             prevX = x;

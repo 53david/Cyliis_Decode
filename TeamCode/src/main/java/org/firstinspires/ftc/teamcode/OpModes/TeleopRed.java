@@ -39,7 +39,7 @@ public class TeleopRed extends LinearOpMode {
     public void runOpMode() {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        voltageSensor = hardwareMap.voltageSensor.iterator().next();
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();Chassis.stop = false;
         Hardware.init(hardwareMap);
         timer = new ElapsedTime();
         timer.startTime();
@@ -53,6 +53,7 @@ public class TeleopRed extends LinearOpMode {
         while (opModeIsActive()) {
 
             currentVoltage = voltageSensor.getVoltage();
+
             gm1.copy(gamepad1);
             gm2.copy(gamepad2);
             intake.update();
@@ -60,14 +61,14 @@ public class TeleopRed extends LinearOpMode {
             drive.update();
             odo.update();
 
-            if (gm1.right_stick_x>0.65 && prevgm1.right_stick_x<0.65) Odo.offsetX -=40;
-            if (gm1.right_stick_x<-0.65 && prevgm1.right_stick_x>-0.65) Odo.offsetX +=40;
-            if (gm1.right_stick_y>0.65 && prevgm1.right_stick_y<0.65) Odo.offsetY +=40;
-            if (gm1.right_stick_y<-0.65 && prevgm1.right_stick_y>-0.65) Odo.offsetY -=40;
+            if (gm1.right_stick_x>0.65 && prevgm1.right_stick_x<0.65) Odo.offsetX +=40;
+            if (gm1.right_stick_x<-0.65 && prevgm1.right_stick_x>-0.65) Odo.offsetX -=40;
+            if (gm1.right_stick_y>0.65 && prevgm1.right_stick_y<0.65) Odo.offsetY -=40;
+            if (gm1.right_stick_y<-0.65 && prevgm1.right_stick_y>-0.65) Odo.offsetY +=40;
 
-            double heading = -Odo.getHeading() + Math.PI;
-            double X = gm1.left_stick_y;
-            double Y = gm1.left_stick_x;
+            double heading = -Odo.getHeading() - Math.PI/2;
+            double X = gm1.left_stick_x;
+            double Y = -gm1.left_stick_y;
             double rx = (gm1.right_trigger - gm1.left_trigger);
             double x = X * Math.cos(heading) - Y * Math.sin(heading);
             double y = X * Math.sin(heading) + Y * Math.cos(heading);

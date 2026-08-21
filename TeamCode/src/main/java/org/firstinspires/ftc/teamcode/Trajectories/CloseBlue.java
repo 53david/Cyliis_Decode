@@ -12,8 +12,8 @@ public class CloseBlue {
             new Pose2D(-1470,-410,Math.toRadians(75)),
             new Pose2D(-1470,-410,Math.toRadians(75)),
         };
-    public static Pose2D gatePos = new Pose2D(-1860, 696, Math.toRadians(118));
-    public static Pose2D goingGatePos = new Pose2D(-1740,600,Math.toRadians(80));
+    public static Pose2D gatePos = new Pose2D(-1860, 720, Math.toRadians(117));
+    public static Pose2D goingGatePos = new Pose2D(-1760,580,Math.toRadians(80));
     public static Pose2D afterCollectPos = new Pose2D(-1820,500,Math.toRadians(75));
     public static Pose2D[] spike1Pos = {
             new Pose2D(-1290,-250,Math.PI/2),

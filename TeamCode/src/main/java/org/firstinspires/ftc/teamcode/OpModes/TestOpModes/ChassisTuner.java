@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes.TestOpModes;
 
 
+import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.gamepad.Gamepad;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 import org.firstinspires.ftc.teamcode.Wrappers.Pose2D;
-@Configurable
+@Config
 @TeleOp
 public class ChassisTuner extends LinearOpMode {
     Chassis chassis;

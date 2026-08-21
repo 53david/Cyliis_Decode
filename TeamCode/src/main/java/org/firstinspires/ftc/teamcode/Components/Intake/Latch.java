@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 @Config
 public class Latch {
     public double profilePos = 0;
-    public static double transferPos = 0.395;
-    public static double idlePos = 0.16;
+    public static double transferPos = 0.382;
+    public static double idlePos = 0.165;
         public enum State{
             TRANSFER(transferPos),
             GOINGTRANSFER(transferPos,TRANSFER),
@@ -30,7 +30,7 @@ public class Latch {
 
         };
     private State state;
-    public static double maxVel=20, acc=16, dec=16;
+    public static double maxVel=20, acc=15  , dec=16;
     BetterMotionProfile profile;
     ServoImplEx servo;
     public Latch(){
@@ -82,5 +82,8 @@ public class Latch {
     public State getState()
     {
         return state;
+    }
+    public boolean isMoving(){
+        return profile.getPosition()!=profile.finalPosition;
     }
 }

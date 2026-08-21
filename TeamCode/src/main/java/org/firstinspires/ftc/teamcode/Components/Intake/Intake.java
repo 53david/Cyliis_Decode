@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 
 public class Intake {
+    public static boolean isShooting = false;
     ElapsedTime timer;
     public ActiveIntake activeIntake;
     public Storage storage;
@@ -33,25 +34,24 @@ public class Intake {
         storage.update();
         activeIntake.update();
 
-        if (storage.getState() == Storage.State.TRANSFER)latch.setState(Latch.State.GOINGTRANSFER);
+        if (state != State.SHOOT) timer.reset();
+        if (storage.getState() == Storage.State.TRANSFER && !storage.isMoving())latch.setState(Latch.State.GOINGTRANSFER);
         if (storage.getState() == Storage.State.GOINGBALL1 || storage.state == Storage.State.BALL1)latch.setState(Latch.State.GOINGIDLE);
     }
     public void updateState(){
         switch (state){
             case IDLE:
-                timer.reset();
                 activeIntake.setState(ActiveIntake.State.IDLE);
                 break;
             case INTAKE:
-                timer.reset();
-                if (isBallInStorage())storage.goNext();
+                if (isBallInStorage() && !storage.isMoving())storage.goNext();
                 activeIntake.setState(ActiveIntake.State.INTAKE);
                 break;
             case REVERSE:
-                timer.reset();
                 activeIntake.setState(ActiveIntake.State.REVERSE);
                 break;
             case SHOOT:
+                isShooting = true;
                 storage.setState(Storage.State.SHOOT);
                 activeIntake.setState(ActiveIntake.State.SHOOT);
                 if (storage.state == Storage.State.GOINGBALL1 || storage.state == Storage.State.BALL1 || timer.seconds()>0.4) {state = State.IDLE; }

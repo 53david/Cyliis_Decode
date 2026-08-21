@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.Components.Shooter;
 
+import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.Voltage;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
 
 import org.firstinspires.ftc.teamcode.Math.PIDController;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
@@ -17,10 +20,10 @@ public class FlyWheel {
     public static double Ki = 0;
     public static double Kd = 0;
     public static double Ks = 0;
-    public static double Kv = 0.000435;
-    public static double Ka = 0.0055;
-    public static double shootPower = 0,idlePower = 1200;
-    public static double currentVelocity = 0,targetVelocity =0;
+    public static double Kv = 0.000395;
+    public static double Ka = 0.0029;
+    public static double shootPower = 0,idlePower = 1550;
+    public static double currentVelocity = 0,targetVelocity =0,offset = -20;
     PIDController controller = new PIDController(Kp,Ki,Kd);
     public enum State{
         IDLE(idlePower),
@@ -31,7 +34,7 @@ public class FlyWheel {
         }
 
     }
-    public static double errorThreshold = 80;
+    public static double errorThreshold = 60;
     public State state = State.SHOOT;
     public static double rpm = 0;
     public FlyWheel(){
@@ -55,7 +58,7 @@ public class FlyWheel {
             case IDLE:
                 break;
             case SHOOT:
-                shootPower = calculatePower(Odo.delta);
+                shootPower = calculatePower(Odo.delta) + offset;
                 break;
         }
     }
@@ -66,6 +69,7 @@ public class FlyWheel {
     private void updateHardware(){
         rpm = controller.calculate(currentVelocity, state.power) + Kv * state.power
                 + Ks * Math.signum(state.power- currentVelocity) + (state.power-currentVelocity) * Ka;
+
         shoot1.setPower(rpm);
         shoot2.setPower(rpm);
 
@@ -74,7 +78,6 @@ public class FlyWheel {
         controller.kp = Kp;
         controller.ki = Ki;
         controller.kd = Kd;
-
     }
     public boolean isReady(){
         return Math.abs(currentVelocity-state.power) < errorThreshold;
@@ -92,7 +95,7 @@ public class FlyWheel {
         return state;
     }
     public double calculatePower(double distance){
-        return Math.clamp(-0.0000247921*Math.pow(distance,2)+0.408875*distance+912.71962,1300,2100);
+        return Math.clamp(-0.0000712024*Math.pow(distance,2)+0.631421*distance+664.24018,1300,2200);
     }
 
 }

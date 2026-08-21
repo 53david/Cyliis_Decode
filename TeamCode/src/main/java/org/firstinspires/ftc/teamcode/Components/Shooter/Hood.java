@@ -12,9 +12,10 @@ import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 @Config
 public class Hood {
     ServoImplEx servo;
-    public static double k = 0.00045;
-    public static double idlePos = 0,shootPos = 0;
+    public static double k = 0.00032,offset = 0;
+    public static double idlePos = 0,shootPos = 0, pos = 0.21;
     public enum State{
+        PAUSE(pos),
         IDLE(idlePos),
         SHOOT(shootPos);
         double position;
@@ -37,10 +38,12 @@ public class Hood {
     }
     private void updateState(){
         switch (state){
+            case PAUSE:
+                break;
             case IDLE:
                 idlePos = calculateHoodPos(Odo.delta);
             case SHOOT:
-                shootPos = calculateHoodPos(Odo.delta) + k*(FlyWheel.targetVelocity-FlyWheel.currentVelocity);
+                shootPos = Math.clamp(calculateHoodPos(Odo.delta) - k * (FlyWheel.targetVelocity-FlyWheel.currentVelocity),0.065,0.52);
                 break;
         }
     }
@@ -58,7 +61,8 @@ public class Hood {
         return state.position;
     }
     public double calculateHoodPos(double distance){
-        return Math.clamp((-1)*(3.31142*Math.pow(10,-8))*Math.pow(distance,2)+0.000287928*distance-0.237023,0.01,0.495);
+
+        return Math.clamp((-0.0000409951*Math.pow(distance,2)+0.295098*distance-148.90526) * 0.001 + offset,0.065,0.52);
     }
 
 }

@@ -9,9 +9,11 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 public class Hardware {
+    public static double Voltage = 0;
     public static Gamepad gm1,gm2,prevgm1,prevgm2;
     public static DcMotorEx mch0, mch1, mch2, mch3;
 
@@ -35,6 +37,8 @@ public class Hardware {
 
     public static void init(HardwareMap hardwareMap)
     {
+        Voltage = 12.90/hardwareMap.getAll(VoltageSensor.class).get(0).getVoltage();
+
         gm1 = new Gamepad();
         prevgm1 = new Gamepad();
         gm2 = new Gamepad();

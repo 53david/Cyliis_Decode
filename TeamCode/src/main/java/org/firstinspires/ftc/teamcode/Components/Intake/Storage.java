@@ -8,16 +8,17 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Math.PIDController;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
+import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
 @Config
 public class Storage {
     ElapsedTime timer = new ElapsedTime();
     ElapsedTime failSafe = new ElapsedTime();
     public static double angle;
-    public static double specialPos = Math.toRadians(250);
+    public static double specialPos = Math.toRadians(255);
     public static double ballPos1 = Math.toRadians(70),ballPos3 = Math.toRadians(190),ballPos2 = Math.toRadians(310);
-    public static double Kp = 0.57,KP = 0.8;
-    public static double Kd = 0.02,KD = 0.023;
+    public static double Kp = 0.57,KP = 0.82;
+    public static double Kd = 0.02,KD = 0.024;
     public static double Ks = 0;
     PIDController pid = new PIDController(Kp,0,Kd);
     public static double error = 0;
@@ -65,6 +66,16 @@ public class Storage {
         updateState();
         updatePID();
         updateHardware();
+        if (!isMoving()){
+            failSafe.reset();
+            return;
+        }
+        if (failSafe.seconds()>1 && failSafe.seconds()<2){
+            motor.setPower(0);
+        }
+        if (failSafe.seconds()>2){
+            failSafe.reset();
+        }
     }
     private void updateHardware(){
 
@@ -76,7 +87,7 @@ public class Storage {
 
         if(state==State.SHOOT)
         {
-            motor.setPower(-1);
+            motor.setPower(Odo.power);
         }
 
     }
@@ -85,7 +96,7 @@ public class Storage {
             case GOINGBALL1:
             case GOINGBALL2:
             case GOINGBALL3:
-                if (Math.abs(error)<0.26)state=state.nextState;
+                if (Math.abs(error)<0.22)state=state.nextState;
                 break;
             case GOINGTRANSFER:
                 if (Math.abs(error)<0.2)state=state.nextState;
@@ -98,7 +109,7 @@ public class Storage {
                 timer.reset();
                 break;
             case SHOOT:
-                if (timer.seconds()>0.365)state=state.nextState;
+                if (timer.seconds()>Odo.timerTreshold)state=state.nextState;
                 break;
 
         }
@@ -138,6 +149,7 @@ public class Storage {
     public void shoot(){
         if (state == State.TRANSFER) state = State.SHOOT;
     }
+
     public State getState(){
         return state;
     }
@@ -149,11 +161,11 @@ public class Storage {
         if (state == State.BALL1 || state == State.BALL2 || state == State.BALL3) state=state.nextState;
     }
     public void byPass() {
-        if (state != State.TRANSFER && state != State.GOINGTRANSFER)
+        if (state != State.TRANSFER && state != State.GOINGTRANSFER && !isMoving())
             this.state = State.GOINGTRANSFER;
     }
     public boolean isMoving(){
-        return Math.abs(error)>0.32;
+        return Math.abs(error)>0.24;
     }
 
 }

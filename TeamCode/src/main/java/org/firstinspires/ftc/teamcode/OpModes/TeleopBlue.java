@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.Voltage;
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.gm1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.gm2;
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.prevgm1;
@@ -28,6 +29,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 public class TeleopBlue extends LinearOpMode {
 
     public static double currentVoltage =0;
+    ElapsedTime failSafeLatch;
     Intake intake;
     Chassis drive;
     Shooter shooter;
@@ -40,9 +42,10 @@ public class TeleopBlue extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
+        Chassis.stop = false;
         Hardware.init(hardwareMap);
-        timer = new ElapsedTime();
-        timer.startTime();
+        timer = new ElapsedTime(); failSafeLatch = new ElapsedTime();
+        timer.startTime(); failSafeLatch.startTime();
         timer.reset();
         odo = new Odo();
         intake =new Intake();
@@ -53,41 +56,51 @@ public class TeleopBlue extends LinearOpMode {
         while (opModeIsActive()) {
 
             currentVoltage = voltageSensor.getVoltage();
+
             gm1.copy(gamepad1);
             gm2.copy(gamepad2);
-            intake.update();
-            shooter.update();
-            drive.update();
-            odo.update();
 
             if (gm1.right_stick_x>0.65 && prevgm1.right_stick_x<0.65) Odo.offsetX -=40;
             if (gm1.right_stick_x<-0.65 && prevgm1.right_stick_x>-0.65) Odo.offsetX +=40;
             if (gm1.right_stick_y>0.65 && prevgm1.right_stick_y<0.65) Odo.offsetY +=40;
             if (gm1.right_stick_y<-0.65 && prevgm1.right_stick_y>-0.65) Odo.offsetY -=40;
 
-            double heading = -Odo.getHeading() + Math.PI;
-            double X = -gm1.left_stick_y;
-            double Y = -gm1.left_stick_x;
+            double heading = -Odo.getHeading() + Math.PI/2;
+            double X = gm1.left_stick_x;
+            double Y = -gm1.left_stick_y;
             double rx = (gm1.right_trigger - gm1.left_trigger);
             double x = X * Math.cos(heading) - Y * Math.sin(heading);
             double y = X * Math.sin(heading) + Y * Math.cos(heading);
             drive.setTargetVector(x, y, rx);
 
+            if (gm1.circle && gm1.circle != prevgm1.circle)intake.storage.byPass();
+
             if (intake.storage.getState() == Storage.State.GOINGTRANSFER){
                 gamepad1.rumble(50);
             }
-            if (intake.storage.getState() == Storage.State.TRANSFER && intake.latch.getState() == Latch.State.TRANSFER && gm1.crossWasPressed()){
+            if (intake.storage.getState() == Storage.State.TRANSFER && intake.latch.getState() == Latch.State.TRANSFER && !intake.latch.isMoving() && gm1.cross && gm1.cross != prevgm1.cross){
                 intake.setState(Intake.State.SHOOT);
                 shooter.setState(Shooter.State.SHOOT);
             }
-            else if (intake.storage.getState() != Storage.State.TRANSFER && intake.storage.getState()!= Storage.State.SHOOT && gm1.right_bumper) intake.setState(Intake.State.INTAKE);
+            if (intake.storage.getState() != Storage.State.TRANSFER && intake.storage.getState()!= Storage.State.SHOOT && gm1.right_bumper) intake.setState(Intake.State.INTAKE);
             else if ((intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER) && gm1.right_bumper) intake.setState(Intake.State.REVERSE);
-            else if (intake.storage.getState() != Storage.State.TRANSFER && intake.storage.getState()!= Storage.State.SHOOT && gm1.left_bumper) intake.setState(Intake.State.REVERSE);
-            else if (!gm1.right_bumper && !gm1.left_bumper && intake.state != Intake.State.SHOOT) intake.setState(Intake.State.IDLE);
+            if (intake.storage.getState() != Storage.State.TRANSFER && intake.storage.getState()!= Storage.State.SHOOT && gm1.left_bumper) intake.setState(Intake.State.REVERSE);
+            if (!gm1.right_bumper && !gm1.left_bumper && intake.state != Intake.State.SHOOT) intake.setState(Intake.State.IDLE);
             if (gamepad1.psWasPressed()){
                 odo.reset();
             }
-            if (gm1.circleWasPressed())intake.storage.byPass();
+
+            odo.update();
+            intake.update();
+            shooter.update();
+            drive.update();
+
+            telemetry.addData("Distance",Odo.distance());
+            telemetry.addData("Target vel",shooter.flyWheel.getTargetVelocity());
+            telemetry.addData("Current vel",shooter.flyWheel.getVelocity());
+            telemetry.addData("Target angle", shooter.turret.targetAngle);
+            telemetry.addData("Target pos", shooter.turret.targetPosition);
+            telemetry.addData("Voltage",Voltage);
             prevgm1.copy(gm1);
             prevgm2.copy(gm2);
             telemetry.update();
