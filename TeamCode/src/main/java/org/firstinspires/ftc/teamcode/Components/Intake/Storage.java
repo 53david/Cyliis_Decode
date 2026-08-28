@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Components.Intake;
 
-import android.security.identity.EphemeralPublicKeyNotFoundException;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -17,8 +16,8 @@ public class Storage {
     public static double angle;
     public static double specialPos = Math.toRadians(255);
     public static double ballPos1 = Math.toRadians(70),ballPos3 = Math.toRadians(190),ballPos2 = Math.toRadians(310);
-    public static double Kp = 0.57,KP = 0.82;
-    public static double Kd = 0.02,KD = 0.024;
+    public static double Kp = 0.57,KP = 0.83;
+    public static double Kd = 0.019,KD = 0.023;
     public static double Ks = 0;
     PIDController pid = new PIDController(Kp,0,Kd);
     public static double error = 0;

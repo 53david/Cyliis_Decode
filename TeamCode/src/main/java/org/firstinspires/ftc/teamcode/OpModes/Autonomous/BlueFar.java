@@ -7,30 +7,32 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.LogicNodes.CloseBlue;
+import org.firstinspires.ftc.teamcode.LogicNodes.FarBlue;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
-@Autonomous(name="Sper_ca_merge-BLUE")
-public class BlueClose extends LinearOpMode {
+@Autonomous(name="Sper_ca_merge-BLUE - far")
+public class BlueFar extends LinearOpMode {
     VoltageSensor voltageSensor;
-    public CloseBlue closeBlue;
+    public FarBlue farBlue;
     @Override
     public void runOpMode() throws InterruptedException{
 
-        closeBlue = new CloseBlue(hardwareMap);
+        farBlue = new FarBlue(hardwareMap);
         while (opModeInInit()){
-            closeBlue.intake.update();
-            closeBlue.odo.update();
-            closeBlue.shooter.turret.update();
-            closeBlue.globalTimer.reset();
+            farBlue.intake.update();
+            farBlue.timer.reset();
+            farBlue.odo.update();
+            farBlue.shooter.turret.update();
+            farBlue.globalTimer.reset();
         }
         waitForStart();
 
         while(opModeIsActive()){
-            closeBlue.update();
-            telemetry.addData("state",closeBlue.shooter.flyWheel.getState());
-            telemetry.addData("target",closeBlue.shooter.flyWheel.getTargetVelocity());
-            telemetry.addData("currentVel",closeBlue.shooter.flyWheel.getVelocity());
+            farBlue.update();
+            telemetry.addData("state",farBlue.shooter.flyWheel.getState());
+            telemetry.addData("target",farBlue.shooter.flyWheel.getTargetVelocity());
+            telemetry.addData("currentVel",farBlue.shooter.flyWheel.getVelocity());
             telemetry.addData("X", Odo.predictedX);
             telemetry.addData("Y", Odo.predictedX);
             telemetry.addData("H", Odo.heading);

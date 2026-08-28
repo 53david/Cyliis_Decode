@@ -5,6 +5,7 @@
 
     import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.pp;
 
+    import com.acmerobotics.dashboard.config.Config;
     import com.bylazar.configurables.annotations.Configurable;
     import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
     import com.qualcomm.robotcore.hardware.IMU;
@@ -20,9 +21,9 @@
 
     import java.lang.Math;
 
-    @Configurable
+    @Config
     public class Odo {
-
+        public static double k = -0.725, time = 0.5;
         public static double power = -1, timerTreshold;
         public static double goalPositionX = 0,goalPositionY;
         public static double heading,x ,y, xVelocity, yVelocity, predictedX, predictedY,offsetX = 0,offsetY = 0, offset = 0,prevX = 0, prevY = 0;
@@ -108,13 +109,13 @@
             xVelocity = xVelocityFilter.getValue(pp.getVelocity().getX(MM));
             yVelocity = yVelocityFilter.getValue(pp.getVelocity().getY(MM));
             updateGlide();
-            if (Odo.delta > 3000){
-                power = -0.6;
-                timerTreshold = 0.7;
+            if (Odo.delta > 2800){
+                power = k;
+                timerTreshold = time;
             }
             else {
                 power = -1;
-                timerTreshold = 0.4;
+                timerTreshold = 0.42;
             }
 
             predictedX = x + xGlide;

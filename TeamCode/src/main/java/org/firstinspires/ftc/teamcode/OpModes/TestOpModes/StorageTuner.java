@@ -31,7 +31,7 @@ public class StorageTuner extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             intake.update();
-
+            if (x!=0) intake.setState(Intake.State.INTAKE);
             telemetry.addData("Current pos",Math.toDegrees(Storage.angle));
             telemetry.addData("Is ball in storage", intake.isBallInStorage());
             telemetry.addData("Current state", intake.storage.getState());

@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Components.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Components.Intake.Latch;
 import org.firstinspires.ftc.teamcode.Components.Intake.Storage;
+import org.firstinspires.ftc.teamcode.Components.Shooter.FlyWheel;
+import org.firstinspires.ftc.teamcode.Components.Shooter.Hood;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Shooter;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
@@ -27,11 +29,13 @@ public class CloseBlue {
     public Shooter shooter;
     public Intake intake;
 
-    public Node shoot,spike1,spike2,goingGate,gate,afterCollect,park;
+    Node shoot,spike1,spike2,goingGate,gate,afterCollect,park;
     public Node currentNode;
     public CloseBlue(HardwareMap hardwareMap){
+
         gateTimer = new ElapsedTime();timer = new ElapsedTime(); globalTimer =new ElapsedTime();
         gateTimer.startTime();timer.startTime();globalTimer.startTime();
+        globalTimer.reset(); timer.reset(); gateTimer.reset();
         Hardware.init(hardwareMap);
         odo = new Odo();
         chassis = new Chassis(Chassis.State.PID);
@@ -45,20 +49,22 @@ public class CloseBlue {
         afterCollect = new Node("affterCollect");
         park = new Node("park");
         currentNode = shoot;
+        currentNode.index = 0;
         intake.storage.setState(Storage.State.TRANSFER);
         shooter.turret.setState(Turret.State.BLUE);
         shoot.addConditions(
                 ()->{
-                    chassis.setTargetPosition(shootPos[Math.min(shoot.index,shootPos.length-1)]);
+                    Chassis.kp = 0.0065;
+                    chassis.setTargetSpecialPosition(shootPos[Math.min(shoot.index,shootPos.length-1)]);
                     if((intake.storage.getState()== Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER) && !intake.storage.isMoving() && !chassis.inPosition(220,220,0.3))intake.setState(Intake.State.REVERSE);
                     if ((intake.storage.getState()!= Storage.State.TRANSFER && intake.storage.getState()!= Storage.State.GOINGTRANSFER) && !intake.storage.isMoving()) intake.storage.setState(Storage.State.GOINGTRANSFER);
-                    if (chassis.inPosition(180,180,0.1) && intake.storage.getState() == Storage.State.TRANSFER && intake.latch.getState() == Latch.State.TRANSFER && shooter.flyWheel.isReady() && !intake.latch.isMoving())intake.setState(Intake.State.SHOOT);
+                    if (chassis.inPosition(180, 180, 0.11) && intake.storage.getState() == Storage.State.TRANSFER && intake.latch.getState() == Latch.State.TRANSFER && shooter.flyWheel.isReady() && !intake.latch.isMoving()) intake.setState(Intake.State.SHOOT);
 
                 },
                 ()->{
                   return intake.storage.getState() == Storage.State.GOINGBALL1;
                 },
-                new Node[]{spike2,goingGate,goingGate,spike1,goingGate,goingGate,goingGate,goingGate,park}
+                new Node[]{spike2,goingGate,spike1,goingGate,goingGate,goingGate,goingGate,park}
         );
         goingGate.addConditions(
                 ()->{
@@ -66,7 +72,7 @@ public class CloseBlue {
                     intake.setState(Intake.State.IDLE);
                 },
                 ()->{
-                    return chassis.inPosition(200,200,0.1);
+                    return chassis.inPosition(400,400,0.2);
                 },
                 new Node[]{gate}
         );
@@ -78,7 +84,7 @@ public class CloseBlue {
                     if (chassis.inPosition(90,90,0.3) && timer.seconds()>0.085)Chassis.stop = true;
                 },
                 ()->{
-                    if (intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER || gateTimer.seconds()>2.5){
+                    if (intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER || gateTimer.seconds()>2.175){
 
                         Chassis.stop= false;
                         return true;
@@ -100,21 +106,24 @@ public class CloseBlue {
         );
         spike1.addConditions(
                 ()->{
+                    if (spike1.index == 1) Chassis.kp = 0.000935;
                     chassis.setTargetPosition(spike1Pos[Math.min(spike1.index,spike1Pos.length-1)]);
                     intake.setState(Intake.State.INTAKE);
                 },
                 ()->{
+                    if (spike1.index == 0 && chassis.inPosition(120,120,0.1)) return true;
                     return chassis.inPosition(30,30,0.1) || intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER;
                 },
                 new Node[]{spike1,shoot}
         );
         spike2.addConditions(
                 ()->{
-                    shooter.turret.pause = false;
+                    if (spike2.index == 1) Chassis.kp = 0.000935;
                     chassis.setTargetPosition(spike2Pos[Math.min(spike2.index,spike2Pos.length-1)]);
                     intake.setState(Intake.State.INTAKE);
                 },
                 ()->{
+                    if (spike2.index == 0 && chassis.inPosition(120,120,0.1)) return true;
                     return chassis.inPosition(30,30,0.1) || intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER;
                 },
                 new Node[]{spike2,shoot}
@@ -143,7 +152,7 @@ public class CloseBlue {
         shooter.update();
         odo.update();
         intake.update();
-        if (globalTimer.seconds()>29.5 && intake.getState()!= Intake.State.SHOOT)currentNode = park;
+        if (globalTimer.seconds()>29.8 && currentNode!=shoot)currentNode = park;
         if (currentNode.transition()){
             currentNode = currentNode.next[Math.min(currentNode.index++,currentNode.next.length-1)];
         }

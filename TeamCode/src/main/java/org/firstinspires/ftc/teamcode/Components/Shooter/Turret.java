@@ -70,8 +70,8 @@ public class Turret {
         rAngle = rAngle / maxAngle;
 
         targetPosition = rAngle;
-        targetPosition = Math.max(0.01 , targetPosition);
-        targetPosition = Math.min(0.95, targetPosition);
+        targetPosition = Math.max(0.05 , targetPosition);
+        targetPosition = Math.min(0.9, targetPosition);
 
         servo1.setPosition(targetPosition);
         servo2.setPosition(targetPosition);
@@ -91,11 +91,11 @@ public class Turret {
                 pause = true;
                 break;
             case BLUE:
-                x = -0.03;
+                x = -0.02;
                 pause = false;
                 break;
             case RED:
-                x = 0.03;
+                x = 0.01;
                 pause = false;
                 break;
         }
