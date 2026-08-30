@@ -23,7 +23,7 @@
 
     @Config
     public class Odo {
-        public static double k = -0.725, time = 0.5;
+        public static double k = -0.6, time = 0.7;
         public static double power = -1, timerTreshold;
         public static double goalPositionX = 0,goalPositionY;
         public static double heading,x ,y, xVelocity, yVelocity, predictedX, predictedY,offsetX = 0,offsetY = 0, offset = 0,prevX = 0, prevY = 0;

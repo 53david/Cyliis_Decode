@@ -20,7 +20,7 @@ public class FlyWheel {
     public static double Ki = 0;
     public static double Kd = 0;
     public static double Ks = 0;
-    public static double Kv = 0.000405;
+    public static double Kv = 0.00041;
     public static double Ka = 0.0055;
     public static double shootPower = 0,idlePower = 1450,x = 0;
     public static double currentVelocity = 0,targetVelocity =0,offset = -80;

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 @Config
 public class Hood {
     ServoImplEx servo;
-    public static double k = 0.00029,offset = 0;
+    public static double k = 0.00028,offset = 0;
     public static double idlePos = 0,shootPos = 0, pos = 0.19;
     public enum State{
         PAUSE(pos),

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.LogicNodes;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import static org.firstinspires.ftc.teamcode.Trajectories.CloseBlue.spike1Pos;
 import static org.firstinspires.ftc.teamcode.Trajectories.CloseBlue.spike2Pos;
 import static org.firstinspires.ftc.teamcode.Trajectories.FarBlue.shootPos;
@@ -21,6 +20,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Node;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
 public class FarBlue {
+    boolean pula = false;
     public ElapsedTime timer,globalTimer;
     public Chassis chassis;
     public Intake intake;
@@ -51,8 +51,8 @@ public class FarBlue {
                     if (prevNode == loadingZone) chassis.setTargetPosition(shootPos[0]);
                     else chassis.setTargetPosition(shootPos[0]);
                     if((intake.storage.getState()== Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER) && !intake.storage.isMoving() && !chassis.inPosition(100,100,0.3))intake.setState(Intake.State.REVERSE);
-                    if ((intake.storage.getState()!= Storage.State.TRANSFER && intake.storage.getState()!= Storage.State.GOINGTRANSFER) && !intake.storage.isMoving()) intake.storage.setState(Storage.State.GOINGTRANSFER);
-                    if (chassis.inPosition(100, 100, 0.1) && intake.storage.getState() == Storage.State.TRANSFER && intake.latch.getState() == Latch.State.TRANSFER && shooter.flyWheel.isReady() && !intake.latch.isMoving()) intake.setState(Intake.State.SHOOT);
+                    if ((intake.storage.getState()!= Storage.State.TRANSFER && intake.storage.getState()!= Storage.State.GOINGTRANSFER) && !intake.storage.isMoving() && !pula) intake.storage.setState(Storage.State.GOINGTRANSFER);
+                    if (chassis.inPosition(100, 100, 0.1) && intake.storage.getState() == Storage.State.TRANSFER && intake.latch.getState() == Latch.State.TRANSFER && shooter.flyWheel.isReady() && !intake.latch.isMoving() && globalTimer.seconds()>0.85) {intake.setState(Intake.State.SHOOT); pula = true;}
                 },
                 ()->{
                     return intake.storage.getState() == Storage.State.GOINGBALL1;
@@ -62,6 +62,7 @@ public class FarBlue {
 
         spike3.addConditions(
                 ()->{
+                    pula = false;
                     if (spike3.index == 1) Chassis.kp = 0.000935;
                     chassis.setTargetPosition(spike3Pos[Math.min(spike3.index,spike3Pos.length-1)]);
                     intake.setState(Intake.State.INTAKE);
@@ -75,21 +76,25 @@ public class FarBlue {
 
         tunnel.addConditions(
                 ()->{
+                    pula = false;
                     chassis.setTargetPosition(tunnelPose[tunnel.index % 2]);
                     if (!chassis.inPosition(60,60,0.1)) timer.reset();
                     intake.setState(Intake.State.INTAKE);
 
                 },
                 ()->{
-                    return timer.seconds()>0.6 || intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER;
+                    return timer.seconds()>1.2 || intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER;
                 },
                 new Node[]{shoot}
         );
         loadingZone.addConditions(
                 ()->{
+                    pula = false;
                     chassis.setTargetPosition(loadingPose);
                     intake.setState(Intake.State.INTAKE);
                     if (!chassis.inPosition(60,60,0.1)) timer.reset();
+                    if (chassis.inPosition(170,170,0.1)) Chassis.kp = 0.0009;
+
                 },
                 ()->{
                     return timer.seconds()>0.65 || intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER;
@@ -98,14 +103,14 @@ public class FarBlue {
         );
         park.addConditions(
                 ()->{
-            Chassis.stop = false;
-            chassis.setTargetPosition(spike3Pos[0]);
-            intake.setState(Intake.State.IDLE);
-            shooter.setState(Shooter.State.IDLE);
-        },
-        ()->{
-            return chassis.inPosition(30,30,0.1);
-        },
+                    Chassis.stop = false;
+                    chassis.setTargetPosition(spike3Pos[0]);
+                    intake.setState(Intake.State.IDLE);
+                    shooter.setState(Shooter.State.IDLE);
+                },
+                ()->{
+                    return chassis.inPosition(30,30,0.1);
+                },
                 new Node[]{park}
 
         );
@@ -116,7 +121,7 @@ public class FarBlue {
         odo.update();
         intake.update();
         shooter.update();
-        if (globalTimer.seconds()>29.8 && currentNode!=shoot)currentNode = park;
+        if (globalTimer.seconds()>29.4 && intake.storage.getState()!= Storage.State.SHOOT)currentNode = park;
         if (currentNode.transition()){
             prevNode = currentNode;
             currentNode = currentNode.next[Math.min(currentNode.index++,currentNode.next.length-1)];

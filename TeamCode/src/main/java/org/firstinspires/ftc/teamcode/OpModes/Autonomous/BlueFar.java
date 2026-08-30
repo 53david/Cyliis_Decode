@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
+import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
 import org.firstinspires.ftc.teamcode.LogicNodes.CloseBlue;
 import org.firstinspires.ftc.teamcode.LogicNodes.FarBlue;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
@@ -17,8 +18,9 @@ public class BlueFar extends LinearOpMode {
     public FarBlue farBlue;
     @Override
     public void runOpMode() throws InterruptedException{
-
+        Chassis.stop = false;
         farBlue = new FarBlue(hardwareMap);
+        Turret.offsetY = -22;
         while (opModeInInit()){
             farBlue.intake.update();
             farBlue.timer.reset();

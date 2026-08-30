@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.LogicNodes;
 
-import static org.firstinspires.ftc.teamcode.Trajectories.CloseRed.afterCollectPos;
-import static org.firstinspires.ftc.teamcode.Trajectories.CloseRed.gatePos;
-import static org.firstinspires.ftc.teamcode.Trajectories.CloseRed.goingGatePos;
-import static org.firstinspires.ftc.teamcode.Trajectories.CloseRed.shootPos;
-import static org.firstinspires.ftc.teamcode.Trajectories.CloseRed.spike1Pos;
-import static org.firstinspires.ftc.teamcode.Trajectories.CloseRed.spike2Pos;
+import static org.firstinspires.ftc.teamcode.Trajectories.QuantumRed.afterCollectPos;
+import static org.firstinspires.ftc.teamcode.Trajectories.QuantumRed.gatePos;
+import static org.firstinspires.ftc.teamcode.Trajectories.QuantumRed.goingGatePos;
+import static org.firstinspires.ftc.teamcode.Trajectories.QuantumRed.shootPos;
+import static org.firstinspires.ftc.teamcode.Trajectories.QuantumRed.spike1Pos;
+import static org.firstinspires.ftc.teamcode.Trajectories.QuantumRed.spike2Pos;
+import static org.firstinspires.ftc.teamcode.Trajectories.QuantumRed.afterSpike1Pos;
+import static org.firstinspires.ftc.teamcode.Trajectories.QuantumRed.afterSpike2Pos;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -20,16 +22,16 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Node;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
-public class CloseRed {
+public class QuantumRed {
     public Odo odo;
     public ElapsedTime gateTimer,timer,globalTimer;
     public Chassis chassis;
     public Shooter shooter;
     public Intake intake;
 
-    Node shoot,spike1,spike2,goingGate,gate,afterCollect,park;
+    Node shoot,spike1,spike2,goingGate,gate,afterCollect,park,afterSpike1,afterSpike2;
     public Node currentNode;
-    public CloseRed(HardwareMap hardwareMap){
+    public QuantumRed(HardwareMap hardwareMap){
         gateTimer = new ElapsedTime();timer = new ElapsedTime(); globalTimer =new ElapsedTime();
         gateTimer.startTime();timer.startTime();globalTimer.startTime();
         Hardware.init(hardwareMap);
@@ -42,7 +44,9 @@ public class CloseRed {
         spike2 = new Node("spike2");
         gate = new Node("gate");
         goingGate = new Node("goingGate");
-        afterCollect = new Node("affterCollect");
+        afterCollect = new Node("afterCollect");
+        afterSpike1 = new Node("afterSpike1");
+        afterSpike2 = new Node("afterSpike2");
         park = new Node("park");
         currentNode = shoot;
         intake.storage.setState(Storage.State.TRANSFER);
@@ -59,7 +63,7 @@ public class CloseRed {
                 ()->{
                     return intake.storage.getState() == Storage.State.GOINGBALL1;
                 },
-                new Node[]{spike2,goingGate,spike1,goingGate,goingGate,goingGate,goingGate,park}
+                new Node[]{spike1,spike2,goingGate,goingGate,goingGate,goingGate,goingGate,park}
         );
         goingGate.addConditions(
                 ()->{
@@ -76,50 +80,54 @@ public class CloseRed {
                     chassis.setTargetPosition(gatePos);
                     intake.setState(Intake.State.INTAKE);
                     if (!chassis.inPosition(110,110,0.32)){timer.reset(); gateTimer.reset();}
-                    if (chassis.inPosition(110,110,0.32) && timer.seconds()>0.085)Chassis.stop = true;
+                    if (chassis.inPosition(110,110,0.32) && timer.seconds()>0.075)Chassis.stop = true;
                 },
                 ()->{
-                    if (intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER || gateTimer.seconds()>2.75){
+                    if (intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER || gateTimer.seconds()>1.5){
                         Chassis.stop= false;
                         return true;
                     }
                     return false;
                 },
-                new Node[]{shoot}
+                new Node[]{afterCollect}
         );
         afterCollect.addConditions(
                 ()->{
+                    Chassis.kp = 0.0065;
                     chassis.setTargetPosition(afterCollectPos);
                     if((intake.storage.getState()== Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER) && !intake.storage.isMoving())intake.setState(Intake.State.REVERSE);
-                    else if (!chassis.inPosition(30,30,0.1)) intake.setState(Intake.State.IDLE);
+                    else intake.setState(Intake.State.INTAKE);
+                    if (!chassis.inPosition(30,30,0.1)) gateTimer.reset();
                 },
                 ()->{
-                    return chassis.inPosition(75,75,0.2);
+                    return gateTimer.seconds()>0.035;
                 },
                 new Node[]{shoot}
         );
         spike1.addConditions(
                 ()->{
-                    if (spike1.index == 1) Chassis.kp = 0.0011;
+                    if (spike1.index == 1) Chassis.kp = 0.0015;
                     chassis.setTargetPosition(spike1Pos[Math.min(spike1.index,spike1Pos.length-1)]);
                     intake.setState(Intake.State.INTAKE);
+
                 },
                 ()->{
+                    if (spike1.index == 0)  return chassis.inPosition(90,90,0.13) || intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER;
                     return chassis.inPosition(60,60,0.13) || intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER;
                 },
                 new Node[]{spike1,shoot}
         );
         spike2.addConditions(
                 ()->{
-                    if (spike2.index == 1) Chassis.kp = 0.0011;
-                    shooter.turret.pause = false;
+                    if (spike2.index == 1) Chassis.kp = 0.0015;
                     chassis.setTargetPosition(spike2Pos[Math.min(spike2.index,spike2Pos.length-1)]);
                     intake.setState(Intake.State.INTAKE);
                 },
                 ()->{
+                    if (spike2.index == 0)  return chassis.inPosition(120,120,0.13) || intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER;
                     return chassis.inPosition(60,60,0.13) || intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER;
                 },
-                new Node[]{spike2,shoot}
+                new Node[]{spike2,afterSpike2}
         );
         park.addConditions(
                 ()->{
@@ -133,6 +141,30 @@ public class CloseRed {
                 },
                 new Node[]{park}
         );
+        afterSpike1.addConditions(
+                ()->{
+                    Chassis.kp = 0.0065;
+                    chassis.setTargetPosition(afterSpike1Pos);
+                    intake.setState(Intake.State.IDLE);
+                    if (!chassis.inPosition(65,65,0.12)) gateTimer.reset();
+                },
+                ()->{
+                    return gateTimer.seconds()>0.8;
+                },
+                new Node[]{shoot}
+        );
+        afterSpike2.addConditions(
+                ()->{
+                    Chassis.kp = 0.0065;
+                    chassis.setTargetPosition(afterSpike2Pos);
+                    intake.setState(Intake.State.IDLE);
+                    if (!chassis.inPosition(65,65,0.12)) gateTimer.reset();
+                },
+                ()->{
+                    return gateTimer.seconds()>0.2;
+                },
+                new Node[]{shoot}
+        );
 
 
 
@@ -145,7 +177,6 @@ public class CloseRed {
         shooter.update();
         odo.update();
         intake.update();
-        if (globalTimer.seconds()>29.5 && intake.getState()!= Intake.State.SHOOT)currentNode = park;
         if (currentNode.transition()){
             currentNode = currentNode.next[Math.min(currentNode.index++,currentNode.next.length-1)];
         }

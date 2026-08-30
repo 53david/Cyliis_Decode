@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Components.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Components.Intake.Latch;
 import org.firstinspires.ftc.teamcode.Components.Intake.Storage;
+import org.firstinspires.ftc.teamcode.Components.Shooter.Hood;
 import org.firstinspires.ftc.teamcode.Components.Shooter.Shooter;
 
 import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
@@ -51,6 +52,7 @@ public class TeleopRed extends LinearOpMode {
         drive =new Chassis(Chassis.State.DRIVE);
         shooter =new Shooter(Shooter.State.ACTIVE);
         shooter.turret.setState(Turret.State.RED);
+        Hood.offset = 0;
         waitForStart();
         while (opModeIsActive()) {
 

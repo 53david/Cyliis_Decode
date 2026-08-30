@@ -52,6 +52,7 @@ public class TeleopBlue extends LinearOpMode {
         drive =new Chassis(Chassis.State.DRIVE);
         shooter =new Shooter(Shooter.State.ACTIVE);
         shooter.turret.setState(Turret.State.BLUE);
+        Hood.offset = 0;
         waitForStart();
         while (opModeIsActive()) {
 

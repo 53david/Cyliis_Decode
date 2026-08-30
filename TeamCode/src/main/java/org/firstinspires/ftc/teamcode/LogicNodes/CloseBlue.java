@@ -51,11 +51,11 @@ public class CloseBlue {
         currentNode = shoot;
         currentNode.index = 0;
         intake.storage.setState(Storage.State.TRANSFER);
-        shooter.turret.setState(Turret.State.BLUE);
+
         shoot.addConditions(
                 ()->{
                     Chassis.kp = 0.0065;
-                    chassis.setTargetSpecialPosition(shootPos[Math.min(shoot.index,shootPos.length-1)]);
+                    chassis.setTargetPosition(shootPos[Math.min(shoot.index,shootPos.length-1)]);
                     if((intake.storage.getState()== Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER) && !intake.storage.isMoving() && !chassis.inPosition(220,220,0.3))intake.setState(Intake.State.REVERSE);
                     if ((intake.storage.getState()!= Storage.State.TRANSFER && intake.storage.getState()!= Storage.State.GOINGTRANSFER) && !intake.storage.isMoving()) intake.storage.setState(Storage.State.GOINGTRANSFER);
                     if (chassis.inPosition(180, 180, 0.11) && intake.storage.getState() == Storage.State.TRANSFER && intake.latch.getState() == Latch.State.TRANSFER && shooter.flyWheel.isReady() && !intake.latch.isMoving()) intake.setState(Intake.State.SHOOT);
@@ -84,7 +84,7 @@ public class CloseBlue {
                     if (chassis.inPosition(90,90,0.3) && timer.seconds()>0.085)Chassis.stop = true;
                 },
                 ()->{
-                    if (intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER || gateTimer.seconds()>2.175){
+                    if (intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER || gateTimer.seconds()>2.75){
 
                         Chassis.stop= false;
                         return true;
@@ -152,7 +152,7 @@ public class CloseBlue {
         shooter.update();
         odo.update();
         intake.update();
-        if (globalTimer.seconds()>29.8 && currentNode!=shoot)currentNode = park;
+        if (globalTimer.seconds()>29.5 && intake.storage.getState()!= Storage.State.SHOOT)currentNode = park;
         if (currentNode.transition()){
             currentNode = currentNode.next[Math.min(currentNode.index++,currentNode.next.length-1)];
         }

@@ -2,7 +2,8 @@ package org.firstinspires.ftc.teamcode.LogicNodes;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+import static org.firstinspires.ftc.teamcode.Trajectories.CloseBlue.spike1Pos;
+import static org.firstinspires.ftc.teamcode.Trajectories.CloseBlue.spike2Pos;
 import static org.firstinspires.ftc.teamcode.Trajectories.FarRed.shootPos;
 import static org.firstinspires.ftc.teamcode.Trajectories.FarRed.spike3Pos;
 import static org.firstinspires.ftc.teamcode.Trajectories.FarRed.tunnelPose;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Node;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
 public class FarRed {
+    boolean pula = false;
     public ElapsedTime timer,globalTimer;
     public Chassis chassis;
     public Intake intake;
@@ -48,18 +50,20 @@ public class FarRed {
                     Chassis.kp = 0.0065;
                     if (prevNode == loadingZone) chassis.setTargetPosition(shootPos[0]);
                     else chassis.setTargetPosition(shootPos[0]);
+
                     if((intake.storage.getState()== Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER) && !intake.storage.isMoving() && !chassis.inPosition(100,100,0.3))intake.setState(Intake.State.REVERSE);
-                    if ((intake.storage.getState()!= Storage.State.TRANSFER && intake.storage.getState()!= Storage.State.GOINGTRANSFER) && !intake.storage.isMoving()) intake.storage.setState(Storage.State.GOINGTRANSFER);
-                    if (chassis.inPosition(100, 100, 0.1) && intake.storage.getState() == Storage.State.TRANSFER && intake.latch.getState() == Latch.State.TRANSFER && shooter.flyWheel.isReady() && !intake.latch.isMoving()) intake.setState(Intake.State.SHOOT);
+                    if ((intake.storage.getState()!= Storage.State.TRANSFER && intake.storage.getState()!= Storage.State.GOINGTRANSFER) && !intake.storage.isMoving() && !pula) intake.storage.setState(Storage.State.GOINGTRANSFER);
+                    if (chassis.inPosition(100, 100, 0.1) && intake.storage.getState() == Storage.State.TRANSFER && intake.latch.getState() == Latch.State.TRANSFER && shooter.flyWheel.isReady() && !intake.latch.isMoving() && globalTimer.seconds()>0.85) {intake.setState(Intake.State.SHOOT); pula = true;}
                 },
                 ()->{
                     return intake.storage.getState() == Storage.State.GOINGBALL1;
                 },
-                new Node[]{loadingZone,spike3,loadingZone,loadingZone,tunnel,loadingZone,loadingZone,tunnel,loadingZone,loadingZone,loadingZone,park}
+                new Node[]{loadingZone,spike3,tunnel,loadingZone,loadingZone,tunnel,loadingZone,loadingZone,tunnel,loadingZone,loadingZone,park}
         );
 
         spike3.addConditions(
                 ()->{
+                    pula = false;
                     if (spike3.index == 1) Chassis.kp = 0.000935;
                     chassis.setTargetPosition(spike3Pos[Math.min(spike3.index,spike3Pos.length-1)]);
                     intake.setState(Intake.State.INTAKE);
@@ -73,27 +77,32 @@ public class FarRed {
 
         tunnel.addConditions(
                 ()->{
+                    pula = false;
                     chassis.setTargetPosition(tunnelPose[tunnel.index % 2]);
-                    if (!chassis.inPosition(60,60,0.1)) timer.reset();
                     intake.setState(Intake.State.INTAKE);
+                    if (!chassis.inPosition(60,60,0.1)) timer.reset();
+                    if (chassis.inPosition(100,100,0.1)) Chassis.kp = 0.00095;
+
 
                 },
                 ()->{
-                    return timer.seconds()>0.6 || intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER;
+                    return timer.seconds()>0.65 || intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER;
                 },
                 new Node[]{shoot}
         );
         loadingZone.addConditions(
                 ()->{
-                    chassis.setTargetPosition(loadingPose[Math.min(loadingZone.index,loadingPose.length-1)]);
+                    pula = false;
+                    chassis.setTargetPosition(loadingPose);
                     intake.setState(Intake.State.INTAKE);
                     if (!chassis.inPosition(60,60,0.1)) timer.reset();
-                    if (intake.storage.state == Storage.State.GOINGTRANSFER || intake.storage.state == Storage.State.TRANSFER) loadingZone.index = 2;
+                    if (chassis.inPosition(170,170,0.1)) Chassis.kp = 0.00095;
+
                 },
                 ()->{
                     return timer.seconds()>0.65 || intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER;
                 },
-                new Node[]{loadingZone,loadingZone,loadingZone,shoot}
+                new Node[]{shoot}
         );
         park.addConditions(
                 ()->{
@@ -115,7 +124,7 @@ public class FarRed {
         odo.update();
         intake.update();
         shooter.update();
-        if (globalTimer.seconds()>29.8 && currentNode!=shoot)currentNode = park;
+        if (globalTimer.seconds()>29.5 && intake.storage.getState()!= Storage.State.SHOOT)currentNode = park;
         if (currentNode.transition()){
             prevNode = currentNode;
             currentNode = currentNode.next[Math.min(currentNode.index++,currentNode.next.length-1)];

@@ -24,6 +24,7 @@ public class Turret {
     public boolean pause = false;
     public double maxAngle = Math.PI * 2;
     public static double offset = 0;
+    public static double offsetX = 0,offsetY = 0;
     public static double dx = 0, tx =17.793;
     public static double dy = 0, ty = 0;
     public enum State{
@@ -41,6 +42,8 @@ public class Turret {
     }
     public State state = State.BLUE;
     public Turret() {
+        offsetX = 0;
+        offsetY = 0;
         servo1 = Hardware.ssh1;
         servo2 = Hardware.ssh2;
         servo1.setPwmRange(new PwmControl.PwmRange(500, 2500));
@@ -80,8 +83,8 @@ public class Turret {
 
     private void updateAngle() {
 
-        dx = state.x - (pp.getPosX(DistanceUnit.MM)+Odo.offsetX + pp.getVelX(DistanceUnit.MM) * a + tx*Math.cos(Odo.getHeading()));
-        dy = state.y - (pp.getPosY(DistanceUnit.MM)+Odo.offsetY + pp.getVelY(DistanceUnit.MM) * a +tx*Math.sin(Odo.getHeading()));
+        dx = (state.x + offsetX) - (pp.getPosX(DistanceUnit.MM)+Odo.offsetX + pp.getVelX(DistanceUnit.MM) * a + tx*Math.cos(Odo.getHeading()));
+        dy = (state.y + offsetY) - (pp.getPosY(DistanceUnit.MM)+Odo.offsetY + pp.getVelY(DistanceUnit.MM) * a +tx*Math.sin(Odo.getHeading()));
         targetAngle = Math.atan2(dy, dx);
 
     }

@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
+import org.firstinspires.ftc.teamcode.Components.Shooter.Turret;
 import org.firstinspires.ftc.teamcode.LogicNodes.CloseBlue;
 import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
@@ -16,7 +17,8 @@ public class BlueClose extends LinearOpMode {
     public CloseBlue closeBlue;
     @Override
     public void runOpMode() throws InterruptedException{
-
+        Turret.offsetY = 0;
+        Chassis.stop = false;
         closeBlue = new CloseBlue(hardwareMap);
         while (opModeInInit()){
             closeBlue.intake.update();
