@@ -26,7 +26,7 @@ public class FlyWheel {
     public static double Kv = 0.00041;
     public static double Ka = 0.0055;
     public static double Kg = 0;
-    public static double shootPower = 0,idlePower = 1450,x = 0;
+    public static double shootPower = 0,idlePower = 1600,x = 0;
     public static double currentVelocity = 0,targetVelocity =0,offset = -80;
     PIDController controller = new PIDController(Kp,Ki,Kd);
     public enum State{
@@ -71,8 +71,7 @@ public class FlyWheel {
         State.IDLE.power = idlePower;
     }
     private void updateHardware(){
-        rpm = controller.calculate(currentVelocity, state.power) + Kv * state.power
-                + Ks * Math.signum(state.power- currentVelocity) + (state.power-currentVelocity) * Ka;
+        rpm = Kv * state.power + Ks * Math.signum(state.power- currentVelocity) + (state.power-currentVelocity) * Ka;
 
         shoot1.setPower(rpm);
         shoot2.setPower(rpm);
@@ -99,7 +98,7 @@ public class FlyWheel {
         return state;
     }
     public double calculatePower(double distance){
-        if (Odo.distance()<2900) return Math.clamp(-0.0000841083*Math.pow(distance,2)+0.664004*distance+684.65048 + offset,1300,2200);
+        if (Odo.distance()<2900) return Math.clamp(-0.0000841081*Math.pow(distance,2)+0.664004*distance+684.65048 + offset,1300,2200);
         else return Math.clamp(-0.0000240764*Math.pow(distance,2)+0.667331*distance,1300,2200);
     }
 

@@ -54,7 +54,7 @@ public class QuantumBlue {
         shoot.addConditions(
                 ()->{
                     Chassis.kp = 0.0065;
-                    chassis.setTargetPosition(shootPos[Math.min(shoot.index,shootPos.length-1)]);
+                    chassis.setTargetPosition(shootPos[Math.min(shoot.index,shootPos.length-1)],false);
                     if((intake.storage.getState()== Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER) && !intake.storage.isMoving() && !chassis.inPosition(220,220,0.3))intake.setState(Intake.State.REVERSE);
                     if ((intake.storage.getState()!= Storage.State.TRANSFER && intake.storage.getState()!= Storage.State.GOINGTRANSFER) && !intake.storage.isMoving()) intake.storage.setState(Storage.State.GOINGTRANSFER);
                     if (chassis.inPosition(180,180,0.1) && intake.storage.getState() == Storage.State.TRANSFER && intake.latch.getState() == Latch.State.TRANSFER && shooter.flyWheel.isReady() && !intake.latch.isMoving())intake.setState(Intake.State.SHOOT);
@@ -67,7 +67,7 @@ public class QuantumBlue {
         );
         goingGate.addConditions(
                 ()->{
-                    chassis.setTargetPosition(goingGatePos);
+                    chassis.setTargetPosition(goingGatePos,false);
                     intake.setState(Intake.State.IDLE);
                 },
                 ()->{
@@ -132,7 +132,7 @@ public class QuantumBlue {
         park.addConditions(
                 ()->{
                     Chassis.stop = false;
-                    chassis.setTargetPosition(spike2Pos[0]);
+                    chassis.setTargetPosition(spike2Pos[0],false);
                     intake.setState(Intake.State.IDLE);
                     shooter.setState(Shooter.State.IDLE);
                 },
@@ -156,7 +156,7 @@ public class QuantumBlue {
         afterSpike2.addConditions(
                 ()->{
                     Chassis.kp = 0.0065;
-                    chassis.setTargetPosition(afterSpike2Pos);
+                    chassis.setTargetPosition(afterSpike2Pos,false);
                     intake.setState(Intake.State.IDLE);
                     if (!chassis.inPosition(65,65,0.12)) gateTimer.reset();
                 },

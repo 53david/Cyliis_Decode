@@ -6,7 +6,6 @@ import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.pp;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import org.firstinspires.ftc.teamcode.Math.PIDController;
@@ -20,6 +19,7 @@ public class Chassis{
         DRIVE , PID;
     }
     public static State state;
+    public boolean usePredictiveBreaking = true;
     DcMotorEx frontLeft,frontRight,backLeft,backRight;
     public static boolean stop = false;
     public  double targetX , targetY ,x=0 ,y=0;
@@ -98,13 +98,19 @@ public class Chassis{
     {
         Chassis.state =state;
     }
-
+    public static void turnOff(){
+        stop = true;
+    }
+    public static void turnOn(){
+        stop = false;
+    }
     public void setTargetPosition(double x , double y , double heading)
     {
         targetX=x;
         targetY=y;
         targetHeading=heading-Math.floor((heading/ (Math.PI*2)))*Math.PI*2;
         usingTargetHeading=true;
+        usePredictiveBreaking = true;
 
     }
 
@@ -114,6 +120,7 @@ public class Chassis{
         this.targetY=targetY;
         rotation=targetHeading;
         usingTargetHeading=false;
+        usePredictiveBreaking = true;
     }
     public void setTargetSpecialPosition(Pose2D position)
     {
@@ -121,6 +128,7 @@ public class Chassis{
         this.targetY=position.y;
         rotation=targetHeading;
         usingTargetHeading=false;
+        usePredictiveBreaking = true;
     }
     public void setTargetPosition(Pose2D position)
     {
@@ -128,6 +136,44 @@ public class Chassis{
         targetY=position.y;
         targetHeading=position.heading;
         usingTargetHeading=true;
+        usePredictiveBreaking = true;
+    }
+    public void setTargetPosition(double x , double y , double heading, boolean usePredictiveBreaking)
+    {
+        targetX=x;
+        targetY=y;
+        targetHeading=heading-Math.floor((heading/ (Math.PI*2)))*Math.PI*2;
+        usingTargetHeading=true;
+        this.usePredictiveBreaking = usePredictiveBreaking;
+
+
+    }
+
+    public void setTargetSpecialPosition(double targetX , double targetY , double targetHeading,boolean usePredictiveBreaking)
+    {
+        this.targetX=targetX;
+        this.targetY=targetY;
+        rotation=targetHeading;
+        usingTargetHeading=false;
+        this.usePredictiveBreaking = usePredictiveBreaking;
+
+    }
+    public void setTargetSpecialPosition(Pose2D position, boolean usePredictiveBreaking)
+    {
+        this.targetX=position.x;
+        this.targetY=position.y;
+        rotation=targetHeading;
+        usingTargetHeading=false;
+        this.usePredictiveBreaking = usePredictiveBreaking;
+
+    }
+    public void setTargetPosition(Pose2D position, boolean usePredictiveBreaking)
+    {
+        targetX=position.x;
+        targetY=position.y;
+        targetHeading=position.heading;
+        usingTargetHeading=true;
+        this.usePredictiveBreaking = usePredictiveBreaking;
     }
     public void updatePID(){
         controllerX.kp=kp;
@@ -148,8 +194,18 @@ public class Chassis{
         if (Double.isNaN(Odo.x) || Double.isNaN(Odo.y) || Double.isNaN(Odo.heading)) {
             return;
         }
-        x = controllerX.calculate(targetX, Odo.predictedX);
-        y = -controllerY.calculate(targetY, Odo.predictedY);
+        double posX, posY;
+        if (usePredictiveBreaking){
+            posX = Odo.predictedX;
+            posY = Odo.predictedY;
+        }
+        else {
+            posX = Odo.x;
+            posY = Odo.y;
+        }
+
+        x = controllerX.calculate(targetX, posX);
+        y = -controllerY.calculate(targetY, posY);
 
         heading = Odo.getHeading();
         if (heading < 0) realHeading = Math.abs(heading);

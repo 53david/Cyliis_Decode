@@ -31,7 +31,6 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
 @TeleOp
-@Autonomous
 public class TeleopBlue extends LinearOpMode {
 
     public static double currentVoltage =0;
@@ -90,7 +89,7 @@ public class TeleopBlue extends LinearOpMode {
             }
             if (intake.storage.getState() == Storage.State.TRANSFER && intake.latch.getState() == Latch.State.TRANSFER && !intake.latch.isMoving() && gm1.cross && gm1.cross != prevgm1.cross){
                 intake.setState(Intake.State.SHOOT);
-                shooter.setState(Shooter.State.SHOOT);
+                shooter.setState(Shooter.State.ACTIVE);
             }
             if (intake.storage.getState() != Storage.State.TRANSFER && intake.storage.getState()!= Storage.State.SHOOT && gm1.right_bumper) intake.setState(Intake.State.INTAKE);
             else if ((intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER) && gm1.right_bumper) intake.setState(Intake.State.REVERSE);
@@ -104,8 +103,9 @@ public class TeleopBlue extends LinearOpMode {
             intake.update();
             shooter.update();
             drive.update();
-
-            telemetry.addData("Distance",Odo.distance());
+            telemetry.addData("X",Odo.predictedX);
+            telemetry.addData("Y",Odo.predictedY);
+            telemetry.addData("H",Odo.heading);
             telemetry.addData("Target vel",shooter.flyWheel.getTargetVelocity());
             telemetry.addData("Current vel",shooter.flyWheel.getVelocity());
             telemetry.addData("Target angle", shooter.turret.targetAngle);

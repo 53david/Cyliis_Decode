@@ -39,7 +39,7 @@ public class Shooter {
             case SHOOT:
                 flyWheel.setState(FlyWheel.State.SHOOT);
                 hood.setState(Hood.State.SHOOT);
-                if (timer.seconds()>0.4) state = State.ACTIVE;
+                if (timer.seconds()>0.4) state = State.IDLE;
                 break;
         }
 

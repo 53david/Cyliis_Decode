@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 public class Hood {
     ServoImplEx servo;
     public static double k = 0.00028,offset = 0;
-    public static double idlePos = 0,shootPos = 0, pos = 0.19;
+    public static double idlePos = 0.07,shootPos = 0, pos = 0.07;
     public enum State{
         PAUSE(pos),
         IDLE(idlePos),
@@ -47,6 +47,7 @@ public class Hood {
         }
     }
     private void updatePosition(){
+        State.PAUSE.position = pos;
         State.IDLE.position = idlePos;
         State.SHOOT.position = shootPos;
     }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Wrappers;
 
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevSPARKMini;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -17,7 +18,7 @@ public class Hardware {
     public static double Voltage = 0;
     public static Gamepad gm1,gm2,prevgm1,prevgm2;
     public static DcMotorEx mch0, mch1, mch2, mch3;
-
+    public static Limelight3A limelight;
     public static ServoImplEx ssh0, ssh1, ssh2, ssh3, ssh4, ssh5;
 
     public static ColorSensor colorSensor;
@@ -61,7 +62,7 @@ public class Hardware {
         ssh3=hardwareMap.get(ServoImplEx.class, "ssh3");
         ssh4=hardwareMap.get(ServoImplEx.class, "ssh4");
         ssh5=hardwareMap.get(ServoImplEx.class, "ssh5");
-
+        limelight = hardwareMap.get(Limelight3A.class,"limelight");
         colorSensor=hardwareMap.get(ColorSensor.class, "colorSensor");
         bb=hardwareMap.get(DigitalChannel.class, "bb");
 

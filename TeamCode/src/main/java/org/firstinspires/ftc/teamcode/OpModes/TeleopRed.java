@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Odo;
 
 @TeleOp
-public class TeleopRed extends LinearOpMode {
+public class        TeleopRed extends LinearOpMode {
 
     public static double currentVoltage =0;
     ElapsedTime failSafeLatch;
