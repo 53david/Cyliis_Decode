@@ -2,11 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.bylazar.configurables.annotations.Configurable;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -18,7 +14,6 @@ import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.gm2;
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.prevgm1;
 import static org.firstinspires.ftc.teamcode.Wrappers.Hardware.prevgm2;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Components.Chassis.Chassis;
 import org.firstinspires.ftc.teamcode.Components.Intake.Intake;
 import org.firstinspires.ftc.teamcode.Components.Intake.Latch;
@@ -89,7 +84,7 @@ public class TeleopBlue extends LinearOpMode {
             }
             if (intake.storage.getState() == Storage.State.TRANSFER && intake.latch.getState() == Latch.State.TRANSFER && !intake.latch.isMoving() && gm1.cross && gm1.cross != prevgm1.cross){
                 intake.setState(Intake.State.SHOOT);
-                shooter.setState(Shooter.State.ACTIVE);
+                shooter.setState(Shooter.State.SHOOT);
             }
             if (intake.storage.getState() != Storage.State.TRANSFER && intake.storage.getState()!= Storage.State.SHOOT && gm1.right_bumper) intake.setState(Intake.State.INTAKE);
             else if ((intake.storage.getState() == Storage.State.GOINGTRANSFER || intake.storage.getState() == Storage.State.TRANSFER) && gm1.right_bumper) intake.setState(Intake.State.REVERSE);
