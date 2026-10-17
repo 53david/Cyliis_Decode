@@ -9,6 +9,7 @@ import static org.firstinspires.ftc.teamcode.Trajectories.QuantumBlue.spike2Pos;
 import static org.firstinspires.ftc.teamcode.Trajectories.QuantumBlue.afterSpike1Pos;
 import static org.firstinspires.ftc.teamcode.Trajectories.QuantumBlue.afterSpike2Pos;
 
+import com.qualcomm.hardware.digitalchickenlabs.OctoQuadImpl;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
